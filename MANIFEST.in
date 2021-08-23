@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include bbt_bpm *.css
+recursive-include bbt_bpm *.csv
+recursive-include bbt_bpm *.html
+recursive-include bbt_bpm *.ico
+recursive-include bbt_bpm *.js
+recursive-include bbt_bpm *.json
+recursive-include bbt_bpm *.md
+recursive-include bbt_bpm *.png
+recursive-include bbt_bpm *.py
+recursive-include bbt_bpm *.svg
+recursive-include bbt_bpm *.txt
+recursive-exclude bbt_bpm *.pyc
