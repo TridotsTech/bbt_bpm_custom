@@ -34,6 +34,13 @@ fixtures = ["Custom Field"]
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
+
+doctype_js = {
+	"Sales Order": "custom_script/sales_order/sales_order.js",
+	"Stock Entry": "custom_script/stock_entry/stock_entry.js",
+	"Quotation": "custom_script/quotation/quotation.js"
+}
+
 # Home Pages
 # ----------
 
@@ -81,6 +88,12 @@ fixtures = ["Custom Field"]
 # Document Events
 # ---------------
 # Hook on document methods and events
+doc_events = {
+	"Stock Entry": {
+		"on_submit": "bbt_bpm.custom_script.stock_entry.stock_entry.on_submit",
+		"on_cancel": "bbt_bpm.custom_script.stock_entry.stock_entry.on_cancel"
+	}
+}
 
 # doc_events = {
 # 	"*": {
