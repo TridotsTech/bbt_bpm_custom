@@ -33,7 +33,9 @@ fixtures = ["Custom Field"]
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
-
+doctype_list_js = {
+	"Delivery Note": "custom_script/delivery_note/delivery_note_list.js"
+}
 
 doctype_js = {
 	"Sales Order": "custom_script/sales_order/sales_order.js",
@@ -92,6 +94,13 @@ doc_events = {
 	"Stock Entry": {
 		"on_submit": "bbt_bpm.custom_script.stock_entry.stock_entry.on_submit",
 		"on_cancel": "bbt_bpm.custom_script.stock_entry.stock_entry.on_cancel"
+	},
+	"Sales Order": {
+		"validate": "bbt_bpm.custom_script.sales_order.sales_order.validate"
+	},
+	"Delivery Note": {
+		"on_submit": "bbt_bpm.custom_script.delivery_note.delivery_note.on_submit",
+		"on_update_after_submit": "bbt_bpm.custom_script.delivery_note.delivery_note.on_update_after_submit"
 	}
 }
 

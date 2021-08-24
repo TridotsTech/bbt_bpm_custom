@@ -4,6 +4,11 @@ from frappe.utils import cint, cstr,flt
 import json
 from frappe.model.mapper import get_mapped_doc
 
+
+def validate(doc, method):
+	for row in doc.items:
+		doc.stock_transfer_ref=frappe.db.get_value("Stock Entry", {"quotation_ref":row.prevdoc_docname, "docstatus":1}, "name")	
+
 @frappe.whitelist()
 def map_on_stock_entry(source_name, target_doc=None):
 	stock_entry_types="Stock Reservation"
