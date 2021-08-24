@@ -1,0 +1,64 @@
+{
+ "autoname": "field:stock_block_unblock",
+ "creation": "2021-08-24 18:08:19.179493",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "stock_block_unblock",
+  "sales_order",
+  "quotation",
+  "data_4",
+  "items"
+ ],
+ "fields": [
+  {
+   "fieldname": "stock_block_unblock",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Stock Block Unblock",
+   "unique": 1
+  },
+  {
+   "fieldname": "sales_order",
+   "fieldtype": "Data",
+   "label": "Sales Order"
+  },
+  {
+   "fieldname": "quotation",
+   "fieldtype": "Data",
+   "label": "Quotation"
+  },
+  {
+   "fieldname": "data_4",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "Stock Blocking Unblocking Table"
+  }
+ ],
+ "modified": "2021-08-24 18:31:36.664570",
+ "modified_by": "Administrator",
+ "module": "Bbt Bpm",
+ "name": "Stock Blocking Unblocking",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

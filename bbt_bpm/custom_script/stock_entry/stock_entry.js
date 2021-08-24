@@ -11,7 +11,7 @@ frappe.ui.form.on("Stock Entry", {
 		}
 	},
 
-	hide_add_delete_option: function(frm){
+	hide_add_delete_option: function(frm) {
 		$('[data-fieldname="items"]').find('.grid-buttons').hide()
 		$('[data-fieldname="items"]').find('.grid-download').hide()
 		$('[data-fieldname="items"]').find('.grid-upload').hide()
@@ -25,7 +25,7 @@ frappe.ui.form.on("Stock Entry", {
 		$('[data-fieldname="items"]').find('.grid-add-multiple-rows').hide()
 	},
 
-	items_on_form_rendered:function(frm,cdt,cdn){
+	items_on_form_rendered:function(frm,cdt,cdn) {
 		$('[data-fieldname="items"]').find('.close').hide()
 		$('[data-fieldname="items"]').find('.grid-add-row').hide()
 		$('[data-fieldname="items"]').find('.grid-row-check').hide()
