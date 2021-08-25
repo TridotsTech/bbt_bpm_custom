@@ -5,6 +5,7 @@ import json
 
 def on_submit(doc, method):
 	frappe.db.set_value("Sales Order", doc.sales_order_ref, "stock_transfer_ref", doc.name)
+	frappe.db.set_value("Sales Order Item", {"parent":doc.sales_order_ref}, "warehouse", doc.to_warehouse)
 
 	if doc.sales_order_ref or doc.quotation_ref:
 		stock_block = frappe.new_doc("Stock Blocking Unblocking")
@@ -29,5 +30,6 @@ def on_submit(doc, method):
 
 def on_cancel(doc, method):
 	frappe.db.set_value("Sales Order", doc.sales_order_ref, "stock_transfer_ref", "")
+	frappe.db.set_value("Sales Order Item", {"parent":doc.sales_order_ref}, "warehouse", doc.from_warehouse)
 	frappe.db.sql("""delete from `tabStock Blocking Unblocking` where name='{0}'""".format(doc.name))
 	frappe.db.commit()
