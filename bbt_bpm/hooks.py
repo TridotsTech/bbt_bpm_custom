@@ -103,6 +103,12 @@ doc_events = {
 	"Delivery Note": {
 		"on_submit": "bbt_bpm.custom_script.delivery_note.delivery_note.on_submit",
 		"on_update_after_submit": "bbt_bpm.custom_script.delivery_note.delivery_note.on_update_after_submit"
+	},
+	"Pick List": {
+		"on_submit": "bbt_bpm.custom_script.pick_list.pick_list.on_submit"
+	},
+	"Sales Invoice": {
+		"on_submit": "bbt_bpm.custom_script.sales_invoice.sales_invoice.on_submit"
 	}
 }
 
