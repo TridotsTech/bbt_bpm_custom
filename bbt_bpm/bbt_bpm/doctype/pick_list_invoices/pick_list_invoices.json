@@ -1,0 +1,27 @@
+{
+ "creation": "2021-08-25 16:35:59.837378",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "sales_invoice"
+ ],
+ "fields": [
+  {
+   "fieldname": "sales_invoice",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Sales Invoice",
+   "options": "Sales Invoice"
+  }
+ ],
+ "istable": 1,
+ "modified": "2021-08-25 21:05:48.819603",
+ "modified_by": "Administrator",
+ "module": "Bbt Bpm",
+ "name": "Pick List Invoices",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
