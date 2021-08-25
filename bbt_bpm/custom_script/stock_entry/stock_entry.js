@@ -3,11 +3,13 @@ frappe.ui.form.on("Stock Entry", {
 		if (frm.doc.sales_order_ref){
 			frm.set_value("stock_entry_type", "Stock Reservation")
 			frm.trigger("hide_add_delete_option")
+			frm.trigger("to_warehouse")
 		}
 
 		if (frm.doc.quotation_ref) {
 			frm.set_value("stock_entry_type", "Stock Reservation")
 			frm.trigger("hide_add_delete_option")
+			frm.trigger("to_warehouse")
 		}
 	},
 
@@ -38,5 +40,19 @@ frappe.ui.form.on("Stock Entry", {
 		$('[data-fieldname="items"]').find('.grid-duplicate-row').hide()
 		$('[data-fieldname="items"]').find('.pull-right').hide()
 		$('[data-fieldname="items"]').find('.text-muted').hide()
+	},
+
+	to_warehouse: function(frm)	{
+		var wh = frm.doc.from_warehouse.split("-");
+		var whstr = wh[0]+"-"+wh[1]+"-"+" Reserved"
+		frm.set_query("to_warehouse", function() {
+			return {
+				filters: [
+					["Warehouse", 'company', '=', frm.doc.company],
+					["Warehouse", "is_group", "=",0],
+					["Warehouse", "name", "like", whstr + "%"]
+				]
+			};
+		});
 	}
 })
