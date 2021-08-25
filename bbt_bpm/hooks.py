@@ -41,7 +41,8 @@ doctype_js = {
 	"Sales Order": "custom_script/sales_order/sales_order.js",
 	"Stock Entry": "custom_script/stock_entry/stock_entry.js",
 	"Quotation": "custom_script/quotation/quotation.js",
-	"Item": "custom_script/item/item.js"
+	"Item": "custom_script/item/item.js",
+	"Pick List" : "custom_script/pick-list/pick_list.js"
 }
 
 # Home Pages
