@@ -11,10 +11,10 @@ def validate(doc, method):
 	for row in doc.items:
 		doc.stock_transfer_ref=frappe.db.get_value("Stock Entry", {"quotation_ref":row.prevdoc_docname, "docstatus":1}, "name")	
 
-def on_save(doc,event):
+def on_save(doc,method):
     set_valid_customer_warehouse(doc)
     set_field_value(doc)
-    set_items(doc)
+    set_packaging_items(doc)
 
 def set_valid_customer_warehouse(doc):
     customer_wahouses=frappe.db.get_value("Customer",doc.customer,["primary_warehouse","secondary_warehouse","ternary_warehouse"],as_dict=1)
@@ -64,7 +64,7 @@ def check_stock_availability(item,warehouse):
 def set_field_value(doc):
     doc.credit_limit=frappe.db.get_value("Customer Credit Limit",{"parent":doc.customer,"company":doc.company},"credit_limit")
 
-def set_items(doc):
+def set_packaging_items(doc):
     po_items=[]
     remove_items=[]
     for i in doc.items:
@@ -83,10 +83,15 @@ def set_items(doc):
 
     for item in doc.items:
         is_packaging_item=frappe.db.get_value("Item",item.item_code,"no_of_items_can_be_packed")
-        if is_packaging_item:
-            item_code="PO153M"
-            item_doc=frappe.get_cached_doc("Item",item_code,"standard_rate")
+        is_catorn_req=frappe.db.get_value("Item",item.item_code,"carton")
+        if is_packaging_item and is_catorn_req:
+            packing_item_code=frappe.db.get_value("Item",item.item_code,"carton")
+            item_doc=frappe.get_cached_doc("Item",packing_item_code)
             qty=item.qty/is_packaging_item
+            conversion_factor=frappe.db.get_value("UOM Conversion Detail",{"parent":item_doc.item_code,"uom":item_doc.sales_uom},"conversion_factor")
+            rate=frappe.db.get_value("Item Price",{"item_code":item_doc.item_code,"price_list":doc.selling_price_list},"price_list_rate")
+            if not conversion_factor:
+                conversion_factor=1
 
             soi=frappe.new_doc("Sales Order Item")
             soi.parenttype="Sales Order"
@@ -96,15 +101,22 @@ def set_items(doc):
             soi.description=item_doc.description
             soi.delivery_date=delivery_date
             soi.qty=math.ceil(qty)
-            soi.rate=item_doc.standard_rate
-            soi.uom=item_doc.stock_uom
-            soi.conversion_factor=1
+            soi.rate=rate
+            soi.amount=rate*math.ceil(qty)
+            soi.uom=item_doc.sales_uom
+            soi.stock_uom=item_doc.stock_uom
+            soi.conversion_factor=conversion_factor
+            soi.stock_qty=conversion_factor*math.ceil(qty)
             soi.idx=sub_item_ind+1
             soi.parent=doc.name
             po_items.append(soi)
             sub_item_ind+=1
             soi.insert(ignore_permissions = True)
             soi.save()
+        elif not is_packaging_item:
+            item_link="<a target=_blank href='#Form/Item/{0}'>{1}</a>".format(item.item_code,item.item_code)
+            msg="Kindly Update No. of Item can be packed Field for Item {0}".format(item_link)
+            frappe.throw(msg)
 
     doc.items=po_items
 
