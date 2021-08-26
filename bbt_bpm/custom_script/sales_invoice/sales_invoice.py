@@ -19,9 +19,11 @@ def on_submit(doc, method=None):
 				doc.pick_list_ref = row[0]
 				pick_doc = frappe.get_doc("Pick List", row[0])
 				pick_doc.append("sales_invoice", {
-						"sales_invoice":doc.name
+						"sales_invoice":doc.name,
+						"parent":row[0]
 					})
-				pick_doc.insert()
+				pick_doc.flags.ignore_validate_update_after_submit = True
+				pick_doc.save()
 				frappe.db.commit()
 
 
