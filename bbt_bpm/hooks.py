@@ -35,6 +35,7 @@ fixtures = ["Custom Field"]
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 doctype_list_js = {
 	"Delivery Note": "custom_script/delivery_note/delivery_note_list.js"
+
 }
 
 doctype_js = {
@@ -42,7 +43,6 @@ doctype_js = {
 	"Stock Entry": "custom_script/stock_entry/stock_entry.js",
 	"Quotation": "custom_script/quotation/quotation.js",
 	"Item": "custom_script/item/item.js",
-	"Pick List" : "custom_script/pick-list/pick_list.js"
 }
 
 # Home Pages
@@ -102,13 +102,16 @@ doc_events = {
 	},
 	"Delivery Note": {
 		"on_submit": "bbt_bpm.custom_script.delivery_note.delivery_note.on_submit",
-		"on_update_after_submit": "bbt_bpm.custom_script.delivery_note.delivery_note.on_update_after_submit"
+		"on_update_after_submit": "bbt_bpm.custom_script.delivery_note.delivery_note.on_update_after_submit",
+		"on_update": "bbt_bpm.custom_script.delivery_note.delivery_note.save"
 	},
 	"Pick List": {
 		"on_submit": "bbt_bpm.custom_script.pick_list.pick_list.on_submit"
 	},
 	"Sales Invoice": {
-		"on_submit": "bbt_bpm.custom_script.sales_invoice.sales_invoice.on_submit"
+		"on_submit": "bbt_bpm.custom_script.sales_invoice.sales_invoice.on_submit",
+		"on_update": "bbt_bpm.custom_script.sales_invoice.sales_invoice.save"
+
 	}
 }
 
