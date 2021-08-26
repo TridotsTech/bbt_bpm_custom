@@ -98,7 +98,8 @@ doc_events = {
 		"on_cancel": "bbt_bpm.custom_script.stock_entry.stock_entry.on_cancel"
 	},
 	"Sales Order": {
-		"validate": "bbt_bpm.custom_script.sales_order.sales_order.validate"
+		"validate": "bbt_bpm.custom_script.sales_order.sales_order.validate",
+		"on_update": "bbt_bpm.custom_script.sales_order.sales_order.on_save",
 	},
 	"Delivery Note": {
 		"on_submit": "bbt_bpm.custom_script.delivery_note.delivery_note.on_submit",
