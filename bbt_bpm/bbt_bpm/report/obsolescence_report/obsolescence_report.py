@@ -318,7 +318,7 @@ def get_columns():
 		},
 		{
 			"label": _("0-30 Days"),
-			"fieldname": "days_30",
+			"fieldname": "bal_qty",
 			"fieldtype": "Data",
 			"width": 120
 		},
