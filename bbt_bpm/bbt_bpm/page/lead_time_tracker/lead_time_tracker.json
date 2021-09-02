@@ -1,0 +1,26 @@
+{
+ "content": null,
+ "creation": "2021-09-01 18:19:32.379844",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2021-09-01 18:19:32.379844",
+ "modified_by": "Administrator",
+ "module": "Bbt Bpm",
+ "name": "lead-time-tracker",
+ "owner": "Administrator",
+ "page_name": "Lead Time Tracker",
+ "roles": [
+  {
+   "role": "Administrator"
+  },
+  {
+   "role": "System Manager"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Lead Time Tracker"
+}

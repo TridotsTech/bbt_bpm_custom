@@ -1,0 +1,71 @@
+<style type="text/css">
+    .text_right{
+        text-align: right;
+    }
+    .text_center{
+        text-align: center;
+    }
+    .font_size{
+        font-size: 15px
+    }
+    .bth{
+        border-top: hidden;
+    }
+    .bbh{
+        border-bottom: hidden;
+    }
+</style>
+<div class="conatiner">
+	<div>
+		<h1 class="text_center">Lead Time Tracker</h1>
+	</div>
+	<div>
+		<table class="table table-bordered" width="100%" border="1px" bordercolor="#000000">
+			<tr class="bbh">
+				<td colspan="6" style="border-right: hidden; border-bottom: hidden;"><b>Printer Name</b> : {{data[0].get("supplier") or ""}}</td>
+				<td colspan="6" class="text_right" style="border-left: hidden; border-bottom: hidden;"><b>Mode Of Shipment</b> : </td>
+			</tr>
+			<tr class="bbh">
+				<td colspan="6" style="border-right: hidden; border-bottom: hidden; border-top: hidden;"><b>Purchase Order Name</b> : {{data[0].get("name") or ""}}</td>
+				<td colspan="6" class="text_right blh"  style="border-left: hidden; border-bottom: hidden; border-top: hidden;"><b>Purchase Order Date</b> : {{frappe.utils.formatdate(data[0].get("transaction_date"),"dd-mm-yyyy") or ""}}</td>
+			</tr>
+			{% for row in data %}
+			<tr>
+				<td colspan="8" style="border-right: hidden;"><b>Discription</b> : {{row.description or ""}}</td>
+				<td colspan="4" class="text_right blh" style="border-left: hidden;"><b>Number Of Shipment</b>: {{row.number_of_shipment or ""}}
+				</td>
+			</tr>
+			<tr>
+				<td colspan="1" class="text_center"><b>Warehouse</b></td>
+				<td colspan="1" class="text_center"><b>Currency</b></td>
+				<td colspan="1" class="text_center"><b>Unit Price</b></td>
+				<td colspan="1" class="text_center"><b>Ordered Qty</b></td>
+				<td colspan="1" class="text_center"><b>Total Amt</b></td>
+				<td colspan="1" class="text_center"><b>Shipped Qty</b></td>
+				<td colspan="1" class="text_center"><b>Balance</b></td>
+				<td colspan="1" class="text_center"><b>Line Fully<br>completed Date</b></td>
+				<td colspan="1" class="text_center"><b>Lead Time</b></td>
+				<td colspan="2" class="text_center"><b>Purchase Invoice</b></td>
+				<td colspan="1" class="text_center"><b>Purchase Invoice<br>Date</b></td>
+			</tr>
+			<tr>
+				<td colspan="1" class="text_center">{{row.warehouse or ""}}</td>
+				<td colspan="1" class="text_center">{{row.currency or ""}}</td>
+				<td colspan="1" class="text_center">{{row.rate or ""}}</td>
+				<td colspan="1" class="text_center">{{row.qty or ""}}</td>
+				<td colspan="1" class="text_center">{{row.billed_amt or ""}}</td>
+				<td colspan="1" class="text_center">{{row.accepted_qty or ""}}</td>
+				<td colspan="1" class="text_center">{{row.balance or ""}}</td>
+				<td colspan="1" class="text_center">
+					{{frappe.utils.formatdate(row.purchase_inv_date,"dd-mm-yyyy") or ""}}
+				</td>
+				<td colspan="1" class="text_center">{{row.lead_time or ""}}</td>
+				<td colspan="2" class="text_center">{{row.purchase_inv or ""}}</td>
+				<td colspan="1" class="text_center">
+					{{frappe.utils.formatdate(row.purchase_inv_date,"dd-mm-yyyy") or ""}}
+				</td>
+			</tr>
+			{% endfor %}
+		</table>
+	</div>
+</div>
