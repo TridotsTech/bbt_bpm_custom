@@ -1,0 +1,86 @@
+{
+ "creation": "2021-09-21 10:06:24.516856",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item_code",
+  "item_name",
+  "item_group",
+  "description",
+  "rate",
+  "stock_in_nos",
+  "stock_in_cartons",
+  "book_per_carton",
+  "ordered_qty_in_nos",
+  "ordered_qty_in_cartons"
+ ],
+ "fields": [
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item"
+  },
+  {
+   "fieldname": "item_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Item Name"
+  },
+  {
+   "fieldname": "item_group",
+   "fieldtype": "Link",
+   "label": "Item Group",
+   "options": "Item Group"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "label": "Description"
+  },
+  {
+   "fieldname": "rate",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "rate"
+  },
+  {
+   "fieldname": "stock_in_nos",
+   "fieldtype": "Float",
+   "label": "stock_in_nos"
+  },
+  {
+   "fieldname": "stock_in_cartons",
+   "fieldtype": "Float",
+   "label": "stock_in_cartons"
+  },
+  {
+   "fieldname": "book_per_carton",
+   "fieldtype": "Float",
+   "label": "book_per_carton"
+  },
+  {
+   "fieldname": "ordered_qty_in_nos",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "ordered_qty_in_nos"
+  },
+  {
+   "fieldname": "ordered_qty_in_cartons",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "ordered_qty_in_cartons"
+  }
+ ],
+ "istable": 1,
+ "modified": "2021-09-21 10:08:11.545675",
+ "modified_by": "Administrator",
+ "module": "Bbt Bpm",
+ "name": "Add To Cart Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

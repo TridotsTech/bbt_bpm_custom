@@ -42,11 +42,81 @@ frappe.customer_portal = Class.extend({
 	        	if (r.message){
 	          		var html = r.message.html
 					$('.frappe-list').html(html)
+	    			me.add_to_card(me)
 	        	}
 
 	        }//calback end
 	    })
+
 	},
+
+	add_to_card: function(me){
+	    $('.add_to_card').click(function() {
+	    	var item = $(this).attr("item")
+	    	var rate = $(this).attr("rate")
+	    	var stock_in_qty = $(this).attr("stock_in_qty")
+	    	var carton_qty = $(this).attr("carton_qty")
+	    	var no_of_items_can_be_packed = $(this).attr("no_of_items_can_be_packed")
+	    	var order_qty=jQuery($(this).closest('tr').children('td.col9')[0]).find("input[type='number']").val()
+	    	var cartan_order_qty=jQuery($(this).closest('tr').children('td.col10')[0]).find("input[type='number']").val()
+	    	var language= $(this).closest('tr').children('td.first_col').text();
+
+	    	var filters = {"item":item, "rate":rate, "stock_in_qty":stock_in_qty, "carton_qty":carton_qty, "no_of_items_can_be_packed":no_of_items_can_be_packed, "order_qty":order_qty, "cartan_order_qty":cartan_order_qty, "language":language}
+
+	    	frappe.call({
+		        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.add_to_cart_item",
+		        args: {
+		        	filters:filters
+		        },
+		        callback: function (r) {
+		        	if (r.message){
+		          		
+		        	}
+
+		        }//calback end
+		    })	
+	    })
+	},
+
+	delete_add_to_cart_item: function(){
+		$(".check").click(function(){
+
+			if($('.check').is(":checked")){
+				$( ".check_row").prop('checked', true);
+				$(".delete").show()
+			} else{
+				$( ".check_row").prop('checked', false);
+				$(".delete").hide()
+			}
+		})
+
+		$(".check_row").click(function(){
+			$('.delete').show()
+		})
+
+
+		$(".delete").click(function(){
+			row_name = []
+			$.each($("input[type='checkbox']:checked"), function(){
+                row_name.push($(this).val());
+            });
+           	frappe.call({
+		        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.delete_add_to_cart_item",
+		        args: {
+		        	user:frappe.session.user,
+		        	name:row_name
+		        },
+		        callback: function (r) {
+		        	if (r.message){
+		        		window.location.reload()
+		        	}
+
+		        }//calback end
+		    })
+		})
+	},
+
+
 
 	add_filters:function(){
 		var me = this
@@ -60,41 +130,51 @@ frappe.customer_portal = Class.extend({
 				me.language = this.value?this.value:null
 				me.get_imp_data()
 			}
-
 		})
+
 		me.page.add_field({
 			fieldtype: 'Button',
 			label: __('New Order'),
 			fieldname: 'new_order',
-			onchange: function() {
-				me.printer_name = this.value?this.value:null
-				me.get_imp_data()
+			click: function() {
+				me.new_order = this.value?this.value:null
+				frappe.call({
+			        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.new_order",
+			        args: {
+			        	user:frappe.session.user
+			        },
+			        callback: function (r) {
+			        	if (r.message){
+			        		window.location.reload()
+			        	}
+
+			        }//calback end
+			    })
 			}
 		})
 
-		// const today = frappe.datetime.get_today();
-		// me.page.add_field({
-		// 	fieldtype: 'Date',
-		// 	label: __('Start Date'),
-		// 	fieldname: 'start_date',
-		// 	default:"",
-		// 	// reqd:1,
-		// 	onchange: function() {
-		// 		me.start_date = this.value?this.value:null
-		// 		me.get_imp_data()
-		// 	}
-		// })
-		// // const today = frappe.datetime.get_today();
-		// me.page.add_field({
-		// 	fieldtype: 'Date',
-		// 	label: __('To Date'),
-		// 	fieldname: 'to_date',
-		// 	default:"",
-		// 	// reqd:1,
-		// 	onchange: function() {
-		// 		me.to_date = this.value?this.value:null
-		// 		me.get_imp_data()
-		// 	}
-		// })
-  	}
+		me.page.add_field({
+			fieldtype: 'Button',
+			label: __('Add To Cart Items'),
+			fieldname: 'add_to_cart_items',
+			click: function() {
+				me.add_to_cart_items = this.value?this.value:null
+				frappe.call({
+			        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.add_to_cart_details",
+			        args: {
+			        	user:frappe.session.user
+			        },
+			        callback: function (r) {
+			        	if (r.message){
+			          		var html = r.message.html
+							$('.frappe-list').html(html)
+							$('.delete').hide()
+							me.delete_add_to_cart_item()
+			        	}
+
+			        }//calback end
+			    })
+			}
+		})
+	}
 })
