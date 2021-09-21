@@ -42,6 +42,8 @@ frappe.customer_portal = Class.extend({
 	        	if (r.message){
 	          		var html = r.message.html
 					$('.frappe-list').html(html)
+					$('[data-fieldname="language"]').show()
+					$('[data-fieldname="home"]').hide()
 	    			me.add_to_card(me)
 	        	}
 
@@ -121,11 +123,21 @@ frappe.customer_portal = Class.extend({
 	add_filters:function(){
 		var me = this
 		me.page.add_field({
+			fieldtype: 'Button',
+			label: __('Home'),
+			fieldname: 'home',
+			click: function() {
+				me.home = this.value?this.value:null
+				me.get_imp_data()
+			}
+		})
+
+		me.page.add_field({
 			fieldtype: 'Link',
 			label: __('Language'),
 			fieldname: 'language',
 			options: "Language",
-			reqd: 1,
+			reqd: 0,
 			onchange: function() {
 				me.language = this.value?this.value:null
 				me.get_imp_data()
@@ -159,6 +171,8 @@ frappe.customer_portal = Class.extend({
 			fieldname: 'add_to_cart_items',
 			click: function() {
 				me.add_to_cart_items = this.value?this.value:null
+				$('[data-fieldname="home"]').show()
+				$('[data-fieldname="language"]').hide()
 				frappe.call({
 			        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.add_to_cart_details",
 			        args: {
