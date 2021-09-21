@@ -89,24 +89,25 @@ def add_to_cart_details(user):
 @frappe.whitelist()
 def new_order(user):
 	data = frappe.db.sql("""SELECT item_code, item_name, item_group, description, rate, language, stock_in_nos, stock_in_cartons, book_per_carton, ordered_qty_in_nos, ordered_qty_in_cartons from `tabAdd To Cart Item` where parent='{0}' """.format(user), as_dict=1)
-
-	doc=frappe.new_doc("Sales Order")
-	doc.customer = "LIVING SPARK I.T. SOLUTION"
-	doc.company = "Bhaktivedanta Book Trust"
-	doc.delivery_date = today()
-	for row in data:
-		doc.append("items", {
-			"item_code": row.get("item_code"),
-			"item_name": row.get("item_name"),
-			"item_group": row.get("item_group"),
-			"description":row.get("description"),
-			"rate": row.get("rate"),
-			"qty":row.get("ordered_qty_in_nos"),
-			"uom":"Nos"
-		})
-	doc.save()
-	frappe.delete_doc('Add To Cart', frappe.session.user)
-	frappe.db.commit()
+	customer = frappe.db.get_values("Customer", {"user":frappe.session.user}, ["name", "company"])
+	if frappe.db.get_value("Add To Cart", {"name":frappe.session.user}, "name") and customer:
+		doc=frappe.new_doc("Sales Order")
+		doc.customer = customer[0][0] if customer[0][0] else ""
+		doc.company = customer[0][1] if customer[0][1] else ""
+		doc.delivery_date = today()
+		for row in data:
+			doc.append("items", {
+				"item_code": row.get("item_code"),
+				"item_name": row.get("item_name"),
+				"item_group": row.get("item_group"),
+				"description":row.get("description"),
+				"rate": flt(row.get("rate")),
+				"qty":flt(row.get("ordered_qty_in_nos")),
+				"uom":frappe.db.get_value("Item", {"name":row.get("item_code")}, "stock_uom")
+			})
+		doc.save()
+		frappe.delete_doc('Add To Cart', frappe.session.user)
+		frappe.db.commit()
 	return True
 
 @frappe.whitelist()

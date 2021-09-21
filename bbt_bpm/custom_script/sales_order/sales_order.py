@@ -105,7 +105,7 @@ def set_packaging_items(doc):
             soi.delivery_date=delivery_date
             soi.qty=math.ceil(qty)
             soi.rate=rate
-            soi.amount=rate*math.ceil(qty)
+            soi.amount=flt(rate)*flt(math.ceil(qty))
             soi.uom=item_doc.sales_uom
             soi.stock_uom=item_doc.stock_uom
             soi.conversion_factor=conversion_factor
