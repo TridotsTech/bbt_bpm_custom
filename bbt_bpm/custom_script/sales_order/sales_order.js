@@ -5,7 +5,7 @@ frappe.ui.form.on("Sales Order", {
 
 	map_on_stock_entry: function(frm){
 		frappe.db.get_value("Delivery Note Item", {"against_sales_order": frm.doc.name}, "parent", (r) => {
-			if (!r.parent){
+			if ( !r.parent && !frm.doc.__islocal && frm.doc.docstatus != 1 && !frm.doc.stock_transfer_ref ){
 				frm.add_custom_button(__('Stock Block'), function() {
 					frappe.confirm("Are you sure you want to a create Stock Entry",function(){
 						frappe.model.open_mapped_doc({

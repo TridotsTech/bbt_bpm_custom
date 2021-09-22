@@ -29,12 +29,15 @@ def get_po_details(filters):
 			actual_qty = frappe.db.sql("""SELECT sum(actual_qty) as actual_qty from `tabBin` where item_code='{0}' and warehouse='{1}'""".format(row.get("item_code"), row.get("warehouse")), as_dict=1)
 
 			if pi_details:
+				actual_lead_time = date_diff(pi_details[0].get("posting_date"), po_details[0].get("transaction_date"))
 				row["purchase_inv"] = pi_details[0].get("name")
 				row["purchase_inv_date"] = pi_details[0].get("posting_date")
 				row["accepted_qty"] = pi_details[0].get("qty")
 				row["lead_time"] = len(lead_time)
+				row["actual_lead_time"] = str(actual_lead_time)
 				row["balance"] = actual_qty[0].get("actual_qty")
 				row["number_of_shipment"] = len(number_of_shipment)
+			
 		path = 'bbt_bpm/bbt_bpm/page/lead_time_tracker/lead_time_tracker.html'
 		html=frappe.render_template(path,{'data':po_details})
 		return {'html':html}

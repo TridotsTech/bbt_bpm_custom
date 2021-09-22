@@ -43,6 +43,7 @@ doctype_js = {
 	"Stock Entry": "custom_script/stock_entry/stock_entry.js",
 	"Quotation": "custom_script/quotation/quotation.js",
 	"Item": "custom_script/item/item.js",
+	"Pick List": "custom_script/pick_list/pick_list.js"
 }
 
 # Home Pages
@@ -99,15 +100,20 @@ doc_events = {
 	},
 	"Sales Order": {
 		"validate": "bbt_bpm.custom_script.sales_order.sales_order.validate",
-		"on_update": "bbt_bpm.custom_script.sales_order.sales_order.on_save",
+		# "on_update": "bbt_bpm.custom_script.sales_order.sales_order.on_save",
+		"on_update": "bbt_bpm.custom_script.sales_order.sales_order.before_save",
+
 	},
 	"Delivery Note": {
 		"on_submit": "bbt_bpm.custom_script.delivery_note.delivery_note.on_submit",
 		"on_update_after_submit": "bbt_bpm.custom_script.delivery_note.delivery_note.on_update_after_submit",
-		"on_update": "bbt_bpm.custom_script.delivery_note.delivery_note.save"
+		"validate": "bbt_bpm.custom_script.delivery_note.delivery_note.save"
 	},
 	"Pick List": {
-		"on_submit": "bbt_bpm.custom_script.pick_list.pick_list.on_submit"
+		"on_submit": "bbt_bpm.custom_script.pick_list.pick_list.on_submit",
+		"validate": "bbt_bpm.custom_script.pick_list.pick_list.save",
+		"before_save": "bbt_bpm.custom_script.pick_list.pick_list.before_save"
+
 	},
 	"Sales Invoice": {
 		"on_submit": "bbt_bpm.custom_script.sales_invoice.sales_invoice.on_submit",
@@ -149,7 +155,6 @@ doc_events = {
 # -------
 
 # before_tests = "bbt_bpm.install.before_tests"
-
 # Overriding Methods
 # ------------------------------
 #

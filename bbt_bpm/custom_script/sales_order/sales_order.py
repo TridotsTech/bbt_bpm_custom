@@ -5,21 +5,25 @@ from frappe.utils import cint, cstr,flt
 import json
 from frappe.model.mapper import get_mapped_doc
 import math
-
+import re
 
 def validate(doc, method):
-	for row in doc.items:
-		doc.stock_transfer_ref=frappe.db.get_value("Stock Entry", {"quotation_ref":row.prevdoc_docname, "docstatus":1}, "name")	
-		outstanding_amount = frappe.db.sql("""SELECT sum(outstanding_amount) as amount from `tabSales Invoice` where customer='{0}' and company='{1}' and docstatus=1 """.format(doc.customer, doc.company), as_dict=1)
-		if outstanding_amount[0]:
-			doc.outstanding_amount = outstanding_amount[0].get('amount') 
 
-def on_save(doc,method):
-    set_valid_customer_warehouse(doc)
+    for row in doc.items:
+        doc.stock_transfer_ref=frappe.db.get_value("Stock Entry", {"quotation_ref":row.prevdoc_docname, "docstatus":1}, "name")		
+        outstanding_amount = frappe.db.sql("""SELECT sum(outstanding_amount) as amount from `tabSales Invoice` where customer='{0}' and company='{1}' and docstatus=1 """.format(doc.customer, doc.company), as_dict=1)
+        if outstanding_amount[0]:
+            doc.outstanding_amount = outstanding_amount[0].get('amount')
     set_field_value(doc)
+
+def before_save(doc, method):
     set_packaging_items(doc)
+    set_item_warehouses(doc)
+    set_valid_customer_warehouse(doc)   
 
 def set_valid_customer_warehouse(doc):
+    if frappe.db.exists("Warehouse", {"name":doc.set_warehouse, "is_reserved":1}):
+        return
     customer_wahouses=frappe.db.get_value("Customer",doc.customer,["primary_warehouse","secondary_warehouse","ternary_warehouse"],as_dict=1)
     final_warehouse=None
 
@@ -30,9 +34,12 @@ def set_valid_customer_warehouse(doc):
         is_err=False
         for item in doc.items:
             is_packaging=frappe.db.get_value("Item",item.item_code,"item_group")
-            if is_packaging in ["Carton","packaging material"]:
-                continue
+            # if is_packaging in ["Carton","packaging material"]:
+            #     continue
             item_available=check_stock_availability(item.item_code,warehouse)
+            if not item_available[0]:
+                is_err = True
+                break
             if is_err or not item_available[0]:
                 is_err=True
                 break
@@ -48,10 +55,12 @@ def set_valid_customer_warehouse(doc):
             final_warehouse=warehouse
 
     if final_warehouse:
+        frappe.db.set_value("Sales Order",doc.name,"set_warehouse",final_warehouse)
         doc.set_warehouse=final_warehouse
     else:
-        doc.set_warehouse=None
-
+        frappe.db.set_value("Sales Order",doc.name,"set_warehouse",frappe.db.get_value("Stock Settings", "Stock Settings", 'default_warehouse' ))
+        doc.set_warehouse=frappe.db.sql(""" SELECT value from `tabSingles` where doctype='Stock Settings' and field='default_warehouse' """)[0]
+    
 def check_stock_availability(item,warehouse):
     actual_qty=frappe.db.sql_list("""SELECT
                                         SUM(actual_qty)
@@ -62,10 +71,13 @@ def check_stock_availability(item,warehouse):
                                     AND
                                         warehouse=%(warehouse)s
                                     """,{"item":item,"warehouse":warehouse})
+    print(actual_qty, item)
     return actual_qty
+    
 
 def set_field_value(doc):
     doc.credit_limit=frappe.db.get_value("Customer Credit Limit",{"parent":doc.customer,"company":doc.company},"credit_limit")
+
 
 def set_packaging_items(doc):
     po_items=[]
@@ -105,7 +117,7 @@ def set_packaging_items(doc):
             soi.delivery_date=delivery_date
             soi.qty=math.ceil(qty)
             soi.rate=rate
-            soi.amount=rate*math.ceil(qty)
+            soi.amount=flt(rate)*flt(math.ceil(qty))
             soi.uom=item_doc.sales_uom
             soi.stock_uom=item_doc.stock_uom
             soi.conversion_factor=conversion_factor
@@ -122,6 +134,7 @@ def set_packaging_items(doc):
             frappe.throw(msg)
 
     doc.items=po_items
+
 
 @frappe.whitelist()
 def map_on_stock_entry(source_name, target_doc=None):
@@ -146,3 +159,8 @@ def map_on_stock_entry(source_name, target_doc=None):
 	})
 	return target_doc
 
+
+def set_item_warehouses(doc):    
+    for item in doc.items:
+        frappe.db.set_value("Sales Order Item", item.name, "warehouse", doc.set_warehouse)
+    

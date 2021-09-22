@@ -3,29 +3,53 @@
 
 import frappe
 from frappe import _
-# from frappe.utils import has_common
-# import json
-# from six import StringIO, string_types
-# from datetime import date
-# from frappe.utils import cstr, getdate, split_emails, add_days, today, get_last_day, get_first_day, month_diff, nowdate, cint
+from frappe.utils import has_common
+import json
+from six import StringIO, string_types
+from datetime import date
+from frappe.utils import cstr, getdate, split_emails, add_days, today, get_last_day, get_first_day, month_diff, nowdate, cint, flt
 
 def execute(filters=None):
 	columns, data = get_columns(), get_data(filters)
 	return columns, data
 	
 def get_data(filters):
-	query_data = frappe.db.sql(""" SELECT a.name, "Payment Entry" as payment_entry, a.posting_date, a.paid_from, a.paid_amount, b.reference_name, b.total_amount, a.payment_type, a.reference_no, a.reference_date, a.total_allocated_amount, a.party_name, a.bank, a.remarks from `tabPayment Entry` a left join `tabPayment Entry Reference` b on a.name=b.parent where a.docstatus=1 and {0}""".format(get_filters_codition(filters)),as_list=True)
+	query_data = frappe.db.sql(""" SELECT  pr.name as voucher_no, "Purchase Receipt" as voucher_type, pr.supplier, 
+	pri.purchase_order as ref, pr.posting_date as posting_date, pr.address_display, pr.supplier_gstin as gstin, pri.item_code,
+	pri.warehouse, pri.batch_no, pri.qty, c.due_date, pr.remarks
+	from `tabPurchase Receipt` pr left JOIN `tabPurchase Receipt Item` pri on
+	pr.name=pri.parent left JOIN `tabPayment Schedule` c on pr.name=c.parent and pri.idx=1 and {0}""".format(get_filters_codition(filters)),as_dict=True)
 	
+
+	for row in query_data:
+		registration_type = frappe.db.get_value("Supplier", {"name":row.get("supplier")}, "gst_category")
+		row["registration_type"] = registration_type
+		address = frappe.db.get_values("Address", {"name":row.get("supplier_address")}, ["country", "state", "pincode"], as_dict=1)
+		if address:
+			add = {"country":address[0].get("country"), "state":address[0].get("state"), "pincode":address[0].get("pincode")}
+			row.update(add)
+
+		taxes_and_charges = frappe.db.sql_list(""" SELECT account_head From `tabPurchase Taxes and Charges` where parent='{0}'""".format(row['voucher_no']))
+		
+		if not taxes_and_charges:
+			row["account_head"] = "-"
+		else:	
+			a = ""
+			for i in taxes_and_charges:
+				a +=  i + ", "
+			row["account_head"] = a
+		row["tracking_no"] = "-"
+
 	return query_data
 
 def get_filters_codition(filters):
 	conditions = "1=1"
 	if filters.get("voucher_number"):
-		conditions += " and a.name = '{0}'".format(filters.get('voucher_number'))
+		conditions += " and pr.name = '{0}'".format(filters.get('voucher_number'))
 	if filters.get("from_date"):
-		conditions += " and a.posting_date >= '{0}'".format(filters.get('from_date'))
+		conditions += " and pr.posting_date >= '{0}'".format(filters.get('from_date'))
 	if filters.get("to_date"):
-		conditions += " and a.posting_date <= '{0}'".format(filters.get('to_date'))
+		conditions += " and pr.posting_date <= '{0}'".format(filters.get('to_date'))
 	return conditions
 
 
@@ -33,90 +57,138 @@ def get_columns():
 	return	[
 		{
 			"label": "Voucher Number",
-			"fieldname": "",
+			"fieldname": "voucher_no",
 			"fieldtype": "Data",
 			"width": 150
 		},
 		{
 			"label": "Voucher Type",
-			"fieldname": "",
-			"fieldtype": "Date",
+			"fieldname": "voucher_type",
+			"fieldtype": "Data",
 			"width": 150
 		},
 		{
 			"label": "Date",
-			"fieldname": "",
+			"fieldname": "posting_date",
 			"fieldtype": "Date",
 			"width": 120
 		},
 		{
 			"label": "Reference Number",
-			"fieldname": "",
+			"fieldname": "ref",
 			"fieldtype": "Data",
 			"width": 120
+		},
+		{
+			"label": _("Order Num"),
+			"fieldname": "ref",
+			"fieldtype": "Data",
+			"width": 120
+		},
+		{
+			"label": _("Order Date"),
+			"fieldname": "posting_date",
+			"fieldtype": "Date",
+			"width": 150
+		},
+		{
+			"label": _("Party Name"),
+			"fieldname": "supplier",
+			"fieldtype": "Data",
+			"width": 120
+		},
+		{
+			"label": _("Registration Type"),
+			"fieldname": "registration_type",
+			"fieldtype": "Data",
+			"width": 120
+		},
+		{
+			"label": _("GSTIN No."),
+			"fieldname": "gstin",
+			"fieldtype": "Data",
+			"width": 150
+		},
+		# {
+		# 	"label": _("Country"),
+		# 	"fieldname": "country",
+		# 	"fieldtype": "Data",
+		# 	"width": 120	
+		# },
+		# {
+		# 	"label": _("State"),
+		# 	"fieldname": "state",
+		# 	"fieldtype": "Data",
+		# 	"width": 120
+		# },
+		# {
+		# 	"label": _("Pincode"),
+		# 	"fieldname": "pincode",
+		# 	"fieldtype": "Data",
+		# 	"width": 120
+		# },
+		{
+			"label": _("Address"),
+			"fieldname": "address_display",
+			"fieldtype": "Data",
+			"width": 150
+		},
+		{
+			"label": _("Purchase Ledger"),
+			"fieldname": "account_head",
+			"fieldtype": "Data",
+			"width": 120
+		},
+		{
+			"label": _("Item name"),
+			"fieldname": "item_code",
+			"fieldtype": "Data",
+			"width": 150
+		},
+		{
+			"label": _("Tracking No"),
+			"fieldname": "tracking_no",
+			"fieldtype": "Data",
+			"width": 150
+		},
+		# {
+		# 	"label": _("Order No"),
+		# 	"fieldname": "order_no",
+		# 	"fieldtype": "Data",
+		# 	"width": 150
+		# },
+		{
+			"label": _("Order Due Date"),
+			"fieldname": "due_date",
+			"fieldtype": "Date",
+			"width": 150
 		},
 		{
 			"label": _("Warehouse"),
-			"fieldname": "",
-			"fieldtype": "Data",
-			"width": 120
-		},
-		{
-			"label": _("Quantity"),
-			"fieldname": "",
+			"fieldname": "warehouse",
 			"fieldtype": "Data",
 			"width": 150
 		},
 		{
-			"label": _("Rate"),
-			"fieldname": "",
-			"fieldtype": "Data",
-			"width": 120
-		},
-		{
-			"label": _("Amount"),
-			"fieldname": "",
-			"fieldtype": "Data",
-			"width": 120
-		},
-		{
-			"label": _("Destination(Production)"),
-			"fieldname": "",
+			"label": _("Batch"),
+			"fieldname": "batch_no",
 			"fieldtype": "Data",
 			"width": 150
 		},
 		{
-			"label": _("Dest Waarehouse"),
-			"fieldname": "",
-			"fieldtype": "Data",
-			"width": 120
-		},
-		{
-			"label": _("Dest Qty"),
-			"fieldname": "",
-			"fieldtype": "Date",
-			"width": 120
-		},
-		{
-			"label": _("Dest Rate"),
-			"fieldname": "",
-			"fieldtype": "Currency",
-			"width": 120
-		},
-		{
-			"label": _("Dest Amount"),
-			"fieldname": "",
+			"label": _("Qty"),
+			"fieldname": "qty",
 			"fieldtype": "Data",
 			"width": 150
 		},
 		{
 			"label": _("Narration"),
-			"fieldname": "",
+			"fieldname": "remarks",
 			"fieldtype": "Data",
-			"width": 120
+			"width": 150
 		},
 		{
-			"label": _("Tally Import Status"),
+			"label": _("TALLYIMPORTSTATUS"),
 			"fieldname": "",
 			"fieldtype": "Data",
 			"width": 150

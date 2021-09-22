@@ -24,33 +24,16 @@ def get_data(filters):
 	for row in query_data:
 		data_row = {}
 		
-		# available_qty = frappe.db.sql("""SELECT sum(actual_qty) as actual_qty from `tabBin` where item_code='{0}' 
-		# """.format(row.get("item_code")), as_dict=1)
-		# row["available_stock"]=available_qty[0].get("actual_qty")
-
-		# po_details = frappe.db.sql(""" SELECT po.company as cmpny, po.name as po_name, po.transaction_date 
-		# as transaction_date, poi.warehouse as wrhs, po.schedule_date as delivery_date 
-		# from `tabPurchase Order` po 
-		# JOIN `tabPurchase Order Item` poi on po.name=poi.parent and poi.item_code=%(item_code)s and po.docstatus=1
-		# """, {"item_code":row.item_code}, as_dict = 1)
-		# print(po_details)
-
-		# if po_details:
-		# 	data_row["company"]=po_details[0].get("cmpny")
-		# 	# row["warehouse"] = po_details[0].get("wrhs")
-		# 	row["transaction_date"] = po_details[0].get("transaction_date")
-		# else:
-		# 	data_row["company"]= None
-		# 	row["warehouse"] = None
-		# 	row["transaction_date"] = None
-
-		# last_stock_updated_date=frappe.db.sql("""SELECT item_code, posting_date from `tabStock Ledger Entry` where item_code=%(item_code)s 
-		# and docstatus=1 ORDER BY posting_date desc """, {"item_code":row.item_code}, as_dict=1)
-		# print(last_stock_updated_date)
-		# if last_stock_updated_date:
-		# 	row["posting_date"] = last_stock_updated_date[0].get("posting_date")
-		# else:
-		# 	row["posting_date"] = None
+		so_details = frappe.db.sql(""" SELECT so.company from `tabSales Order` so JOIN `tabSales Order Item` soi on
+		 so.name=soi.parent where item_code=%(item_code)s and so.docstatus=1 """, 
+		 {"item_code":row.item_code}, as_dict = 1)
+		
+		
+		if so_details:
+			data_row["company"]=so_details[0].get("company")
+		else:
+			data_row["company"]= None
+		
 		item_warehouses = frappe.db.sql_list(""" SELECT DISTINCT warehouse from tabBin 
 		where item_code=%(item_code)s and actual_qty>0""", {"item_code":row.item_code})
 		data_row["item_code"] = row.item_code
@@ -63,34 +46,42 @@ def get_data(filters):
 			item_code=%(item_code)s and warehouse=%(warehouse)s """, {"item_code":row.item_code, "warehouse":warehouse}, as_dict = 1)
 			update_row["warehouse"] = warehouse
 			update_row["available_stock"] = item_available_qty[0].get("available_stock")
-			update_row["last_stock_updated_date"] = item_available_qty[0].get("last_stock_updated_date")
-			update_row["last_stock_updated_date"] = item_available_qty[0].get("last_stock_updated_date")
 			update_row["last_received_date"] = item_available_qty[0].get("last_stock_updated_date")
 
+			last_stock_updated_date = frappe.db.sql(""" SELECT  date(modified) as last_stock_updated_date FROM `tabStock Ledger Entry` WHERE
+			item_code=%(item_code)s and warehouse=%(warehouse)s """, {"item_code":row.item_code, "warehouse":warehouse}, as_dict = 1)
+			update_row["last_stock_updated_date"] = last_stock_updated_date[0].get("last_stock_updated_date")
 
+			last_issued_date = frappe.db.sql_list(""" SELECT  date(posting_date) as last_issued_date FROM `tabSales Invoice` so left JOIN 
+			`tabSales Invoice Item` soi on so.name=soi.parent WHERE soi.item_code=%(item_code)s and soi.warehouse=%(warehouse)s """, {"item_code":row.item_code, "warehouse":warehouse})
+			
+			if last_issued_date:
+				update_row["last_issued_date"] = last_issued_date[-1]
+			else:
+				update_row["last_issued_date"] = None
 
-			six_month_quantity = frappe.db.sql_list(""" SELECT sum(poi.qty) as six_month_qty from `tabPurchase Order Item` poi
-			join `tabPurchase Order` po on po.name=poi.parent and po.transaction_date between DATE_ADD(CURDATE(), INTERVAL -6 MONTH)
+			six_month_quantity = frappe.db.sql_list(""" SELECT sum(soi.qty) as six_month_qty from `tabSales Invoice Item` soi
+			join `tabSales Invoice` so on so.name=soi.parent and so.posting_date between DATE_ADD(CURDATE(), INTERVAL -6 MONTH)
 			and CURDATE() where item_code=%(item_code)s """, {"item_code":row["item_code"]})
 			update_row["six_month_qty"] = six_month_quantity[0]
 
-			twelve_month_quantity = frappe.db.sql_list(""" SELECT sum(poi.qty) as six_month_qty from `tabPurchase Order Item` poi
-			join `tabPurchase Order` po on po.name=poi.parent and po.transaction_date between DATE_ADD(CURDATE(), INTERVAL -6 MONTH) 
+			twelve_month_quantity = frappe.db.sql_list(""" SELECT sum(soi.qty) as six_month_qty from `tabSales Invoice Item` soi
+			join `tabSales Invoice` so on so.name=soi.parent and so.posting_date between DATE_ADD(CURDATE(), INTERVAL -6 MONTH) 
 			and DATE_ADD(CURDATE(), INTERVAL -12 MONTH) where item_code=%(item_code)s """, {"item_code":row["item_code"]})
 			update_row["twelve_month_qty"] = twelve_month_quantity[0]
 
-			eighteen_month_quantity = frappe.db.sql_list(""" SELECT sum(poi.qty) as six_month_qty from `tabPurchase Order Item` poi
-			join `tabPurchase Order` po on po.name=poi.parent and po.transaction_date between DATE_ADD(CURDATE(), INTERVAL -12 MONTH) 
+			eighteen_month_quantity = frappe.db.sql_list(""" SELECT sum(soi.qty) as six_month_qty from `tabSales Invoice Item` soi
+			join `tabSales Invoice` so on so.name=soi.parent and so.posting_date between DATE_ADD(CURDATE(), INTERVAL -12 MONTH) 
 			and DATE_ADD(CURDATE(), INTERVAL -18 MONTH) where item_code=%(item_code)s """, {"item_code":row["item_code"]})
 			update_row["eighteen_month_qty"] = eighteen_month_quantity[0]
 
-			twenty_four_month_quantity = frappe.db.sql_list(""" SELECT sum(poi.qty) as six_month_qty from `tabPurchase Order Item` poi
-			join `tabPurchase Order` po on po.name=poi.parent and po.transaction_date between DATE_ADD(CURDATE(), INTERVAL -18 MONTH) 
+			twenty_four_month_quantity = frappe.db.sql_list(""" SELECT sum(soi.qty) as six_month_qty from `tabSales Invoice Item` soi
+			join `tabSales Invoice` so on so.name=soi.parent and so.posting_date between DATE_ADD(CURDATE(), INTERVAL -18 MONTH) 
 			and DATE_ADD(CURDATE(), INTERVAL -24 MONTH) where item_code=%(item_code)s """, {"item_code":row["item_code"]})
 			update_row["twenty_four_month_qty"] = twenty_four_month_quantity[0]
 
-			above_twenty_four_month_quantity = frappe.db.sql_list(""" SELECT sum(poi.qty) as six_month_qty from `tabPurchase Order Item` poi
-			join `tabPurchase Order` po on po.name=poi.parent and po.transaction_date < DATE_ADD(CURDATE(), INTERVAL -24 MONTH) 
+			above_twenty_four_month_quantity = frappe.db.sql_list(""" SELECT sum(soi.qty) as six_month_qty from `tabSales Invoice Item` soi
+			join `tabSales Invoice` so on so.name=soi.parent and so.posting_date < DATE_ADD(CURDATE(), INTERVAL -24 MONTH) 
 			where item_code=%(item_code)s """, {"item_code":row["item_code"]})
 			update_row["above_twenty_four_month_qty"] = above_twenty_four_month_quantity[0]
 
@@ -102,15 +93,15 @@ def get_data(filters):
 def get_filters_codition(filters):
 	conditions = "1=1"
 	if filters.get("item"):
-		conditions += " and poi.item_code = '{0}'".format(filters.get('item'))
+		conditions += " and soi.item_code = '{0}'".format(filters.get('item'))
 	if filters.get("company"):
-		conditions += " and poi.company = '{0}'".format(filters.get('company'))	
+		conditions += " and soi.company = '{0}'".format(filters.get('company'))	
 	if filters.get("warehouse"):
-		conditions += " and poi.warehouse = '{0}'".format(filters.get('warehouse'))
+		conditions += " and soi.warehouse = '{0}'".format(filters.get('warehouse'))
 	if filters.get("from_date"):
-		conditions += " and po.transaction_date >= '{0}'".format(filters.get('from_date'))
+		conditions += " and so.posting_date >= '{0}'".format(filters.get('from_date'))
 	if filters.get("to_date"):
-		conditions += " and po.transaction_date <= '{0}'".format(filters.get('to_date'))
+		conditions += " and so.posting_date <= '{0}'".format(filters.get('to_date'))
 	return conditions
 
 
@@ -155,7 +146,7 @@ def get_columns():
 		},
 		{
 			"label": "Last Issued Date",
-			"fieldname": "transaction_date",
+			"fieldname": "last_issued_date",
 			"fieldtype": "Date",
 			"width": 120
 		},

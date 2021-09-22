@@ -11,114 +11,124 @@ def execute(filters=None):
 	return columns, data
 	
 def get_data(filters):
-	# query_data = frappe.db.sql(""" SELECT a.name, "Payment Entry" as payment_entry, a.posting_date, a.paid_from, a.paid_amount, b.reference_name, b.total_amount, a.payment_type, a.reference_no, a.reference_date, a.total_allocated_amount, a.party_name, a.bank, a.remarks from `tabPayment Entry` a left join `tabPayment Entry Reference` b on a.name=b.parent where a.docstatus=1 and {0}""".format(get_filters_codition(filters)),as_dict=True)
+	query_data = frappe.db.sql(""" SELECT voucher_type, posting_date, voucher_no, item_code, warehouse, qty_after_transaction, _comments,
+	valuation_rate, stock_value 
+	from `tabStock Ledger Entry` where voucher_type in ('Stock Reconciliation', 'Stock Transfer', 'Material Transfer', 'Material Issue') and docstatus=1 and {0}""".format(get_filters_codition(filters)),as_dict=True)
 	
-	# return query_data
-	pass
+	for itm in query_data:
+
+		dst_warehouse = frappe.db.sql("""SELECT name from `tabWarehouse` where main_warehouse='{0}'""".format(itm.warehouse))
+		print(dst_warehouse)
+		if dst_warehouse:
+			itm["dst_warehouse"] = dst_warehouse[0]
+		else:
+			itm["dst_warehouse"] = None
+	return query_data
 
 
-# def get_filters_codition(filters):
-# 	conditions = "1=1"
-# 	if filters.get("voucher_number"):
-# 		conditions += " and a.name = '{0}'".format(filters.get('voucher_number'))
-# 	if filters.get("from_date"):
-# 		conditions += " and a.posting_date >= '{0}'".format(filters.get('from_date'))
-# 	if filters.get("to_date"):
-# 		conditions += " and a.posting_date <= '{0}'".format(filters.get('to_date'))
-# 	return conditions
+
+def get_filters_codition(filters):
+	conditions = "1=1"
+	if filters.get("voucher_number"):
+		conditions += " and a.name = '{0}'".format(filters.get('voucher_number'))
+	if filters.get("from_date"):
+		conditions += " and a.posting_date >= '{0}'".format(filters.get('from_date'))
+	if filters.get("to_date"):
+		conditions += " and a.posting_date <= '{0}'".format(filters.get('to_date'))
+	return conditions
 
 
 def get_columns():
 	return	[
 		{
 			"label": "Voucher Type",
+			"fieldname": "voucher_type",
+			"fieldtype": "Data",
+			"width": 150
+		},
+		{
+			"label": _("Date"),
+			"fieldname": "posting_date",
+			"fieldtype": "Date",
+			"width": 150
+		},
+		{
+			"label": _("Voucher Number"),
+			"fieldname": "voucher_no",
+			"fieldtype": "Data",
+			"width": 120
+		},
+		{
+			"label": _("Source(Consumption)"),
+			"fieldname": "item_code",
+			"fieldtype": "Data",
+			"width": 120
+		},
+		{
+			"label": _("Warehouse"),
+			"fieldname": "warehouse",
+			"fieldtype": "Data",
+			"width": 120
+		},
+		{
+			"label": _("Quantity"),
+			"fieldname": "qty_after_transaction",
+			"fieldtype": "Data",
+			"width": 150
+		},
+		{
+			"label": _("Rate"),
+			"fieldname": "valuation_rate",
+			"fieldtype": "Data",
+			"width": 120
+		},
+		{
+			"label": _("Amount"),
+			"fieldname": "stock_value",
+			"fieldtype": "Data",
+			"width": 120
+		},
+		{
+			"label": _("Destination(Production)"),
+			"fieldname": "item_code",
+			"fieldtype": "Data",
+			"width": 150
+		},
+		{
+			"label": _("DST_Warehouse"),
+			"fieldname": "dst_warehouse",
+			"fieldtype": "Data",
+			"width": 120
+		},
+		{
+			"label": _("DST_Qty"),
+			"fieldname": "qty_after_transaction",
+			"fieldtype": "Data",
+			"width": 120
+		},
+		{
+			"label": _("DST_Rate"),
+			"fieldname": "valuation_rate",
+			"fieldtype": "Currency",
+			"width": 120
+		},
+		{
+			"label": _("DST_Amount"),
+			"fieldname": "stock_value",
+			"fieldtype": "Data",
+			"width": 150
+		},
+		{
+			"label": _("Narration"),
+			"fieldname": "_comments",
+			"fieldtype": "Data",
+			"width": 120
+		},
+		{
+			"label": _("Tally Import Status"),
 			"fieldname": "",
 			"fieldtype": "Data",
 			"width": 150
 		}
-		# {
-		# 	"label": _("Date"),
-		# 	"fieldname": "",
-		# 	"fieldtype": "Date",
-		# 	"width": 150
-		# },
-		# {
-		# 	"label": _("Voucher Number"),
-		# 	"fieldname": "",
-		# 	"fieldtype": "Date",
-		# 	"width": 120
-		# },
-		# {
-		# 	"label": _("Source(Consumption)"),
-		# 	"fieldname": "",
-		# 	"fieldtype": "Data",
-		# 	"width": 120
-		# },
-		# {
-		# 	"label": _("Warehouse"),
-		# 	"fieldname": "",
-		# 	"fieldtype": "Data",
-		# 	"width": 120
-		# },
-		# {
-		# 	"label": _("Quantity"),
-		# 	"fieldname": "",
-		# 	"fieldtype": "Data",
-		# 	"width": 150
-		# },
-		# {
-		# 	"label": _("Rate"),
-		# 	"fieldname": "",
-		# 	"fieldtype": "Data",
-		# 	"width": 120
-		# },
-		# {
-		# 	"label": _("Amount"),
-		# 	"fieldname": "",
-		# 	"fieldtype": "Data",
-		# 	"width": 120
-		# },
-		# {
-		# 	"label": _("Destination(Production)"),
-		# 	"fieldname": "",
-		# 	"fieldtype": "Data",
-		# 	"width": 150
-		# },
-		# {
-		# 	"label": _("Dest Waarehouse"),
-		# 	"fieldname": "",
-		# 	"fieldtype": "Data",
-		# 	"width": 120
-		# },
-		# {
-		# 	"label": _("Dest Qty"),
-		# 	"fieldname": "",
-		# 	"fieldtype": "Date",
-		# 	"width": 120
-		# },
-		# {
-		# 	"label": _("Dest Rate"),
-		# 	"fieldname": "",
-		# 	"fieldtype": "Currency",
-		# 	"width": 120
-		# },
-		# {
-		# 	"label": _("Dest Amount"),
-		# 	"fieldname": "",
-		# 	"fieldtype": "Data",
-		# 	"width": 150
-		# },
-		# {
-		# 	"label": _("Narration"),
-		# 	"fieldname": "",
-		# 	"fieldtype": "Data",
-		# 	"width": 120
-		# },
-		# {
-		# 	"label": _("Tally Import Status"),
-		# 	"fieldname": "",
-		# 	"fieldtype": "Data",
-		# 	"width": 150
-		# }
 	]
 
