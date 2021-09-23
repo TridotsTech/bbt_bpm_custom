@@ -173,6 +173,13 @@
 		max-width: 10px;
 		text-align: center;
 	}
+
+	.comment_lable {
+  		position: static;
+  		bottom: 50;
+  		/*right: 0;*/
+  		width: 300px;
+	}
 </style>
 <div class="conatiner">
 	<div>
@@ -214,6 +221,12 @@
 					<td class="text_center col10" last_col><input class="cartan_order_qty" type="number" value="{{row.ordered_qty_in_cartons}}" readonly></td>
 				</tr>
 				{% endfor %}
+				<tr>
+					<td colspan="12">
+						<p><label class="comment_lable">Comment/Feedback</label></p>
+						<textarea class="comment" id="comment" name="comment" rows="4" cols="50"></textarea>
+					</td>
+				</tr>
 			<tbody>
 		</table>
 	</div>
