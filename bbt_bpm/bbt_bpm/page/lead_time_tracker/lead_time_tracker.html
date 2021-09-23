@@ -45,7 +45,8 @@
 				<td colspan="1" class="text_center"><b>Balance</b></td>
 				<td colspan="1" class="text_center"><b>Line Fully<br>completed Date</b></td>
 				<td colspan="1" class="text_center"><b>Lead Time</b></td>
-				<td colspan="2" class="text_center"><b>Purchase Invoice</b></td>
+				<td colspan="1" class="text_center"><b>Actual Lead Time</b></td>
+				<td colspan="1" class="text_center"><b>Purchase Invoice</b></td>
 				<td colspan="1" class="text_center"><b>Purchase Invoice<br>Date</b></td>
 			</tr>
 			<tr>
@@ -60,7 +61,8 @@
 					{{frappe.utils.formatdate(row.purchase_inv_date,"dd-mm-yyyy") or ""}}
 				</td>
 				<td colspan="1" class="text_center">{{row.lead_time or ""}}</td>
-				<td colspan="2" class="text_center">{{row.purchase_inv or ""}}</td>
+				<td colspan="1" class="text_center">{{row.actual_lead_time or ""}}</td>
+				<td colspan="1" class="text_center">{{row.purchase_inv or ""}}</td>
 				<td colspan="1" class="text_center">
 					{{frappe.utils.formatdate(row.purchase_inv_date,"dd-mm-yyyy") or ""}}
 				</td>
