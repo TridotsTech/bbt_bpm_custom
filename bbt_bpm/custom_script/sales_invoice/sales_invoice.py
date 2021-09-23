@@ -39,6 +39,6 @@ def set_items(doc):
 									where item_code='{0}'""".format(item.item_code))
 		if is_packaging_item and is_carton_req:
 			carton_item_doc = frappe.get_cached_doc("Item", {"item_code": is_carton_req})
-			doc.available_stock = available_qty[0]
-			doc.dimension = carton_item_doc.dimension
-			doc.used_qty = item.qty
+			item.available_stock = available_qty[0]
+			item.dimension = carton_item_doc.dimension
+			item.used_qty = item.qty
