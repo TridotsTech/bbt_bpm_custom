@@ -32,7 +32,7 @@ frappe.customer_portal = Class.extend({
 	get_imp_data:function(){
 	    var me = this
 	    $('.frappe-list').html("")
-	    var filters = {"purchase_order":me.purchase_order}
+	    var filters = {"language":me.language}
 	    frappe.call({
 	        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.get_items_data",
 	        args: {
@@ -133,10 +133,10 @@ frappe.customer_portal = Class.extend({
 		})
 
 		me.page.add_field({
-			fieldtype: 'Link',
+			fieldtype: 'Select',
 			label: __('Language'),
 			fieldname: 'language',
-			options: "Language",
+			options: [ "", "Assamese", "Bengali", "Chhattisgarhi", "English", "French", "Gujarati", "Hindi", "Japanese", "Kannada", "Marathi", "Korean", "Nepali", "Odia", "Punjabi", "Sinhala", "Tamil", "Telugu", "Urdu"],
 			reqd: 0,
 			onchange: function() {
 				me.language = this.value?this.value:null
@@ -150,10 +150,12 @@ frappe.customer_portal = Class.extend({
 			fieldname: 'new_order',
 			click: function() {
 				me.new_order = this.value?this.value:null
+				client_feedback = $(".comment").val()
+				console.log("==============", client_feedback)
 				frappe.call({
 			        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.new_order",
 			        args: {
-			        	user:frappe.session.user
+			        	client_feedback:client_feedback
 			        },
 			        callback: function (r) {
 			        	if (r.message){
