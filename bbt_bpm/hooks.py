@@ -100,8 +100,7 @@ doc_events = {
 	},
 	"Sales Order": {
 		"validate": "bbt_bpm.custom_script.sales_order.sales_order.validate",
-		# "on_update": "bbt_bpm.custom_script.sales_order.sales_order.on_save",
-		"on_update": "bbt_bpm.custom_script.sales_order.sales_order.before_save",
+		"on_update": "bbt_bpm.custom_script.sales_order.sales_order.on_update",
 
 	},
 	"Delivery Note": {
