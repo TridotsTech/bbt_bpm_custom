@@ -80,6 +80,7 @@ def before_save(doc, method=None):
 		item_details.warehouse = item.warehouse
 		item_details.qty = item.qty
 		item_details.uom = item.uom
+		item_details.picked_qty = item.qty
 		item_details.stock_uom = item.stock_uom
 		item_details.stock_qty = item.stock_qty
 		item_details.conversion_factor = item.conversion_factor

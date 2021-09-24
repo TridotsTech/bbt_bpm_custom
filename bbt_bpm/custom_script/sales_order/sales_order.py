@@ -8,18 +8,18 @@ import math
 import re
 
 def validate(doc, method):
-
     for row in doc.items:
         doc.stock_transfer_ref=frappe.db.get_value("Stock Entry", {"quotation_ref":row.prevdoc_docname, "docstatus":1}, "name")		
         outstanding_amount = frappe.db.sql("""SELECT sum(outstanding_amount) as amount from `tabSales Invoice` where customer='{0}' and company='{1}' and docstatus=1 """.format(doc.customer, doc.company), as_dict=1)
         if outstanding_amount[0]:
             doc.outstanding_amount = outstanding_amount[0].get('amount')
     set_field_value(doc)
-
-def before_save(doc, method):
     set_packaging_items(doc)
+    set_valid_customer_warehouse(doc)
     set_item_warehouses(doc)
-    set_valid_customer_warehouse(doc)   
+
+def on_update(doc, method):
+    rm_unwanted_items(doc)
 
 def set_valid_customer_warehouse(doc):
     if frappe.db.exists("Warehouse", {"name":doc.set_warehouse, "is_reserved":1}):
@@ -34,8 +34,6 @@ def set_valid_customer_warehouse(doc):
         is_err=False
         for item in doc.items:
             is_packaging=frappe.db.get_value("Item",item.item_code,"item_group")
-            # if is_packaging in ["Carton","packaging material"]:
-            #     continue
             item_available=check_stock_availability(item.item_code,warehouse)
             if not item_available[0]:
                 is_err = True
@@ -55,11 +53,9 @@ def set_valid_customer_warehouse(doc):
             final_warehouse=warehouse
 
     if final_warehouse:
-        frappe.db.set_value("Sales Order",doc.name,"set_warehouse",final_warehouse)
         doc.set_warehouse=final_warehouse
     else:
-        frappe.db.set_value("Sales Order",doc.name,"set_warehouse",frappe.db.get_value("Stock Settings", "Stock Settings", 'default_warehouse' ))
-        doc.set_warehouse=frappe.db.sql(""" SELECT value from `tabSingles` where doctype='Stock Settings' and field='default_warehouse' """)[0]
+        doc.set_warehouse=frappe.db.get_value("Stock Settings","Stock Settings","default_warehouse")
     
 def check_stock_availability(item,warehouse):
     actual_qty=frappe.db.sql_list("""SELECT
@@ -71,7 +67,6 @@ def check_stock_availability(item,warehouse):
                                     AND
                                         warehouse=%(warehouse)s
                                     """,{"item":item,"warehouse":warehouse})
-    print(actual_qty, item)
     return actual_qty
     
 
@@ -94,7 +89,6 @@ def set_packaging_items(doc):
         doc.items.remove(i)
 
     sub_item_ind=len(doc.items)
-    delivery_date=doc.items[0].delivery_date
 
     for item in doc.items:
         is_packaging_item=frappe.db.get_value("Item",item.item_code,"no_of_items_can_be_packed")
@@ -114,7 +108,7 @@ def set_packaging_items(doc):
             soi.item_code=item_doc.item_code
             soi.item_name=item_doc.item_name
             soi.description=item_doc.description
-            soi.delivery_date=delivery_date
+            soi.delivery_date=doc.delivery_date
             soi.qty=math.ceil(qty)
             soi.rate=rate
             soi.amount=flt(rate)*flt(math.ceil(qty))
@@ -162,5 +156,11 @@ def map_on_stock_entry(source_name, target_doc=None):
 
 def set_item_warehouses(doc):    
     for item in doc.items:
-        frappe.db.set_value("Sales Order Item", item.name, "warehouse", doc.set_warehouse)
-    
+        item.warehouse=doc.set_warehouse
+
+def rm_unwanted_items(doc):
+    db_items=frappe.db.sql(""" select item_code, warehouse,projected_qty,name from `tabSales Order Item` where parent=%(doc_name)s """,{"doc_name":doc.name},as_dict=1)
+    doc_itm_name=[soi.name for soi in doc.items]
+    for rm_item in db_items:
+        if rm_item.name not in doc_itm_name:
+            frappe.db.sql("DELETE FROM `tabSales Order Item` WHERE name=%(name)s",{"name":rm_item.name})
