@@ -62,27 +62,27 @@ def get_data(filters):
 
 			six_month_quantity = frappe.db.sql_list(""" SELECT sum(soi.qty) as six_month_qty from `tabSales Invoice Item` soi
 			join `tabSales Invoice` so on so.name=soi.parent and so.posting_date between DATE_ADD(CURDATE(), INTERVAL -6 MONTH)
-			and CURDATE() where item_code=%(item_code)s """, {"item_code":row["item_code"]})
+			and CURDATE() where item_code=%(item_code)s and warehouse =%(warehouse)s """, {"item_code":row["item_code"], "warehouse":warehouse})
 			update_row["six_month_qty"] = six_month_quantity[0]
 
 			twelve_month_quantity = frappe.db.sql_list(""" SELECT sum(soi.qty) as six_month_qty from `tabSales Invoice Item` soi
 			join `tabSales Invoice` so on so.name=soi.parent and so.posting_date between DATE_ADD(CURDATE(), INTERVAL -6 MONTH) 
-			and DATE_ADD(CURDATE(), INTERVAL -12 MONTH) where item_code=%(item_code)s """, {"item_code":row["item_code"]})
+			and DATE_ADD(CURDATE(), INTERVAL -12 MONTH) where item_code=%(item_code)s and warehouse =%(warehouse)s """, {"item_code":row["item_code"], "warehouse":warehouse})
 			update_row["twelve_month_qty"] = twelve_month_quantity[0]
 
 			eighteen_month_quantity = frappe.db.sql_list(""" SELECT sum(soi.qty) as six_month_qty from `tabSales Invoice Item` soi
 			join `tabSales Invoice` so on so.name=soi.parent and so.posting_date between DATE_ADD(CURDATE(), INTERVAL -12 MONTH) 
-			and DATE_ADD(CURDATE(), INTERVAL -18 MONTH) where item_code=%(item_code)s """, {"item_code":row["item_code"]})
+			and DATE_ADD(CURDATE(), INTERVAL -18 MONTH) where item_code=%(item_code)s and warehouse =%(warehouse)s """, {"item_code":row["item_code"], "warehouse":warehouse})
 			update_row["eighteen_month_qty"] = eighteen_month_quantity[0]
 
 			twenty_four_month_quantity = frappe.db.sql_list(""" SELECT sum(soi.qty) as six_month_qty from `tabSales Invoice Item` soi
 			join `tabSales Invoice` so on so.name=soi.parent and so.posting_date between DATE_ADD(CURDATE(), INTERVAL -18 MONTH) 
-			and DATE_ADD(CURDATE(), INTERVAL -24 MONTH) where item_code=%(item_code)s """, {"item_code":row["item_code"]})
+			and DATE_ADD(CURDATE(), INTERVAL -24 MONTH) where item_code=%(item_code)s and warehouse =%(warehouse)s """, {"item_code":row["item_code"], "warehouse":warehouse})
 			update_row["twenty_four_month_qty"] = twenty_four_month_quantity[0]
 
 			above_twenty_four_month_quantity = frappe.db.sql_list(""" SELECT sum(soi.qty) as six_month_qty from `tabSales Invoice Item` soi
 			join `tabSales Invoice` so on so.name=soi.parent and so.posting_date < DATE_ADD(CURDATE(), INTERVAL -24 MONTH) 
-			where item_code=%(item_code)s """, {"item_code":row["item_code"]})
+			where item_code=%(item_code)s and warehouse =%(warehouse)s """, {"item_code":row["item_code"], "warehouse":warehouse})
 			update_row["above_twenty_four_month_qty"] = above_twenty_four_month_quantity[0]
 
 			data.append(update_row)
