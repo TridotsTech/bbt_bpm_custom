@@ -1,4 +1,7 @@
 frappe.ui.form.on("Sales Order", {
+	onload: function(frm){
+		frm.trigger("map_on_stock_entry")
+	},
 	refresh: function(frm){
 		frm.trigger("map_on_stock_entry")
 	},
