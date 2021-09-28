@@ -1,0 +1,146 @@
+.bbt_home {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    box-sizing: border-box;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.logo a {
+    font-size: 1.3em;
+    color: #fff;
+    text-decoration: none;
+    font-weight: bolder;
+}
+
+.logo select{
+    float: left;
+    margin-top: 10px;
+    margin-left: 10px;
+    font-weight: bolder;
+}
+
+
+div#header {
+    width: 100%;
+    height: 50px;
+    background-color: black;
+    margin: 0 auto;
+    color: black;
+    position: fixed;
+    z-index: 3;  
+}
+
+div#bbt-container {
+    margin: 0 auto;
+    height: 100%;
+}
+
+div#bbt-sidebar {
+    width: 225pxpx;
+    height: 100%;
+    background-color: #1C2833;
+    float: left;
+    position: fixed;
+    top: 90px;
+}
+
+ul#nav {
+    padding: 0;
+    list-style-type: none
+}
+
+ul#nav li {
+    list-style: none;
+    line-height: 20px;
+}
+
+ul#nav li a {
+    text-decoration: none;
+    color: #ccc;
+    display: block;
+    padding: 15px;
+    font-size: 0.9em;
+    border-bottom: 1px solid #0A0A0A;
+    -webkit-transition: 0.2s;
+    -moz-transition: 0.2s;
+    -o-transition: 0.2s;
+    transition: 0.2;
+}
+
+ul#nav li a:hover {
+    color: #fff;
+    background: #161c1f;
+    padding-left: 30px;
+}
+
+ul#nav li a.selected {
+    color: #fff;
+    background: #161c1f;
+}
+
+div#bbt-content {
+    width: auto;
+}
+
+#doctype{
+    padding-left: 260px;
+}
+
+#masters-content{
+    padding-top: 83px;
+}
+
+/*#master-reports_list{
+    padding-top: 83px;
+    padding-left: 270px;
+}*/
+
+.teesta-main-content {
+    margin-left: 180px;
+    padding: 0px 20px 30px 0px;
+    font-size: 0.9em;
+}
+
+.doc_link {
+    width: 350px;
+    margin-left: 15px;
+    padding-top: 40px;
+    padding-left: 165px;
+}
+
+.ui-menu-item {
+    font-size: 0.9em;
+}
+
+.ui-menu {
+    z-index: 1;
+}
+.action-dropdown {
+
+}
+
+.action-dropdown {
+
+}
+
+.dropdown-toggle {
+    
+}
+
+.bg-success {
+    background: #f39c12;
+    color: #fff;
+}
+
+.bg-warning {
+    background: #00a65a;
+    color: #fff;   
+}
+
+.count-bg {
+    padding: 5px;
+}
