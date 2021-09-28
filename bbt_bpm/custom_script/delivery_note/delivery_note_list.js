@@ -6,10 +6,13 @@ frappe.listview_settings['Delivery Note'] = {
 			return [__("Return"), "darkgrey", "is_return,=,Yes"];
 		} else if (doc.status === "Closed") {
 			return [__("Closed"), "green", "status,=,Closed"];
+		} else if (doc.delivered == 1) {
+			return [__("Delivered"), "green"];
 		} else if (flt(doc.per_billed, 2) < 100) {
 			return [__("Goods-In-Transit"), "orange", "per_billed,<,100"];
 		} else if (flt(doc.delivered, 2) == 100) {
 			return [__("Completed"), "green", "per_billed,=,100"];
 		}
+
 	}
 }

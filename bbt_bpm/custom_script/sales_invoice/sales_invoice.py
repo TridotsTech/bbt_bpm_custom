@@ -10,6 +10,18 @@ def on_submit(doc, method=None):
 	for row in doc.items:
 		sales_order.append(row.sales_order)
 
+		sales_qty = frappe.db.sql("""SELECT sum(qty) from  `tabSales Invoice Item` where date_add(curdate(),interval -DAY(curdate())+1 DAY)
+		and item_code = '{0}' and docstatus=1 """.format(row.item_code))
+		slow_movement_qty = frappe.db.get_value("Item", {"name":row.item_code}, "slow_movement_qty")
+		medium_movement_qty = frappe.db.get_value("Item", {"name":row.item_code}, "medium_movement_qty")
+		fast_movement_qty = frappe.db.get_value("Item", {"name":row.item_code}, "fast_movement_qty")
+		if sales_qty[0][0] <= slow_movement_qty:
+			frappe.db.set_value("Item", row.item_code, "movement", 'Slow')
+		if (sales_qty[0][0] > slow_movement_qty) and (sales_qty[0][0] <= medium_movement_qty):
+			frappe.db.set_value("Item", row.item_code, "movement", 'Medium')
+		if (sales_qty[0][0] > medium_movement_qty):
+			frappe.db.set_value("Item", row.item_code, "movement", 'Fast')
+
 	if sales_order:
 		pick_list = frappe.db.sql("""SELECT distinct parent from `tabPick List Item` where sales_order='{0}' 
 									and docstatus=1 """.format(sales_order[0]), as_list=1)
@@ -25,11 +37,10 @@ def on_submit(doc, method=None):
 				pick_doc.flags.ignore_validate_update_after_submit = True
 				pick_doc.save()
 				frappe.db.commit()
-
+	
 
 def save(doc, method):
 	set_items(doc)
-
 
 def set_items(doc):
 	for item in doc.items:
