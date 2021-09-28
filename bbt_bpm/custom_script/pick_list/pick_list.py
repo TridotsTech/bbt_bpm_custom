@@ -12,7 +12,6 @@ def carton_details(doc):
 	indx=0
 	for i in doc.locations:
 		is_packaging=frappe.db.get_value("Item",i.item_code,"item_group")
-		print(is_packaging)
 		if is_packaging in ["Carton","packaging material"]:
 			
 			start_indx=""
@@ -49,8 +48,12 @@ def set_items(doc):
 
 def on_submit(doc, method=None):
 	sales_order = []
+
 	for row in doc.locations:
 		sales_order.append(row.sales_order)
+		picked_qty = frappe.db.sql("""select sum(picked_qty) from `tabPick List Item` where item_code = '{0}'""".format(row.item_code))	
+		frappe.db.set_value("Item", row.item_code, "picked_qty", picked_qty)
+		
 
 	if sales_order:
 		invoices = frappe.db.sql("""SELECT distinct parent from `tabSales Invoice Item` where sales_order='{0}' and docstatus=1 """.format(sales_order[0]), as_list=1)
@@ -65,9 +68,9 @@ def on_submit(doc, method=None):
 				doc.append("sales_invoice", {
 					"sales_invoice": row[0]
 				})
+			
 
 def before_save(doc, method=None):
-	print("\n \n \n called custom script \n \n")
 	so_doc = frappe.get_cached_doc("Sales Order", doc.locations[0].sales_order)
 	items = []
 	for item in so_doc.items:

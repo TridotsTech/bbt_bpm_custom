@@ -11,6 +11,7 @@ def on_submit(doc, method):
 		goods_in_transit = flt(item_qty)+flt(row.qty)
 		frappe.db.set_value("Item", row.item_code, "goods_in_transit", goods_in_transit)
 
+		
 
 def on_update_after_submit(doc, method):
 	if doc.delivered:
@@ -18,6 +19,15 @@ def on_update_after_submit(doc, method):
 			item_qty = frappe.db.get_value("Item", {"name":row.item_code}, "goods_in_transit")	
 			goods_in_transit = flt(item_qty)-flt(row.qty)
 			frappe.db.set_value("Item", row.item_code, "goods_in_transit", goods_in_transit)
+
+			total_picked_qty = frappe.db.sql("""SELECT sum(picked_qty) from `tabPick List Item` where item_code = '{0}'""".format(row.item_code))
+			picked_qty = flt(total_picked_qty[0][0])-flt(row.qty)
+			frappe.db.set_value("Item", row.item_code, "picked_qty", picked_qty)
+
+			total_allocated_qty = frappe.db.get_value("Item", {"name":row.item_code}, "allocated_qty")			
+			allocated_qty = flt(total_allocated_qty	)-flt(row.qty)
+			frappe.db.set_value("Item", row.item_code, "allocated_qty", allocated_qty)
+
 
 
 def save(doc, method):
@@ -28,7 +38,7 @@ def carton_num(doc):
 	indx=0
 	for i in doc.items:
 		is_packaging=frappe.db.get_value("Item",i.item_code,"item_group")
-		print(is_packaging)
+		
 		if is_packaging in ["Carton","packaging material"]:
 			
 			start_indx=""
