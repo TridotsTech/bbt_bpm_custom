@@ -9,7 +9,8 @@ import re
 
 def validate(doc, method):
     for row in doc.items:
-        doc.stock_transfer_ref=frappe.db.get_value("Stock Entry", {"quotation_ref":row.prevdoc_docname, "docstatus":1}, "name")		
+        if frappe.db.exists("Stock Entry", {"quotation_ref":row.prevdoc_docname, "docstatus":1}):
+            doc.stock_transfer_ref=frappe.db.get_value("Stock Entry", {"quotation_ref":row.prevdoc_docname, "docstatus":1}, "name")		
         outstanding_amount = frappe.db.sql("""SELECT sum(outstanding_amount) as amount from `tabSales Invoice` where customer='{0}' and company='{1}' and docstatus=1 """.format(doc.customer, doc.company), as_dict=1)
         if outstanding_amount[0]:
             doc.outstanding_amount = outstanding_amount[0].get('amount')
@@ -20,6 +21,12 @@ def validate(doc, method):
 
 def on_update(doc, method):
     rm_unwanted_items(doc)
+
+def on_submit(doc, method):
+    for row in doc.items:
+        if doc.stock_transfer_ref:
+            allocated_qty = frappe.db.sql("""SELECT sum(qty) from `tabSales Order Item` where item_code = '{0}' and docstatus=1""".format(row.item_code))
+            frappe.db.set_value("Item", row.item_code, "allocated_qty", allocated_qty)
 
 def set_valid_customer_warehouse(doc):
     if frappe.db.exists("Warehouse", {"name":doc.set_warehouse, "is_reserved":1}):
