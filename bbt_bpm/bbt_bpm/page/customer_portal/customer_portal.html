@@ -216,13 +216,13 @@
 					</td>
 				</tr>
 				{% else %}
-				<tr style="background-color:#c83622;">
+				<tr style="background-color:#d16759;">
 					<td class="text_center first_col">{{row.book_language or ""}}</td>
 					<td class="text_center sec_col">{{row.item_group or ""}}</td>
 					<td class="text_center col3">{{row.name or ""}}</td>
 					<td class="desc align col4">{{row.description or ""}}</td>
 					<td class="text_center col5">{{row.rate or ""}}</td>
-					<td class="text_center col6">{{row.stock_in_qty or ""}}</td>
+					<td class="text_center col6">{{row.stock_in_qty or "Out of Stock"}}</td>
 					<td class="text_center col7">{{row.carton_qty or ""}}</td>
 					<td class="text_center col8">{{row.no_of_items_can_be_packed or ""}}</td>
 					<td class="text_center col9"><input class="order_qty" type="number"></td>
