@@ -7,6 +7,7 @@
   "item_code",
   "item_name",
   "item_group",
+  "language",
   "description",
   "rate",
   "stock_in_nos",
@@ -72,10 +73,16 @@
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "ordered_qty_in_cartons"
+  },
+  {
+   "fieldname": "language",
+   "fieldtype": "Select",
+   "label": "language",
+   "options": "\nAssamese\nBengali\nChhattisgarhi\nEnglish\nFrench\nGujarati\nHindi\nJapanese\nKannada\nMarathi\nKorean\nNepali\nOdia\nPunjabi\nSinhala\nTamil\nTelugu\nUrdu"
   }
  ],
  "istable": 1,
- "modified": "2021-09-21 10:08:11.545675",
+ "modified": "2021-09-28 15:52:14.235289",
  "modified_by": "Administrator",
  "module": "Bbt Bpm",
  "name": "Add To Cart Item",
