@@ -3,6 +3,9 @@ import frappe
 from frappe.utils import cint, cstr,flt
 import json
 import math
+from frappe import _, msgprint, scrub
+from frappe.utils import has_common
+from datetime import date
 
 
 def on_submit(doc, method=None):
@@ -53,3 +56,25 @@ def set_items(doc):
 			item.available_stock = available_qty[0]
 			item.dimension = carton_item_doc.dimension
 			item.used_qty = item.qty
+
+
+
+
+#------------------------------------------------------------------
+#Permission Query
+#------------------------------------------------------------------
+def si_get_permission_query_conditions(user):
+	if not user: user = frappe.session.user
+
+	cust = frappe.db.get_value("Customer", {"user":user}, "name")
+
+	invoices=frappe.db.sql("""select name from `tabSales Invoice` where customer='{0}' """.format(cust), as_dict=1)
+
+	si_list = [ '"%s"'%si.get("name") for si in invoices ]
+	roles = frappe.get_roles();
+	if user != "Administrator" and has_common(['Customer'],roles) :
+		if si_list:
+			return """(`tabSales Invoice`.name in ({0}) )""".format(','.join(si_list))
+		else:
+			# return "1=2"
+			return """(`tabSales Invoice`.name is null)"""
