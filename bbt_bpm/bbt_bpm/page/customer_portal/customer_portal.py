@@ -88,6 +88,12 @@ def add_to_cart_item(filters):
 @frappe.whitelist()
 def add_to_cart_details(user):
 	add_to_cart = frappe.db.sql("""SELECT name, item_code, item_group, description, rate, language, stock_in_nos, stock_in_cartons, book_per_carton, ordered_qty_in_nos, ordered_qty_in_cartons from `tabAdd To Cart Item` where parent='{0}' """.format(user), as_dict=1)
+
+	add_qty =  frappe.db.sql("""SELECT sum(ordered_qty_in_nos) as total_ordered_qty, sum(ordered_qty_in_cartons) as total_cartons_qty from `tabAdd To Cart Item` where parent='{0}' """.format(user), as_dict=1)
+	for row in add_to_cart:
+		row["total_ordered_qty"] = add_qty[0].get("total_ordered_qty")
+		row["total_cartons_qty"] = add_qty[0].get("total_cartons_qty")
+
 	path = 'bbt_bpm/bbt_bpm/page/customer_portal/add_to_cart.html'
 	html=frappe.render_template(path,{'data':add_to_cart})
 	return {'html':html}
