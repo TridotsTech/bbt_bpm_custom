@@ -6,6 +6,9 @@ import json
 from frappe.model.mapper import get_mapped_doc
 import math
 import re
+from frappe import _, msgprint, scrub
+from frappe.utils import has_common
+from datetime import date
 
 def validate(doc, method):
     for row in doc.items:
@@ -171,3 +174,28 @@ def rm_unwanted_items(doc):
     for rm_item in db_items:
         if rm_item.name not in doc_itm_name:
             frappe.db.sql("DELETE FROM `tabSales Order Item` WHERE name=%(name)s",{"name":rm_item.name})
+
+
+
+
+
+
+
+
+#------------------------------------------------------------------
+#Permission Query
+#------------------------------------------------------------------
+def so_get_permission_query_conditions(user):
+    if not user: user = frappe.session.user
+
+    cust = frappe.db.get_value("Customer", {"user":user}, "name")
+    orders=frappe.db.sql("""select name from `tabSales Order` where customer='{0}' """.format(cust), as_dict=1) 
+    so_list = [ '"%s"'%so.get("name") for so in orders ]
+
+    roles = frappe.get_roles();
+    if user != "Administrator" and has_common(['Customer'],roles) :
+        if so_list:
+            return """(`tabSales Order`.name in ({0}) )""".format(','.join(so_list))
+        else:
+            # return "1=2"
+            return """(`tabSales Order`.name is null)"""

@@ -3,6 +3,9 @@ import frappe
 from frappe.utils import cint, cstr,flt
 import json
 import math
+from frappe import _, msgprint, scrub
+from frappe.utils import has_common
+from datetime import date
 
 
 def on_submit(doc, method):
@@ -77,3 +80,23 @@ def set_items(doc):
 			msg = "Kindly Update No. of Item can be packed Field for Item {0}".format(item_link)
 			frappe.throw(msg)
 	carton_num(doc)
+
+
+
+#------------------------------------------------------------------
+#Permission Query
+#------------------------------------------------------------------
+def dn_get_permission_query_conditions(user):
+	if not user: user = frappe.session.user
+
+	cust = frappe.db.get_value("Customer", {"user":user}, "name")
+	delivery_note=frappe.db.sql("""select name from `tabDelivery Note` where customer='{0}' """.format(cust), as_dict=1)
+	dn_list = [ '"%s"'%dn.get("name") for dn in delivery_note ]
+	
+	roles = frappe.get_roles();
+	if user != "Administrator" and has_common(['Customer'],roles) :
+		if dn_list:
+			return """(`tabDelivery Note`.name in ({0}) )""".format(','.join(dn_list))
+		else:
+			# return "1=2"
+			return """(`tabDelivery Note`.name is null)"""

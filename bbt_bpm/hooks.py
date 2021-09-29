@@ -85,7 +85,16 @@ doctype_js = {
 # permission_query_conditions = {
 # 	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
 # }
-#
+
+permission_query_conditions = {
+	"Customer": "bbt_bpm.custom_script.customer.customer.cust_get_permission_query_conditions",
+	"Sales Order": "bbt_bpm.custom_script.sales_order.sales_order.so_get_permission_query_conditions",
+	"Sales Invoice": "bbt_bpm.custom_script.sales_invoice.sales_invoice.si_get_permission_query_conditions",
+	"Delivery Note": "bbt_bpm.custom_script.delivery_note.delivery_note.dn_get_permission_query_conditions",
+	"Address": "bbt_bpm.custom_script.address.address.add_get_permission_query_conditions"
+}
+	
+
 # has_permission = {
 # 	"Event": "frappe.desk.doctype.event.event.has_permission",
 # }
