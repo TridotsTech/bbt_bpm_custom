@@ -45,6 +45,7 @@ frappe.customer_portal = Class.extend({
 					$('[data-fieldname="language"]').show()
 					$('[data-fieldname="home"]').hide()
 	    			me.add_to_card(me)
+	    			me.new_order(me)
 	        	}
 
 	        }//calback end
@@ -64,6 +65,11 @@ frappe.customer_portal = Class.extend({
 	    	var language= $(this).closest('tr').children('td.first_col').text();
 
 	    	var filters = {"item":item, "rate":rate, "stock_in_qty":stock_in_qty, "carton_qty":carton_qty, "no_of_items_can_be_packed":no_of_items_can_be_packed, "order_qty":order_qty, "cartan_order_qty":cartan_order_qty, "language":language}
+
+	    	if (stock_in_qty == "None"){
+	    		frappe.throw(__("Books {0} Out Of Stock.",[item]));
+	    		frappe.validated = false;
+	    	}
 
 	    	frappe.call({
 		        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.add_to_cart_item",
@@ -118,7 +124,77 @@ frappe.customer_portal = Class.extend({
 		})
 	},
 
+	new_order: function(){
+		$(".submit").click(function(){
+			client_feedback = $(".comment").val()
+			frappe.call({
+		        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.new_order",
+		        args: {
+		        	client_feedback:client_feedback
+		        },
+		        callback: function (r) {
+		        	if (r.message){
+		        		window.location.reload()
+		        	}
 
+		        }//calback end
+		    })	
+		})
+	},
+
+	update_qty_on_cart: function(){
+		$(".cart_order_qty").click(function(){
+			var item = $(this).attr("item")
+			var language = $(this).attr("language")
+			var rate = $(this).attr("rate")
+			var order_qty=jQuery($(this).closest('tr').children('td.col9')[0]).find("input[type='number']").val()
+			frappe.call({
+		        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.update_qty_on_cart",
+		        args: {
+		        	item:item,
+		        	language:language,
+		        	order_qty:order_qty,
+		        	rate:rate
+		        },
+		        callback: function (r) {
+		        	if (r.message){
+		        		// window.location.reload()
+		        	}
+
+		        }//calback end
+		    })
+		})
+
+		$(".cart_cartan_order_qty").click(function(){
+			var amount = 0.0 
+			var item = $(this).attr("item")
+			var language = $(this).attr("language")
+			var rate = $(this).attr("rate")
+			var book_per_cartons = $(this).attr("book_per_cartons")
+			var cartan_order_qty=jQuery($(this).closest('tr').children('td.col10')[0]).find("input[type='number']").val()
+			var qty = parseFloat(book_per_cartons)*parseFloat(cartan_order_qty)
+			var amount = parseFloat(qty)*parseFloat(rate)
+			var a = jQuery($(this).closest('tr').children('td.col11')[0]).html(amount)
+			
+			frappe.call({
+		        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.update_cartons_qty_on_cart",
+		        args: {
+		        	item:item,
+		        	language:language,
+		        	rate: rate,
+		        	cartan_order_qty:cartan_order_qty,
+		        	book_per_cartons:book_per_cartons
+		        },
+		        callback: function (r) {
+		        	if (r.message){
+		        		// window.location.reload()
+		        	}
+
+		        }//calback end
+		    })
+		})
+
+	},
 
 	add_filters:function(){
 		var me = this
@@ -144,32 +220,31 @@ frappe.customer_portal = Class.extend({
 			}
 		})
 
+		// me.page.add_field({
+		// 	fieldtype: 'Button',
+		// 	label: __('New Order'),
+		// 	fieldname: 'new_order',
+		// 	click: function() {
+		// 		me.new_order = this.value?this.value:null
+		// 		client_feedback = $(".comment").val()
+		// 		frappe.call({
+		// 	        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.new_order",
+		// 	        args: {
+		// 	        	client_feedback:client_feedback
+		// 	        },
+		// 	        callback: function (r) {
+		// 	        	if (r.message){
+		// 	        		window.location.reload()
+		// 	        	}
+
+		// 	        }//calback end
+		// 	    })
+		// 	}
+		// })
+
 		me.page.add_field({
 			fieldtype: 'Button',
-			label: __('New Order'),
-			fieldname: 'new_order',
-			click: function() {
-				me.new_order = this.value?this.value:null
-				client_feedback = $(".comment").val()
-				console.log("==============", client_feedback)
-				frappe.call({
-			        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.new_order",
-			        args: {
-			        	client_feedback:client_feedback
-			        },
-			        callback: function (r) {
-			        	if (r.message){
-			        		window.location.reload()
-			        	}
-
-			        }//calback end
-			    })
-			}
-		})
-
-		me.page.add_field({
-			fieldtype: 'Button',
-			label: __('Add To Cart Items'),
+			label: __('View Cart'),
 			fieldname: 'add_to_cart_items',
 			click: function() {
 				me.add_to_cart_items = this.value?this.value:null
@@ -186,6 +261,8 @@ frappe.customer_portal = Class.extend({
 							$('.frappe-list').html(html)
 							$('.delete').hide()
 							me.delete_add_to_cart_item()
+							me.update_qty_on_cart()
+							me.new_order()
 			        	}
 
 			        }//calback end

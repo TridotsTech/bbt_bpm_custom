@@ -14,7 +14,8 @@
   "stock_in_cartons",
   "book_per_carton",
   "ordered_qty_in_nos",
-  "ordered_qty_in_cartons"
+  "ordered_qty_in_cartons",
+  "amount"
  ],
  "fields": [
   {
@@ -79,11 +80,17 @@
    "fieldtype": "Select",
    "label": "language",
    "options": "\nAssamese\nBengali\nChhattisgarhi\nEnglish\nFrench\nGujarati\nHindi\nJapanese\nKannada\nMarathi\nKorean\nNepali\nOdia\nPunjabi\nSinhala\nTamil\nTelugu\nUrdu"
+  },
+  {
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount"
   }
  ],
  "istable": 1,
- "modified": "2021-09-28 15:52:14.235289",
- "modified_by": "Administrator",
+ "modified": "2021-09-30 16:40:05.236505",
+ "modified_by": "amit.parab@i2econsulting.com",
  "module": "Bbt Bpm",
  "name": "Add To Cart Item",
  "owner": "Administrator",
