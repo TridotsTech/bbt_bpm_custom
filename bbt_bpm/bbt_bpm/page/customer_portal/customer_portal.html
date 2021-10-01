@@ -187,7 +187,7 @@
 					<th class="text_center fixed align">Language</th>
 					<th class="text_center fixed align">Category</th>
 					<th class="text_center fixed align">Item Code</th>
-					<th class="desc align">Discription</th>
+					<th class="desc align">Description</th>
 					<th class="text_center fixed align">Rate</th>
 					<th class="text_center fixed align">Stock In Nos</th>
 					<th class="text_center fixed align">Stock In<br>Cartons</th>
@@ -209,7 +209,7 @@
 					<td class="text_center col6">{{row.stock_in_qty or ""}}</td>
 					<td class="text_center col7">{{row.carton_qty or ""}}</td>
 					<td class="text_center col8">{{row.no_of_items_can_be_packed or ""}}</td>
-					<td class="text_center col9"><input class="order_qty" type="number"></td>
+					<td class="text_center col9"><input class="order_qty item_order_qty" no_of_items_can_be_packed={{row.no_of_items_can_be_packed}} type="number"></td>
 					<td class="text_center col10" last_col><input class="cartan_order_qty" type="number"></td>
 					<td class="text_center col11">
 						<button class="add_to_card" item={{row.name}} rate={{row.rate}} stock_in_qty={{row.stock_in_qty}} carton_qty={{row.carton_qty}} no_of_items_can_be_packed={{row.no_of_items_can_be_packed}}><b>+</b></button>
