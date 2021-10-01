@@ -130,6 +130,10 @@ doc_events = {
 		"on_submit": "bbt_bpm.custom_script.sales_invoice.sales_invoice.on_submit",
 		"on_update": "bbt_bpm.custom_script.sales_invoice.sales_invoice.save"
 
+	},
+	"User": {
+		"validate": "bbt_bpm.custom_script.user.user.validate",
+		"after_insert": "bbt_bpm.custom_script.user.user.after_insert"
 	}
 }
 
