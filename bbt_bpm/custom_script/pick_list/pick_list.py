@@ -51,8 +51,13 @@ def on_submit(doc, method=None):
 
 	for row in doc.locations:
 		sales_order.append(row.sales_order)
-		picked_qty = frappe.db.sql("""select sum(picked_qty) from `tabPick List Item` where item_code = '{0}'""".format(row.item_code))	
-		frappe.db.set_value("Item", row.item_code, "picked_qty", picked_qty)
+		picked_qty = frappe.db.sql("""select sum(picked_qty) from `tabPick List Item` where item_code=%(item_code)s 
+		""", {"item_code": row.item_code})
+
+		delivered_qty = frappe.db.sql("""select sum(qty) from `tabDelivery Note Item` soi join `tabWarehouse` w on soi.warehouse=w.name 
+            where soi.item_code=%(item_code)s and soi.docstatus=1 and w.is_reserved=1""", {"item_code": row.item_code})
+		actual_picked_qty = picked_qty[0][0] - delivered_qty[0][0]
+		frappe.db.set_value("Item", row.item_code, "picked_qty", actual_picked_qty)
 		
 
 	if sales_order:
