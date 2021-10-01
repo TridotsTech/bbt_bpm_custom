@@ -71,6 +71,19 @@ frappe.customer_portal = Class.extend({
 	    		frappe.validated = false;
 	    	}
 
+	    	stock_order_qty = 0.0
+	    	stock_order_qty = parseFloat(no_of_items_can_be_packed)*parseFloat(cartan_order_qty)
+
+	    	if (stock_in_qty<order_qty){
+	    		frappe.throw(__("Please enter order qty less than stock qty."));
+	    		frappe.validated = false;
+	    	}
+
+	    	if (carton_qty<cartan_order_qty) {
+	    		frappe.throw(__("Please enter cartons qty less than stock in cartons."));
+	    		frappe.validated = false;
+	    	}
+
 	    	frappe.call({
 		        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.add_to_cart_item",
 		        args: {
@@ -78,7 +91,7 @@ frappe.customer_portal = Class.extend({
 		        },
 		        callback: function (r) {
 		        	if (r.message){
-		          		
+		          		frappe.msgprint(__("Item Added in Cart"));
 		        	}
 
 		        }//calback end
@@ -149,9 +162,7 @@ frappe.customer_portal = Class.extend({
 			no_of_cartons = 0.0
 	    	no_of_cartons = Math.round(parseFloat(order_qty)/parseFloat(no_of_items_can_be_packed))
 	    	total_req_qty = no_of_cartons*parseFloat(no_of_items_can_be_packed)
-	    	console.log("=============")
 	    	if (total_req_qty && total_req_qty!=0 && parseFloat(order_qty)!=parseFloat(total_req_qty)){
-	    		console.log("===========ggg==")
 	    		frappe.msgprint(__("Add min {0} qty to fulfill Cartons Size", [total_req_qty]));
 	    	}
 		})

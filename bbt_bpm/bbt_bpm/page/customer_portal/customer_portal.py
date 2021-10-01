@@ -14,6 +14,7 @@ from frappe.utils import cint, flt, get_datetime, datetime, date_diff, today, no
 from datetime import date
 from dateutil.relativedelta import relativedelta
 import datetime
+import math
 
 @frappe.whitelist()
 def get_items_data(filters):
@@ -24,24 +25,27 @@ def get_items_data(filters):
 		item_qty = frappe.db.sql("""SELECT sum(actual_qty) as actual_qty from `tabBin` where item_code='{0}'""".format(row.get("name")), as_dict=1)
 		carton_qty = frappe.db.sql("""SELECT sum(actual_qty) as actual_qty from `tabBin` where item_code='{0}'""".format(row.get("carton")), as_dict=1)
 
-		item_reserved_qty = frappe.db.sql("""SELECT sum(qty) as qty From `tabStock Blocking Unblocking Table` where item_code='{0}' """.format(row.get("name")), as_dict=1)
+		item_reserved_qty = frappe.db.sql("""SELECT item_code, sum(qty) as qty From `tabStock Blocking Unblocking Table` where item_code='{0}' """.format(row.get("name")), as_dict=1, debug=1)
 		cartons_reserved_qty = frappe.db.sql("""SELECT sum(qty) as qty From `tabStock Blocking Unblocking Table` where item_code='{0}' """.format(row.get("carton")), as_dict=1)
+		
 		stock_qty=0.0
 		if item_qty[0] and item_reserved_qty[0]:
 			stock_qty = abs(flt(item_qty[0].get("actual_qty"))-flt(item_reserved_qty[0].get("qty")))
 		else:
 			stock_qty=item_qty[0].get("actual_qty") if item_qty[0] else 0
-		
 		cartons_qty = 0.0
 		if carton_qty[0] and cartons_reserved_qty[0]:
 			cartons_qty = abs(flt(carton_qty[0].get("actual_qty"))-flt(cartons_reserved_qty[0].get("qty")))
 		else:
 			cartons_qty=carton_qty[0].get("actual_qty") if carton_qty[0] else 0
 
+		allow_carton_qty = 0.0
+		if row.get("no_of_items_can_be_packed"):
+			allow_carton_qty = flt(stock_qty)/flt(row.get("no_of_items_can_be_packed"))
 		item_rate = frappe.db.get_value("Item Price", {"item_code":row.get("name")}, "price_list_rate")
 		row["rate"] = item_rate
 		row["stock_in_qty"] = stock_qty
-		row["carton_qty"] = cartons_qty
+		row["carton_qty"] = math.ceil(allow_carton_qty) 
 
 	path = 'bbt_bpm/bbt_bpm/page/customer_portal/customer_portal.html'
 	html=frappe.render_template(path,{'data':items_data})
@@ -62,9 +66,12 @@ def add_to_cart_item(filters):
 	if not data.get("order_qty"):
 		order_qty = flt(data.get("cartan_order_qty"))*flt(data.get("no_of_items_can_be_packed"))
 	else:
-		order_qty = data.get("order_qty")
+		order_qty = flt(data.get("order_qty"))
 
 	item = frappe.db.get_values("Item", {"name":data.get("item")}, ["item_name", "description", "item_group"])
+	
+	added_item = frappe.db.get_values("Add To Cart Item", {"item_code":data.get("item"), "parent":frappe.session.user}, ["name", "ordered_qty_in_nos", "ordered_qty_in_cartons"], as_dict=1)
+
 	if not frappe.db.get_value("Add To Cart", {"name":frappe.session.user}, "name"):
 		doc=frappe.new_doc("Add To Cart")
 		doc.user = frappe.session.user
@@ -83,6 +90,11 @@ def add_to_cart_item(filters):
 			"amount": flt(data.get("rate"))*flt(order_qty)
 		})
 		doc.save(ignore_permissions=True)
+	elif added_item[0].get("name"):
+		_cartons_qty = 0.0
+		order_qty += flt(added_item[0].get("ordered_qty_in_nos"))
+		_cartons_qty = flt(added_item[0].get("ordered_qty_in_cartons"))+flt(data.get("cartan_order_qty"))
+		frappe.db.set_value("Add To Cart Item", {"name":added_item[0].get("name"), "item_code":data.get("item")}, {"ordered_qty_in_nos":order_qty, "ordered_qty_in_cartons":_cartons_qty})
 	else:
 		doc=frappe.get_doc("Add To Cart", frappe.session.user)
 		doc.append("items", {
@@ -100,7 +112,7 @@ def add_to_cart_item(filters):
 			"amount": flt(data.get("rate"))*flt(order_qty)
 		})
 		doc.save(ignore_permissions=True)
-
+	return True
 
 @frappe.whitelist()
 def add_to_cart_details(user):
@@ -152,6 +164,8 @@ def new_order(client_feedback):
 		doc.add_comment('Comment', text=client_feedback)
 		frappe.delete_doc('Add To Cart', frappe.session.user)
 		frappe.db.commit()
+		frappe.msgprint(_("New Order Created"))
+
 	return True
 
 @frappe.whitelist()
