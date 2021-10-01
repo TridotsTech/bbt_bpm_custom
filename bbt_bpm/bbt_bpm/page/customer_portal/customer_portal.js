@@ -225,7 +225,7 @@ frappe.customer_portal = Class.extend({
 		var me = this
 		me.page.add_field({
 			fieldtype: 'Button',
-			label: __('Home'),
+			label: __('Back'),
 			fieldname: 'home',
 			click: function() {
 				me.home = this.value?this.value:null
