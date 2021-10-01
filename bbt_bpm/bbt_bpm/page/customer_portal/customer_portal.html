@@ -6,7 +6,7 @@
         /*text-align: center;*/
 		/*width: 8%;*/
 		word-wrap: break-word;
-		width: 9em;
+		/*width: 9em;*/
     }
     .desc{
     	text-align: center;
@@ -39,9 +39,9 @@
 		height: 600px;
 	}
 
-	thead, tbody {
+	/*thead, tbody {
 		display: inline-block;
-	}
+	}*/
 
 	thead {
 		position: sticky;
@@ -79,16 +79,16 @@
 		z-index: 0;
 	}
 
-	.first_col {
+	/*.first_col {
 		top: auto;
-		min-width: 79px;
-		max-width: 79px;
+		min-width: 77px;
+		max-width: 77px;
 		text-align: center;
 	}
 	.sec_col {
 		top: auto;
-		min-width: 54px;
-		max-width: 73px;
+		min-width: 56px;
+		max-width: 500px;
 		text-align: center;
 	}
 
@@ -97,9 +97,9 @@
 		min-width: 45px;
 		max-width: 50px;
 		text-align: center;
-	}
+	}*/
 
-	.col4 {
+	/*.col4 {
 		top: auto;
 		min-width: 223px;
 		max-width: 230px;
@@ -130,8 +130,8 @@
 		min-width: 59px;
 		max-width: 59px;
 		text-align: center;
-	}
-	.col9 {
+	}*/
+	/*.col9 {
 		top: auto;
 		min-width: 42px;
 		max-width: 67px;
@@ -142,7 +142,7 @@
 		min-width: 65px;
 		max-width: 65px;
 		text-align: center;
-	}
+	}*/
 	
 
 	input[type=number] {
@@ -172,6 +172,13 @@
 		min-width: 10px;
 		max-width: 10px;
 		text-align: center;
+	}
+
+	.comment_lable {
+  		position: static;
+  		bottom: 50;
+  		/*right: 0;*/
+  		width: 300px;
 	}
 </style>
 <div class="conatiner">
@@ -229,18 +236,14 @@
 					<td class="text_center col7">{{row.carton_qty or ""}}</td>
 					<td class="text_center col8">{{row.no_of_items_can_be_packed or ""}}</td>
 					<td class="text_center col9"><input class="order_qty" type="number"></td>
-					<td class="text_center col10" last_col><input class="cartan_order_qty" type="number"></td>
+					<td class="text_center col10 "><input class="cartan_order_qty" type="number"></td>
 					<td class="text_center col11">
 						<button class="add_to_card" item={{row.name}} rate={{row.rate}} stock_in_qty={{row.stock_in_qty}} carton_qty={{row.carton_qty}} no_of_items_can_be_packed={{row.no_of_items_can_be_packed}}><b>+</b></button>
 					</td>
 				</tr>
 				{% endif %}
 				{% endfor %}
-			<tbody>
+			</tbody>
 		</table>
 	</div>
 </div>
-
-
-
-

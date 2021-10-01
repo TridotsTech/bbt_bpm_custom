@@ -66,8 +66,7 @@ frappe.customer_portal = Class.extend({
 	    	var language= $(this).closest('tr').children('td.first_col').text();
 
 	    	var filters = {"item":item, "rate":rate, "stock_in_qty":stock_in_qty, "carton_qty":carton_qty, "no_of_items_can_be_packed":no_of_items_can_be_packed, "order_qty":order_qty, "cartan_order_qty":cartan_order_qty, "language":language}
-
-	    	if (stock_in_qty == "None"){
+	    	if (stock_in_qty<=0 || stock_in_qty=="None"){
 	    		frappe.throw(__("Books {0} Out Of Stock.",[item]));
 	    		frappe.validated = false;
 	    	}
@@ -150,7 +149,9 @@ frappe.customer_portal = Class.extend({
 			no_of_cartons = 0.0
 	    	no_of_cartons = Math.round(parseFloat(order_qty)/parseFloat(no_of_items_can_be_packed))
 	    	total_req_qty = no_of_cartons*parseFloat(no_of_items_can_be_packed)
+	    	console.log("=============")
 	    	if (total_req_qty && total_req_qty!=0 && parseFloat(order_qty)!=parseFloat(total_req_qty)){
+	    		console.log("===========ggg==")
 	    		frappe.msgprint(__("Add min {0} qty to fulfill Cartons Size", [total_req_qty]));
 	    	}
 		})
