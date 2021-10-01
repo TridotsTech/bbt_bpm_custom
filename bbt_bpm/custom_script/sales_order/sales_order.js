@@ -1,8 +1,10 @@
 frappe.ui.form.on("Sales Order", {
 	onload: function(frm){
+		frm.trigger("hide_sidebar")
 		frm.trigger("map_on_stock_entry")
 	},
 	refresh: function(frm){
+		frm.trigger("hide_sidebar")
 		frm.trigger("map_on_stock_entry")
 	},
 	map_on_stock_entry: function(frm){
@@ -16,6 +18,12 @@ frappe.ui.form.on("Sales Order", {
 				})
 			});
 		}
+	},
+
+	hide_sidebar: function(frm){
+		if ((frappe.session.user !="administrator") && frappe.user.has_role(["Customer"])){
+			$(".form-sidebar").css("display", "none");
+		}
 	}	
-	})
+})
 	

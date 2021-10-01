@@ -14,5 +14,16 @@ frappe.listview_settings['Delivery Note'] = {
 			return [__("Completed"), "green", "per_billed,=,100"];
 		}
 
+	},
+
+	onload: function(listview) {
+		if ((frappe.session.user !="administrator") && frappe.user.has_role(["Customer"])){
+			$(".list-sidebar").hide()
+		}
+	},
+	refresh: function(listview) {
+		if ((frappe.session.user !="administrator") && frappe.user.has_role(["Customer"])){
+			$(".list-sidebar").hide()
+		}
 	}
 }
