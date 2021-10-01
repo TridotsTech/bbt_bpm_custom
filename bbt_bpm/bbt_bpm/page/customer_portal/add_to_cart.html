@@ -196,7 +196,7 @@
 					<th class="text_center fixed align">Language</th>
 					<th class="text_center fixed align">Category</th>
 					<th class="text_center fixed align">Item Code</th>
-					<th class="desc align">Discription</th>
+					<th class="desc align">Description</th>
 					<th class="text_center fixed align">Rate</th>
 					<th class="text_center fixed align">Stock In Nos</th>
 					<th class="text_center fixed align">Stock In<br>Cartons</th>
@@ -218,7 +218,7 @@
 					<td class="text_center col6">{{row.stock_in_nos or ""}}</td>
 					<td class="text_center col7">{{row.stock_in_cartons or ""}}</td>
 					<td class="text_center col8">{{row.book_per_carton or ""}}</td>
-					<td class="text_center col9"><input class="order_qty cart_order_qty" item="{{row.item_code}}" language="{{row.language}}" rate="{{row.rate}}" type="number" value="{{row.ordered_qty_in_nos}}" onchange="update_qty_on_cart()"></td>
+					<td class="text_center col9"><input class="order_qty cart_order_qty" item="{{row.item_code}}" language="{{row.language}}" rate="{{row.rate}}" type="number" value="{{row.ordered_qty_in_nos}}"></td>
 					<td class="text_center col10 order_cartons" last_col><input class="cartan_order_qty cart_cartan_order_qty" item="{{row.item_code}}" language="{{row.language}}" rate="{{row.rate}}" book_per_cartons="{{row.book_per_carton}}" type="number" value="{{row.ordered_qty_in_cartons}}"></td>
 					<td class="col11">{{row.amount or ""}}</td>
 				</tr>
@@ -234,9 +234,9 @@
 					<td class="text_center fixed align"></td>
 					<td class="text_center fixed align"></td>
 					<td class="text_center fixed align"></td>
-					<td class="text_center fixed align">{{ data[0]["total_ordered_qty"] or ""}}</td>
-					<td class="text_center fixed align">{{ data[0]["total_cartons_qty"] or "0.0" }}</td>
-					<td class="text_center fixed align">{{ data[0]["total_amount"] or "0.0" }}</td>
+					<td class="text_center fixed align total_ordered_qty">{{ data[0]["total_ordered_qty"] or ""}}</td>
+					<td class="text_center fixed align total_cartons_qty">{{ data[0]["total_cartons_qty"] or "0.0" }}</td>
+					<td class="text_center fixed align total_amount">{{ data[0]["total_amount"] or "0.0" }}</td>
 				</tr>
 				{% endif %}
 				<tr>

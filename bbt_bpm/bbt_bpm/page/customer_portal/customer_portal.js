@@ -44,6 +44,7 @@ frappe.customer_portal = Class.extend({
 					$('.frappe-list').html(html)
 					$('[data-fieldname="language"]').show()
 					$('[data-fieldname="home"]').hide()
+					me.item_order_qty(me)
 	    			me.add_to_card(me)
 	    			me.new_order(me)
 	        	}
@@ -142,12 +143,27 @@ frappe.customer_portal = Class.extend({
 		})
 	},
 
+	item_order_qty: function(me){
+		$(".item_order_qty").click(function(){
+			var no_of_items_can_be_packed = $(this).attr("no_of_items_can_be_packed")
+	    	var order_qty=jQuery($(this).closest('tr').children('td.col9')[0]).find("input[type='number']").val()
+			no_of_cartons = 0.0
+	    	no_of_cartons = Math.round(parseFloat(order_qty)/parseFloat(no_of_items_can_be_packed))
+	    	total_req_qty = no_of_cartons*parseFloat(no_of_items_can_be_packed)
+	    	if (total_req_qty && total_req_qty!=0 && parseFloat(order_qty)!=parseFloat(total_req_qty)){
+	    		frappe.msgprint(__("Add min {0} qty to fulfill Cartons Size", [total_req_qty]));
+	    	}
+		})
+	},
+
 	update_qty_on_cart: function(){
 		$(".cart_order_qty").click(function(){
 			var item = $(this).attr("item")
 			var language = $(this).attr("language")
 			var rate = $(this).attr("rate")
 			var order_qty=jQuery($(this).closest('tr').children('td.col9')[0]).find("input[type='number']").val()
+			var amount = parseFloat(order_qty)*parseFloat(rate)
+			var a = jQuery($(this).closest('tr').children('td.col11')[0]).html(amount)
 			frappe.call({
 		        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.update_qty_on_cart",
 		        args: {
@@ -158,7 +174,10 @@ frappe.customer_portal = Class.extend({
 		        },
 		        callback: function (r) {
 		        	if (r.message){
-		        		// window.location.reload()
+		        		data = r.message
+		        		$(".total_amount").html(data.amount)
+		        		$(".total_ordered_qty").html(data.total_ordered_qty)
+		        		$(".total_cartons_qty").html(data.total_cartons_qty)
 		        	}
 
 		        }//calback end
@@ -175,7 +194,6 @@ frappe.customer_portal = Class.extend({
 			var qty = parseFloat(book_per_cartons)*parseFloat(cartan_order_qty)
 			var amount = parseFloat(qty)*parseFloat(rate)
 			var a = jQuery($(this).closest('tr').children('td.col11')[0]).html(amount)
-			
 			frappe.call({
 		        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.update_cartons_qty_on_cart",
 		        args: {
@@ -187,7 +205,14 @@ frappe.customer_portal = Class.extend({
 		        },
 		        callback: function (r) {
 		        	if (r.message){
-		        		// window.location.reload()
+		        		data = r.message[0]
+		        		$(".total_amount").html(data.amount)
+		        		$(".total_ordered_qty").html(data.total_ordered_qty)
+		        		$(".total_cartons_qty").html(data.total_cartons_qty)
+		        		// $("input").val(r.message[1]); 
+		    //     		jQuery($(this).closest('tr').children('td.col9')[0]).find("input[type='number']").innerHTMLer=r.message[1]
+						// console.log("=============",jQuery($(this).closest('tr').children('td.col9')[0]).find("input[type='number']").innerHTMLer=r.message[1])
+
 		        	}
 
 		        }//calback end

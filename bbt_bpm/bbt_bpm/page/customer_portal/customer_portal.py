@@ -23,10 +23,25 @@ def get_items_data(filters):
 	for row in items_data:
 		item_qty = frappe.db.sql("""SELECT sum(actual_qty) as actual_qty from `tabBin` where item_code='{0}'""".format(row.get("name")), as_dict=1)
 		carton_qty = frappe.db.sql("""SELECT sum(actual_qty) as actual_qty from `tabBin` where item_code='{0}'""".format(row.get("carton")), as_dict=1)
+
+		item_reserved_qty = frappe.db.sql("""SELECT sum(qty) as qty From `tabStock Blocking Unblocking Table` where item_code='{0}' """.format(row.get("name")), as_dict=1)
+		cartons_reserved_qty = frappe.db.sql("""SELECT sum(qty) as qty From `tabStock Blocking Unblocking Table` where item_code='{0}' """.format(row.get("carton")), as_dict=1)
+		stock_qty=0.0
+		if item_qty[0] and item_reserved_qty[0]:
+			stock_qty = abs(flt(item_qty[0].get("actual_qty"))-flt(item_reserved_qty[0].get("qty")))
+		else:
+			stock_qty=item_qty[0].get("actual_qty") if item_qty[0] else 0
+		
+		cartons_qty = 0.0
+		if carton_qty[0] and cartons_reserved_qty[0]:
+			cartons_qty = abs(flt(carton_qty[0].get("actual_qty"))-flt(cartons_reserved_qty[0].get("qty")))
+		else:
+			cartons_qty=carton_qty[0].get("actual_qty") if carton_qty[0] else 0
+
 		item_rate = frappe.db.get_value("Item Price", {"item_code":row.get("name")}, "price_list_rate")
 		row["rate"] = item_rate
-		row["stock_in_qty"] = item_qty[0].get("actual_qty") if item_qty[0] else 0
-		row["carton_qty"] = carton_qty[0].get("actual_qty") if carton_qty[0] else 0
+		row["stock_in_qty"] = stock_qty
+		row["carton_qty"] = cartons_qty
 
 	path = 'bbt_bpm/bbt_bpm/page/customer_portal/customer_portal.html'
 	html=frappe.render_template(path,{'data':items_data})
@@ -154,6 +169,8 @@ def update_qty_on_cart(item, language, order_qty, rate):
 	amount = flt(order_qty)*flt(rate)
 	frappe.db.set_value("Add To Cart Item", {"item_code":item, "language":language}, {"ordered_qty_in_nos":order_qty, "amount":amount})
 	frappe.db.commit()
+	total_amount = frappe.db.sql("""SELECT sum(ordered_qty_in_nos) as total_ordered_qty, sum(ordered_qty_in_cartons) as total_cartons_qty, sum(amount) as amount From	`tabAdd To Cart Item` where parent = '{0}'""".format(frappe.session.user), as_dict=True)
+	return total_amount
 
 
 @frappe.whitelist()
@@ -163,4 +180,6 @@ def update_cartons_qty_on_cart(item, language, cartan_order_qty, rate, book_per_
 	amount = flt(order_qty)*flt(rate)
 	frappe.db.set_value("Add To Cart Item", {"item_code":item, "language":language}, {"ordered_qty_in_cartons":cartan_order_qty, "amount":amount, "ordered_qty_in_nos":order_qty})
 	frappe.db.commit()
-	print("=============aaaaa", amount, order_qty)
+	total_amount = frappe.db.sql("""SELECT sum(ordered_qty_in_nos) as total_ordered_qty, sum(ordered_qty_in_cartons) as total_cartons_qty, sum(amount) as amount From	`tabAdd To Cart Item` where parent = '{0}'""".format(frappe.session.user), as_dict=True)
+	total_amount.append(order_qty)
+	return total_amount
