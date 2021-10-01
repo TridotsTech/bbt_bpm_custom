@@ -32,6 +32,7 @@ def on_submit(doc, method):
             where soi.item_code = '{0}' and soi.docstatus=1 and w.is_reserved=1 """.format(row.item_code))
             frappe.db.set_value("Item", row.item_code, "allocated_qty", allocated_qty)
 
+
 def set_valid_customer_warehouse(doc):
     if frappe.db.exists("Warehouse", {"name":doc.set_warehouse, "is_reserved":1}):
         return

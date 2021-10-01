@@ -10,11 +10,17 @@ from datetime import date
 
 def on_submit(doc, method):
 	for row in doc.items:
-		item_qty = frappe.db.get_value("Item", {"name":row.item_code}, "goods_in_transit")	
+		item_qty = frappe.db.get_value("Item", {"name":row.item_code}, "goods_in_transit")
 		goods_in_transit = flt(item_qty)+flt(row.qty)
 		frappe.db.set_value("Item", row.item_code, "goods_in_transit", goods_in_transit)
 
-		
+		total_picked_qty = frappe.db.get_value("Item", {"name":row.item_code}, "picked_qty")
+		picked_qty = flt(total_picked_qty)-flt(row.qty)
+		frappe.db.set_value("Item", row.item_code, "picked_qty", picked_qty)
+
+		total_allocated_qty = frappe.db.get_value("Item", {"name":row.item_code}, "allocated_qty")			
+		allocated_qty = flt(total_allocated_qty)-flt(row.qty)
+		frappe.db.set_value("Item", row.item_code, "allocated_qty", allocated_qty)
 
 def on_update_after_submit(doc, method):
 	if doc.delivered:
@@ -22,15 +28,6 @@ def on_update_after_submit(doc, method):
 			item_qty = frappe.db.get_value("Item", {"name":row.item_code}, "goods_in_transit")	
 			goods_in_transit = flt(item_qty)-flt(row.qty)
 			frappe.db.set_value("Item", row.item_code, "goods_in_transit", goods_in_transit)
-
-			total_picked_qty = frappe.db.sql("""SELECT sum(picked_qty) from `tabPick List Item` where item_code = '{0}'""".format(row.item_code))
-			picked_qty = flt(total_picked_qty[0][0])-flt(row.qty)
-			frappe.db.set_value("Item", row.item_code, "picked_qty", picked_qty)
-
-			total_allocated_qty = frappe.db.get_value("Item", {"name":row.item_code}, "allocated_qty")			
-			allocated_qty = flt(total_allocated_qty	)-flt(row.qty)
-			frappe.db.set_value("Item", row.item_code, "allocated_qty", allocated_qty)
-
 
 
 def save(doc, method):

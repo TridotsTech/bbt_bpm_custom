@@ -17,7 +17,7 @@ def execute(filters=None):
 def get_data(filters):
 	query_data = frappe.db.sql(""" SELECT a.name, a.company, a.customer, b.warehouse, a.order_type, a.transaction_date, a.order_class, a.po_no as referce_no, b.item_code, b.qty, "0" as cancelled_qty, b.qty as net_ordered_quantity, "0" as invoiced_qty,  "0" as pending_qty, "0" as allocated_qty, "0" as pick_qty, "BO_aty" as bo_qty, "0" as available_stock, a.docstatus from `tabSales Order` a left join `tabSales Order Item` b on a.name=b.parent where a.docstatus=1 and {0}""".format(get_filters_codition(filters)),as_dict=True)
 
-	cancel_order = frappe.db.sql(""" SELECT a.name, a.company, a.customer, b.warehouse, a.order_type, a.transaction_date, a.order_class, a.po_no as referce_no, b.item_code, b.qty as cancelled_qty, b.qty as net_ordered_quantity, "0" as invoiced_qty,  "0" as pending_qty, "Allocate_qty" as allocated_qty, "0" as pick_qty, "BO_aty" as bo_qty, "0" as available_stock from `tabSales Order` a left join `tabSales Order Item` b on a.name=b.parent where a.docstatus=2 and {0}""".format(get_filters_codition(filters)),as_dict=True)
+	cancel_order = frappe.db.sql(""" SELECT a.name, a.company, a.customer, b.warehouse, a.order_type, a.transaction_date, a.order_class, a.po_no as referce_no, b.item_code, b.qty as cancelled_qty, b.qty as net_ordered_quantity, "0" as invoiced_qty,  "0" as pending_qty, "0" as allocated_qty, "0" as pick_qty, "BO_aty" as bo_qty, "0" as available_stock from `tabSales Order` a left join `tabSales Order Item` b on a.name=b.parent where a.docstatus=2 and {0}""".format(get_filters_codition(filters)),as_dict=True)
 
 	# where {0}""".format(get_filters_codition(filters)),as_dict=True, debug=1)
 	cancel_order_name = []
@@ -82,6 +82,12 @@ def get_columns():
 		{
 			"label": _("Order Type"),
 			"fieldname": "order_type",
+			"fieldtype": "Data",
+			"width": 120
+		},
+		{
+			"label": _("Sales Order Ref"),
+			"fieldname": "name",
 			"fieldtype": "Data",
 			"width": 120
 		},
