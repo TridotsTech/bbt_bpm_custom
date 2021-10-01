@@ -2,7 +2,7 @@
 // For license information, please see license.txt
 
 frappe.ui.form.on('Add To Cart', {
-	// refresh: function(frm) {
-
-	// }
+	refresh: function(frm) {
+		$(".layout-side-section").hide()
+	}
 });

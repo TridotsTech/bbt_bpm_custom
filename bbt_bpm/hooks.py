@@ -34,8 +34,10 @@ fixtures = ["Custom Field"]
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 doctype_list_js = {
-	"Delivery Note": "custom_script/delivery_note/delivery_note_list.js"
-
+	"Delivery Note": "custom_script/delivery_note/delivery_note_list.js",
+	"Sales Order": "custom_script/sales_order/sales_order_list.js",
+	"Sales Invoice": "custom_script/sales_invoice/sales_invoice_list.js",
+	"Customer": "custom_script/customer/customer_list.js"
 }
 
 doctype_js = {
@@ -43,7 +45,8 @@ doctype_js = {
 	"Stock Entry": "custom_script/stock_entry/stock_entry.js",
 	"Quotation": "custom_script/quotation/quotation.js",
 	"Item": "custom_script/item/item.js",
-	"Pick List": "custom_script/pick_list/pick_list.js"
+	"Pick List": "custom_script/pick_list/pick_list.js",
+	"Customer": "custom_script/customer/customer.js"
 }
 
 # Home Pages
