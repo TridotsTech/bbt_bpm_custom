@@ -25,7 +25,7 @@ def get_items_data(filters):
 		item_qty = frappe.db.sql("""SELECT sum(actual_qty) as actual_qty from `tabBin` where item_code='{0}'""".format(row.get("name")), as_dict=1)
 		carton_qty = frappe.db.sql("""SELECT sum(actual_qty) as actual_qty from `tabBin` where item_code='{0}'""".format(row.get("carton")), as_dict=1)
 
-		item_reserved_qty = frappe.db.sql("""SELECT item_code, sum(qty) as qty From `tabStock Blocking Unblocking Table` where item_code='{0}' """.format(row.get("name")), as_dict=1, debug=1)
+		item_reserved_qty = frappe.db.sql("""SELECT item_code, sum(qty) as qty From `tabStock Blocking Unblocking Table` where item_code='{0}' """.format(row.get("name")), as_dict=1)
 		cartons_reserved_qty = frappe.db.sql("""SELECT sum(qty) as qty From `tabStock Blocking Unblocking Table` where item_code='{0}' """.format(row.get("carton")), as_dict=1)
 		
 		stock_qty=0.0
