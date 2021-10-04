@@ -10,17 +10,18 @@ from datetime import date
 
 def on_submit(doc, method):
 	for row in doc.items:
-		item_qty = frappe.db.get_value("Item", {"name":row.item_code}, "goods_in_transit")
-		goods_in_transit = flt(item_qty)+flt(row.qty)
-		frappe.db.set_value("Item", row.item_code, "goods_in_transit", goods_in_transit)
+		total_allocated_qty = frappe.db.get_value("Item", {"name":row.item_code}, "allocated_qty")			
+		allocated_qty = flt(total_allocated_qty)-flt(row.qty)
+		frappe.db.set_value("Item", row.item_code, "allocated_qty", allocated_qty)
 
 		total_picked_qty = frappe.db.get_value("Item", {"name":row.item_code}, "picked_qty")
 		picked_qty = flt(total_picked_qty)-flt(row.qty)
 		frappe.db.set_value("Item", row.item_code, "picked_qty", picked_qty)
 
-		total_allocated_qty = frappe.db.get_value("Item", {"name":row.item_code}, "allocated_qty")			
-		allocated_qty = flt(total_allocated_qty)-flt(row.qty)
-		frappe.db.set_value("Item", row.item_code, "allocated_qty", allocated_qty)
+		item_qty = frappe.db.get_value("Item", {"name":row.item_code}, "goods_in_transit")
+		goods_in_transit = flt(item_qty)+flt(row.qty)
+		frappe.db.set_value("Item", row.item_code, "goods_in_transit", goods_in_transit)
+
 
 def on_update_after_submit(doc, method):
 	if doc.delivered:
@@ -34,7 +35,6 @@ def save(doc, method):
 	set_items(doc)
 
 def carton_num(doc):
-
 	indx=0
 	for i in doc.items:
 		is_packaging=frappe.db.get_value("Item",i.item_code,"item_group")
