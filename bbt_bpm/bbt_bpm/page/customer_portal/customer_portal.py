@@ -90,7 +90,7 @@ def add_to_cart_item(filters):
 			"amount": flt(data.get("rate"))*flt(order_qty)
 		})
 		doc.save(ignore_permissions=True)
-	elif added_item[0].get("name"):
+	elif added_item:
 		_cartons_qty = 0.0
 		order_qty += flt(added_item[0].get("ordered_qty_in_nos"))
 		_cartons_qty = flt(added_item[0].get("ordered_qty_in_cartons"))+flt(data.get("cartan_order_qty"))
