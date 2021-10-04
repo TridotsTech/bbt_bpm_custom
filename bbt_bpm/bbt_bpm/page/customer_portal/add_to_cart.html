@@ -219,7 +219,7 @@
 					<td class="text_center col7">{{row.stock_in_cartons or ""}}</td>
 					<td class="text_center col8">{{row.book_per_carton or ""}}</td>
 					<td class="text_center col9"><input class="order_qty cart_order_qty" item="{{row.item_code}}" language="{{row.language}}" rate="{{row.rate}}" type="number" value="{{row.ordered_qty_in_nos}}"></td>
-					<td class="text_center col10 order_cartons" last_col><input class="cartan_order_qty cart_cartan_order_qty" item="{{row.item_code}}" language="{{row.language}}" rate="{{row.rate}}" book_per_cartons="{{row.book_per_carton}}" type="number" value="{{row.ordered_qty_in_cartons}}"></td>
+					<td class="text_center col10 order_cartons"><input class="cartan_order_qty cart_cartan_order_qty" item="{{row.item_code}}" language="{{row.language}}" rate="{{row.rate}}" book_per_cartons="{{row.book_per_carton}}" type="number" value="{{row.ordered_qty_in_cartons}}"></td>
 					<td class="col11">{{row.amount or ""}}</td>
 				</tr>
 				{% endfor %}
