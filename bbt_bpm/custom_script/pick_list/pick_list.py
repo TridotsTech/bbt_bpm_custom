@@ -21,10 +21,14 @@ def carton_details(doc):
 			i.carton_no=str(start_indx)+"-"+str(end_indx)
 			i.carton_qty = str(start_indx)+"-"+str(end_indx)
 			i.no_of_items_can_be_packed = str(start_indx)+"-"+ str(end_indx)
-
+		
 		else:
+			if not i.carton_qty:
+				carton_qty = 0
+			else:
+				carton_qty = i.carton_qty
 			start_indx=indx+1
-			end_indx=start_indx+i.carton_qty-1
+			end_indx=start_indx+carton_qty - 1
 			i.carton_no=str(start_indx)+"-"+str(end_indx)
 			indx=end_indx
 
@@ -51,12 +55,22 @@ def on_submit(doc, method=None):
 
 	for row in doc.locations:
 		sales_order.append(row.sales_order)
-		picked_qty = frappe.db.sql("""select sum(picked_qty) from `tabPick List Item` where item_code=%(item_code)s 
-		""", {"item_code": row.item_code})
+		picked_qty = frappe.db.sql("""select sum(picked_qty) from `tabPick List Item` where item_code=%(item_code)s""", {"item_code": row.item_code})
 
 		delivered_qty = frappe.db.sql("""select sum(qty) from `tabDelivery Note Item` soi join `tabWarehouse` w on soi.warehouse=w.name 
             where soi.item_code=%(item_code)s and soi.docstatus=1 and w.is_reserved=1""", {"item_code": row.item_code})
-		actual_picked_qty = picked_qty[0][0] - delivered_qty[0][0]
+		
+		if picked_qty[0][0] == None:
+			picked_qty_1 = 0
+		else:
+			picked_qty_1 = picked_qty[0][0]
+
+		if delivered_qty[0][0] == None:
+			delivered_qty_1 = 0
+		else:
+			delivered_qty_1 = delivered_qty[0][0]
+		
+		actual_picked_qty = picked_qty_1 - delivered_qty_1
 		frappe.db.set_value("Item", row.item_code, "picked_qty", actual_picked_qty)
 		
 

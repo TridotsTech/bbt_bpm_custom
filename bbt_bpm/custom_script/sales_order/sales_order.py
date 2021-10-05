@@ -28,14 +28,28 @@ def on_update(doc, method):
 def on_submit(doc, method):
     for row in doc.items:
         if doc.stock_transfer_ref:
+
             allocated_qty = frappe.db.sql("""select sum(qty) from `tabSales Order Item` soi join 
             `tabWarehouse` w on soi.warehouse=w.name where soi.item_code=%(item_code)s and soi.docstatus=1 
-            and w.is_reserved=1 """, {"item_code":row.item_code})
+            and w.is_reserved=1""", {"item_code":row.item_code})
+            
 
             delivered_qty = frappe.db.sql("""select sum(qty) from `tabDelivery Note Item` soi join `tabWarehouse` w on soi.warehouse=w.name 
             where soi.item_code=%(item_code)s and soi.docstatus=1 and w.is_reserved=1""", {"item_code":row.item_code}) 
             
-            actual_allocated_qty = allocated_qty[0][0] - delivered_qty[0][0]
+
+            if allocated_qty[0][0] == None:
+                allocated_qty_1 = 0
+            else:
+                allocated_qty_1 = allocated_qty[0][0]
+
+            if delivered_qty[0][0] == None:
+                delivered_qty_1 = 0
+            else:
+                delivered_qty_1 = delivered_qty[0][0]
+
+            actual_allocated_qty = allocated_qty_1 - delivered_qty_1
+            
             frappe.db.set_value("Item", row.item_code, "allocated_qty", actual_allocated_qty)
 
 
