@@ -165,7 +165,7 @@ frappe.customer_portal = Class.extend({
 	    	no_of_cartons = Math.ceil(parseFloat(order_qty)/parseFloat(no_of_items_can_be_packed))
 	    	total_req_qty = no_of_cartons*parseFloat(no_of_items_can_be_packed)
 	    	if (total_req_qty && total_req_qty!=0 && parseFloat(order_qty)!=parseFloat(total_req_qty)){
-	    		frappe.msgprint(__("Add min {0} qty to fulfill Cartons Sizess", [total_req_qty]));
+	    		frappe.msgprint(__("Add min {0} qty to fulfill Carton's Size OR to continue please click on add to cart again", [total_req_qty]));
 	    	}
 		});
 	},
@@ -249,9 +249,9 @@ frappe.customer_portal = Class.extend({
 
 		me.page.add_field({
 			"fieldtype": 'Select',
-			"label": __('Language'),
-			"fieldname": 'language',
-			"placeholder": __("Search By Language"),
+			"label": __("Language"),
+			"fieldname": "language",
+			"placeholder":"Search By Language",
 			"options": [ "", "Assamese", "Bengali", "Chhattisgarhi", "English", "French", "Gujarati", "Hindi", "Japanese", "Kannada", "Marathi", "Korean", "Nepali", "Odia", "Punjabi", "Sinhala", "Tamil", "Telugu", "Urdu"],
 			"reqd": 0,
 			onchange: function() {
@@ -259,7 +259,9 @@ frappe.customer_portal = Class.extend({
 				me.get_imp_data()
 			}
 		})
-
+		$('[data-fieldname="language"]').css({"border": "1px solid Brown"})
+		
+		
 		me.page.add_field({
 			"fieldtype": 'Button',
 			"label": __('View Cart'),
@@ -287,5 +289,6 @@ frappe.customer_portal = Class.extend({
 			    })
 			}
 		})
+		$('[data-fieldname="add_to_cart_items"]').addClass("btn-primary")
 	}
 })

@@ -83,11 +83,16 @@ def set_valid_customer_warehouse(doc):
             continue
         else:
             final_warehouse=warehouse
-
-    if final_warehouse:
+    
+    if final_warehouse and doc.company != "Bhaktivedanta Book Trust":
+        return
+    if final_warehouse and doc.company == "Bhaktivedanta Book Trust":
         doc.set_warehouse=final_warehouse
     else:
-        doc.set_warehouse=frappe.db.get_value("Stock Settings","Stock Settings","default_warehouse")
+        if doc.company != "Bhaktivedanta Book Trust":
+            return
+        else:
+            doc.set_warehouse=frappe.db.get_value("Stock Settings","Stock Settings","default_warehouse")
     
 def check_stock_availability(item,warehouse):
     actual_qty=frappe.db.sql_list("""SELECT
