@@ -42,10 +42,13 @@ def get_items_data(filters):
 		allow_carton_qty = 0.0
 		if row.get("no_of_items_can_be_packed"):
 			allow_carton_qty = flt(stock_qty)/flt(row.get("no_of_items_can_be_packed"))
-		item_rate = frappe.db.get_value("Item Price", {"item_code":row.get("name")}, "price_list_rate")
-		row["rate"] = item_rate
+		
+		customer_user = frappe.session.user
+		customer_price_list = frappe.db.get_value("Customer", {"user":customer_user}, "default_price_list")
+		item_rate = frappe.db.get_value("Item Price", {"item_code":row.get("name"), "price_list":customer_price_list}, "price_list_rate")
+		row["rate"] = item_rate or "0"
 		row["stock_in_qty"] = stock_qty
-		row["carton_qty"] = math.ceil(allow_carton_qty) 
+		row["carton_qty"] = math.ceil(allow_carton_qty)
 
 	path = 'bbt_bpm/bbt_bpm/page/customer_portal/customer_portal.html'
 	html=frappe.render_template(path,{'data':items_data})
