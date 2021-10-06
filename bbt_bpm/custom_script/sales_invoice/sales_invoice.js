@@ -7,7 +7,7 @@ frappe.ui.form.on("Sales Invoice", {
 	},
 
 	hide_sidebar: function(frm){
-		if ((frappe.session.user !="administrator") && frappe.user.has_role(["Customer"])){
+		if ((frappe.session.user !="Administrator") && frappe.user.has_role(["Customer"])){
 			$(".form-sidebar").css("display", "none");
 		}
 	}	
