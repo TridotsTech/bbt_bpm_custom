@@ -158,7 +158,7 @@ frappe.customer_portal = Class.extend({
 	},
 
 	item_order_qty: function(me){
-		$( "input[type='number']" ).change(function() {
+		$( ".item_order_qty" ).change(function() {
 			var no_of_items_can_be_packed = $(this).attr("no_of_items_can_be_packed")
 	    	var order_qty=jQuery($(this).closest('tr').children('td.col9')[0]).find("input[type='number']").val()
 			no_of_cartons = 0.0
