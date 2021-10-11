@@ -13,24 +13,33 @@ from datetime import date
 
 def validate(doc, method=None):
 	pass
-	# if has_common(["Customer"], frappe.get_roles(doc.name)):
-	# 	cust_doc = frappe.new_doc("Customer")
-	# 	cust_doc.customer_name = doc.full_name
-	# 	cust_doc.customer_group = "Retail"
-	# 	cust_doc.territory = "All Territories"
-	# 	cust_doc.user = doc.name
-	# 	cust_doc.save()
-	# 	frappe.db.commit()
 
 def after_insert(doc, method):
-	if has_common(["Customer"], frappe.get_roles(doc.name)):
-		doc.add_roles("Customer User")
-		doc.save()
-		cust_doc = frappe.new_doc("Customer")
-		cust_doc.customer_name = doc.full_name
-		cust_doc.customer_group = "Retail"
-		cust_doc.territory = "All Territories"
-		cust_doc.user = doc.name
-		cust_doc.save()
+	if doc.user_type == "Website User":
+		roles = ["Customer User", "Customer"]
+		for role in roles:
+			doc.append("roles", {
+						    "owner": "Administrator",
+						    "modified_by": "Administrator",
+						    "parent": doc.name,
+						    "parentfield": "roles",
+						    "parenttype": "User",
+						    "docstatus": 0,
+						    "role": role,
+						    "doctype": "Has Role"
+						})
+		doc.save(ignore_permissions=True)
 		frappe.db.commit()
+		try:
+			cust_doc = frappe.new_doc("Customer")
+			cust_doc.customer_name = doc.full_name
+			cust_doc.customer_group = "Retail"
+			cust_doc.territory = "All Territories"
+			cust_doc.user = doc.name
+			cust_doc.default_price_list = "Web Price"
+			cust_doc.save(ignore_permissions=True)
+			frappe.db.commit()
+		except Exception as e:
+			pass
+	
 
