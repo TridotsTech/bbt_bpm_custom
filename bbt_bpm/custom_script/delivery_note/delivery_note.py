@@ -48,9 +48,15 @@ def carton_num(doc):
 			i.carton_qty = str(start_indx)+"-"+str(end_indx)
 			i.no_of_items_can_be_packed = str(start_indx)+"-"+str(end_indx)
 		else:
+			if not i.carton_qty:
+				carton_qty = 0
+			else:
+				# carton_qty = i.carton_qty
+				i.carton_qty =  doc.items[int(i.idx)].qty
+				carton_qty = doc.items[int(i.idx)].qty
 			start_indx=indx+1
 			end_indx=start_indx+i.carton_qty-1
-			i.carton_no=str(start_indx)+"-"+str(end_indx)
+			i.carton_no=str(start_indx)+"-"+str(int(end_indx))
 			indx=end_indx
 
 def set_items(doc):

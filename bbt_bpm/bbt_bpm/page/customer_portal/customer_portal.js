@@ -85,19 +85,50 @@ frappe.customer_portal = Class.extend({
 	    		frappe.throw(__("Please enter cartons qty less than stock in cartons."));
 	    		frappe.validated = false;
 	    	}
+			var no_of_items_can_be_packed = $(this).attr("no_of_items_can_be_packed")
+	    	var order_qty=jQuery($(this).closest('tr').children('td.col9')[0]).find("input[type='number']").val()
+			no_of_cartons = 0.0
+	    	no_of_cartons = Math.ceil(parseFloat(order_qty)/parseFloat(no_of_items_can_be_packed))
+	    	total_req_qty = no_of_cartons*parseFloat(no_of_items_can_be_packed)
+	    	if (total_req_qty && total_req_qty!=0 && parseFloat(order_qty)!=parseFloat(total_req_qty)){
+				var msg = "Add min "+total_req_qty+" qty to fulfill Carton's Size OR to continue please click Yes" 
+				frappe.confirm(
+					msg,
+					()=>{
+						frappe.call({
+						    "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.add_to_cart_item",
+						    args: {
+						    	filters:filters
+						    },
+						    callback: function (r) {
+						    	if (r.message){
+						      		frappe.msgprint(__("Item Added in Cart"));
+						    	}
+			
+						    }//calback end
+						})
+					},
+					()=>{
+							window.close();
+					},
+				)
+			}
+			else{
+				frappe.call({
+					"method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.add_to_cart_item",
+					args: {
+						filters:filters
+					},
+					callback: function (r) {
+						if (r.message){
+							  frappe.msgprint(__("Item Added in Cart"));
+						}
+	
+					}//calback end
+				})
 
-	    	frappe.call({
-		        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.add_to_cart_item",
-		        args: {
-		        	filters:filters
-		        },
-		        callback: function (r) {
-		        	if (r.message){
-		          		frappe.msgprint(__("Item Added in Cart"));
-		        	}
-
-		        }//calback end
-		    })	
+			}
+	    		
 	    })
 	},
 
@@ -165,8 +196,8 @@ frappe.customer_portal = Class.extend({
 	    	no_of_cartons = Math.ceil(parseFloat(order_qty)/parseFloat(no_of_items_can_be_packed))
 	    	total_req_qty = no_of_cartons*parseFloat(no_of_items_can_be_packed)
 	    	if (total_req_qty && total_req_qty!=0 && parseFloat(order_qty)!=parseFloat(total_req_qty)){
-	    		frappe.msgprint(__("Add min {0} qty to fulfill Carton's Size OR to continue please click on add to cart again", [total_req_qty]));
-	    	}
+	    		// frappe.msgprint(__("Add min {0} qty to fulfill Carton's Size OR to continue please click on add to cart again", [total_req_qty]));
+			}
 		});
 	},
 

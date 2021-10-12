@@ -112,9 +112,11 @@ def set_field_value(doc):
 
 
 def set_packaging_items(doc):
+    if doc.edit_carton_items == 1:
+        return
     po_items=[]
     remove_items=[]
-    for i in doc.items:
+    for i in doc.items: 
         is_packaging=frappe.db.get_value("Item",i.item_code,"item_group")
         if is_packaging in ["Carton","packaging material"]:
             frappe.db.sql("DELETE FROM `tabSales Order Item` WHERE name=%(name)s",{"name":i.name})
@@ -128,6 +130,10 @@ def set_packaging_items(doc):
     sub_item_ind=len(doc.items)
 
     for item in doc.items:
+        # exe_qty = frappe.db.get_value("Sales Order Item", i.name, "qty")
+        # is_packaging=frappe.db.get_value("Item",i.item_code,"item_group")
+        # if is_packaging in ["Carton","packaging material"] and exe_qty == i.qty:
+        #     continue    
         is_packaging_item=frappe.db.get_value("Item",item.item_code,"no_of_items_can_be_packed")
         is_catorn_req=frappe.db.get_value("Item",item.item_code,"carton")
         if is_packaging_item and is_catorn_req:
