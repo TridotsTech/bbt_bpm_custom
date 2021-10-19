@@ -67,6 +67,9 @@ frappe.customer_portal = Class.extend({
 	    	var cartan_order_qty=jQuery($(this).closest('tr').children('td.col10')[0]).find("input[type='number']").val()
 	    	var language= $(this).closest('tr').children('td.first_col').text();
 
+			if (!cartan_order_qty){
+				cartan_order_qty = Math.ceil(parseFloat(order_qty)/parseFloat(no_of_items_can_be_packed))
+			}
 	    	var filters = {"item":item, "rate":rate, "stock_in_qty":stock_in_qty, "carton_qty":carton_qty, "no_of_items_can_be_packed":no_of_items_can_be_packed, "order_qty":order_qty, "cartan_order_qty":cartan_order_qty, "language":language}
 	    	if (stock_in_qty<=0 || stock_in_qty=="None"){
 	    		frappe.throw(__("Books {0} Out Of Stock.",[item]));
@@ -75,13 +78,12 @@ frappe.customer_portal = Class.extend({
 
 	    	stock_order_qty = 0.0
 	    	stock_order_qty = parseFloat(no_of_items_can_be_packed)*parseFloat(cartan_order_qty)
-
-	    	if (stock_in_qty<order_qty){
+	    	if (flt(order_qty)>flt(stock_in_qty)){
 	    		frappe.throw(__("Please enter order qty less than stock qty."));
 	    		frappe.validated = false;
 	    	}
 
-	    	if (carton_qty<cartan_order_qty) {
+	    	if (flt(carton_qty)<flt(cartan_order_qty)) {
 	    		frappe.throw(__("Please enter cartons qty less than stock in cartons."));
 	    		frappe.validated = false;
 	    	}
