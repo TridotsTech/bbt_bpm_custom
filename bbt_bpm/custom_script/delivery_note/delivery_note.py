@@ -78,6 +78,7 @@ def set_items(doc):
 			item.dimension = carton_item_doc_name.dimension
 			item.available_stock = available_qty[0]
 			item.used_qty = item.qty
+			item.is_free_item = 1
 		elif not is_packaging_item:
 			item_link = "<a target=_blank href='#Form/Item/{0}'>{1}</a>".format(item.item_code, item.item_code)
 			msg = "Kindly Update No. of Item can be packed Field for Item {0}".format(item_link)
