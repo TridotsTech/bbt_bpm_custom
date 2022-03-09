@@ -201,7 +201,7 @@ def map_on_stock_entry(source_name, target_doc=None):
 
 
 def set_item_warehouses(doc):    
-    for item in doc.items:
+   for item in doc.items:
         item.warehouse=doc.set_warehouse
 
 def rm_unwanted_items(doc):
@@ -210,12 +210,6 @@ def rm_unwanted_items(doc):
     for rm_item in db_items:
         if rm_item.name not in doc_itm_name:
             frappe.db.sql("DELETE FROM `tabSales Order Item` WHERE name=%(name)s",{"name":rm_item.name})
-
-
-
-
-
-
 
 
 #------------------------------------------------------------------
