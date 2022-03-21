@@ -52,8 +52,9 @@ def carton_num(doc):
 				carton_qty = 0
 			else:
 				# carton_qty = i.carton_qty
-				i.carton_qty =  doc.items[int(i.idx)].qty
-				carton_qty = doc.items[int(i.idx)].qty
+				# i.carton_qty =  doc.items[int(i.idx)].qty
+				# carton_qty = doc.items[int(i.idx)].qty
+				carton_qty =  i.qty
 			start_indx=indx+1
 			end_indx=start_indx+carton_qty-1
 			i.carton_no=str(start_indx)+"-"+str(int(end_indx))
