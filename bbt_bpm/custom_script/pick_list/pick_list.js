@@ -12,6 +12,4 @@ frappe.ui.form.on("Pick List", {
 //         };
 //    }
     
-
-
 });

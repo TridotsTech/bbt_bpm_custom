@@ -111,7 +111,7 @@ doc_events = {
 		"on_cancel": "bbt_bpm.custom_script.stock_entry.stock_entry.on_cancel"
 	},
 	"Sales Order": {
-		#"validate": "bbt_bpm.custom_script.sales_order.sales_order.validate",
+		"validate": "bbt_bpm.custom_script.sales_order.sales_order.validate",
 		"on_update": "bbt_bpm.custom_script.sales_order.sales_order.on_update",
 		"on_submit" : "bbt_bpm.custom_script.sales_order.sales_order.on_submit"
 	},
@@ -123,7 +123,7 @@ doc_events = {
 	"Pick List": {
 		"on_submit": "bbt_bpm.custom_script.pick_list.pick_list.on_submit",
 		"validate": "bbt_bpm.custom_script.pick_list.pick_list.save",
-		"before_save": "bbt_bpm.custom_script.pick_list.pick_list.before_save"
+		#"before_save": "bbt_bpm.custom_script.pick_list.pick_list.before_save"
 
 	},
 	"Sales Invoice": {

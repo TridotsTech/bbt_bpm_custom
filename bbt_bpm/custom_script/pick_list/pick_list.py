@@ -9,7 +9,7 @@ def save(doc, method):
 
 def carton_details(doc):
 	indx=0
-	for i in doc.locations:
+	for i in doc.get("locations"):
 		is_packaging=frappe.db.get_value("Item",i.item_code,"item_group")
 		if is_packaging in ["Carton","packaging material"]:
 			
@@ -26,8 +26,9 @@ def carton_details(doc):
 				carton_qty = 0
 			else:
 				# carton_qty = i.carton_qty
-				i.carton_qty =  doc.locations[int(i.idx)].qty
-				carton_qty = doc.locations[int(i.idx)].qty
+				i.carton_qty =  i.qty
+				carton_qty =  i.qty
+				#carton_qty = doc.locations[int(i.idx)].qty
 			start_indx=indx+1
 			end_indx=start_indx+carton_qty - 1
 			i.carton_no=str(start_indx)+"-"+str(int(end_indx))
@@ -43,6 +44,9 @@ def set_items(doc):
 			carton_item_doc_name = frappe.get_cached_doc("Item", {"item_code": is_carton_req})
 			qty = item.qty / is_packaging_item
 			item.carton_qty = math.ceil(qty)
+			# print('////////')
+			# print(item.carton_qty)
+			# print('//////')
 			print('item index__________	',int(item.idx))
 			# item.carton_qty = doc.locations[int(item.idx)+1].qty
 			item.no_of_items_can_be_packed = is_packaging_item
@@ -118,7 +122,4 @@ def before_save(doc, method=None):
 		items.append(item_details)
 	doc.locations = items
 	set_items(doc)
-
-
-
 
