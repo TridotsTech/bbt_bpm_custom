@@ -20,7 +20,7 @@ def validate(doc, method):
     set_field_value(doc)
     set_packaging_items(doc)
     set_valid_customer_warehouse(doc)
-    #set_item_warehouses(doc)
+    set_item_warehouses(doc)
 
 def on_update(doc, method):
     rm_unwanted_items(doc)
@@ -201,9 +201,10 @@ def map_on_stock_entry(source_name, target_doc=None):
 
 
 def set_item_warehouses(doc): 
- 
+
         for item in doc.items:
-             item.warehouse=doc.set_warehouse
+             if not doc.edit_item_warehouse:
+                item.warehouse=doc.set_warehouse
 
 def rm_unwanted_items(doc):
     db_items=frappe.db.sql(""" select item_code, warehouse,projected_qty,name from `tabSales Order Item` where parent=%(doc_name)s """,{"doc_name":doc.name},as_dict=1)
