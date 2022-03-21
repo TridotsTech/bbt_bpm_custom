@@ -26,7 +26,7 @@ def carton_details(doc):
 				carton_qty = 0
 			else:
 				# carton_qty = i.carton_qty
-				i.carton_qty =  i.qty
+				#i.carton_qty =  i.qty
 				carton_qty =  i.qty
 				#carton_qty = doc.locations[int(i.idx)].qty
 			start_indx=indx+1
