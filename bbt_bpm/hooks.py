@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from . import __version__ as app_version
+from frappe.utils import cstr, flt, getdate, cint, nowdate, add_days, get_link_to_form, strip_html
+import frappe
+from frappe import _
 
 app_name = "bbt_bpm"
 app_title = "Bbt Bpm"
@@ -173,9 +176,10 @@ doc_events = {
 # Overriding Methods
 # ------------------------------
 #
-# override_whitelisted_methods = {
+#override_whitelisted_methods = {
 # 	"frappe.desk.doctype.event.event.get_events": "bbt_bpm.event.get_events"
-# }
+#	"erpnext.selling.doctype.sales_order.sales_order.validate_warehouse":"bbt_bpm.custom_script.sales_order.sales_order.validate_warehouse"
+#}
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
@@ -183,4 +187,16 @@ doc_events = {
 # override_doctype_dashboards = {
 # 	"Task": "bbt_bpm.task.get_dashboard_data"
 # }
+from erpnext.selling.doctype.sales_order.sales_order import SalesOrder
+@frappe.whitelist()
+def validate_warehouse(self):
+    #pass
+		super(SalesOrder, self).validate_warehouse()
 
+		for d in self.get("items"):
+			if (frappe.get_cached_value("Item", d.item_code, "is_stock_item") == 0 or
+				(self.has_product_bundle(d.item_code) and self.product_bundle_has_stock_item(d.item_code))) \
+				and not d.warehouse and not cint(d.delivered_by_supplier):
+				frappe.throw(_("stock item {0}").format(d.item_code),
+					WarehouseRequired)
+SalesOrder.validate_warehouse=validate_warehouse

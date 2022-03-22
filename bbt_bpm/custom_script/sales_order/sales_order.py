@@ -231,3 +231,15 @@ def so_get_permission_query_conditions(user):
         else:
             # return "1=2"
             return """(`tabSales Order`.name is null)"""
+
+@frappe.whitelist()
+def validate_warehouse():
+    #pass
+		super(SalesOrder, self).validate_warehouse()
+
+		for d in self.get("items"):
+			if (frappe.get_cached_value("Item", d.item_code, "is_stock_item") == 1 or
+				(self.has_product_bundle(d.item_code) and self.product_bundle_has_stock_item(d.item_code))) \
+				and not d.warehouse and not cint(d.delivered_by_supplier):
+				frappe.throw(_("stock item {0}").format(d.item_code),
+					WarehouseRequired)
