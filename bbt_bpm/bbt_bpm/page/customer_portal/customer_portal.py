@@ -135,7 +135,10 @@ def add_to_cart_details(user):
 @frappe.whitelist()
 def new_order(client_feedback):
 	user = frappe.session.user
-	data = frappe.db.sql("""SELECT item_code, item_name, item_group, description, rate, language, stock_in_nos, stock_in_cartons, book_per_carton, ordered_qty_in_nos, ordered_qty_in_cartons from `tabAdd To Cart Item` where parent='{0}' """.format(user), as_dict=1)
+	data = frappe.db.sql("""SELECT crt.item_code, crt.item_name, crt.item_group, crt.description, item.publisher,crt.rate, crt.language, crt.stock_in_nos, crt.stock_in_cartons, crt.book_per_carton, ordered_qty_in_nos, ordered_qty_in_cartons from `tabAdd To Cart Item` crt,`tabItem` item 
+where crt.item_code=item.item_code and item.publisher="BBT" and crt.parent='{0}' """.format(user), as_dict=1)
+	data2 = frappe.db.sql("""SELECT crt.item_code, crt.item_name, crt.item_group, crt.description, item.publisher,crt.rate, crt.language, crt.stock_in_nos, crt.stock_in_cartons, crt.book_per_carton, ordered_qty_in_nos, ordered_qty_in_cartons from `tabAdd To Cart Item` crt,`tabItem` item 
+where crt.item_code=item.item_code and item.publisher="SRST" and crt.parent='{0}' """.format(user), as_dict=1)
 	customer = frappe.db.get_values("Customer", {"user":frappe.session.user}, ["name", "company", "default_currency", "default_price_list"])
 
 	if frappe.db.get_value("Add To Cart", {"name":frappe.session.user}, "name") and customer:
@@ -146,6 +149,35 @@ def new_order(client_feedback):
 		doc.currency = customer[0][2] if customer[0][2] else ""
 		doc.selling_price_list = customer[0][3] if customer[0][3] else ""  
 		for row in data:
+			item_taxes_template = ""
+			if customer[0][2] == "USD" and row.get("item_group")=="Poster" or row.get("item_group")=="CD":
+				hsn_code = frappe.db.get_value("Item", {"name": row.get("item_code")}, "gst_hsn_code")
+				item_taxes_template += frappe.db.get_value("Item Tax", {"parent":hsn_code, "item_tax_template":["like", "IGST%"]}, "item_tax_template")
+			elif customer[0][1] == "Sri Sri Sitaram Seva Trust" and row.get("item_group")=="Poster" or row.get("item_group")=="CD":
+				item_taxes_template += frappe.db.get_value("Item Tax", {"parent":hsn_code, "item_tax_template":["like", "CGST+SGST%"]}, "item_tax_template")
+			doc.append("items", {
+				"item_code": row.get("item_code"),
+				"item_name": row.get("item_name"),
+				"item_group": row.get("item_group"),
+				"description":row.get("description"),
+				"rate": flt(row.get("rate")),
+				"qty":flt(row.get("ordered_qty_in_nos")),
+				"uom":frappe.db.get_value("Item", {"name":row.get("item_code")}, "stock_uom"),
+				"item_tax_template": item_taxes_template
+				# "warehouse": "Stores - SRST"
+			})
+		doc.save()
+		doc.add_comment('Comment', text=client_feedback)
+		frappe.delete_doc('Add To Cart', frappe.session.user)
+		frappe.db.commit()
+#		if frappe.db.get_value("Add To Cart", {"name":frappe.session.user}, "name") and customer:
+		doc=frappe.new_doc("Sales Order")
+		doc.customer = customer[0][0] if customer[0][0] else ""
+		doc.company = "Sri Sri Sitaram Seva Trust" 
+		doc.delivery_date = today()
+		doc.currency = customer[0][2] if customer[0][2] else ""
+		doc.selling_price_list = customer[0][3] if customer[0][3] else ""  
+		for row in data2:
 			item_taxes_template = ""
 			if customer[0][2] == "USD" and row.get("item_group")=="Poster" or row.get("item_group")=="CD":
 				hsn_code = frappe.db.get_value("Item", {"name": row.get("item_code")}, "gst_hsn_code")
