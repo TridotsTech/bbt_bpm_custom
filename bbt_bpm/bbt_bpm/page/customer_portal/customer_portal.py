@@ -46,7 +46,13 @@ def get_items_data(filters):
 		customer_user = frappe.session.user
 		customer_price_list = frappe.db.get_value("Customer", {"user":customer_user}, "default_price_list")
 		item_rate = frappe.db.get_value("Item Price", {"item_code":row.get("name"), "price_list":customer_price_list}, "price_list_rate")
-		row["rate"] = item_rate or "0"
+
+		if stock_qty:
+			#row["rate"] = item_rate or "0"
+			row["rate"] = item_rate or "0"
+		else:
+			row["rate"] = ""
+
 		row["stock_in_qty"] = stock_qty
 		row["carton_qty"] = math.ceil(allow_carton_qty)
 
