@@ -204,6 +204,7 @@
 					<th class="text_center fixed align">Book Per<br>Carton</th>
 					<th class="text_center fixed align">Ordered<br>Qty In NOS</th>
 					<th class="text_center fixed align">Ordered<br>Qty in Cartons</th>
+					<th class="text_center fixed align">Publisher</th>
 					<th class="text_center fixed align">Add To Cart</th>
 				</tr>
 			</thead>
@@ -221,6 +222,8 @@
 					<td class="text_center col8">{{row.no_of_items_can_be_packed or ""}}</td>
 					<td class="text_center col9"><input class="order_qty item_order_qty" no_of_items_can_be_packed={{row.no_of_items_can_be_packed}} type="number"></td>
 					<td class="text_center col10" last_col><input class="cartan_order_qty" type="number"></td>
+					<td class="text_center col12">{{row.publisher or ""}}</td>
+
 					<td class="text_center col11">
 						<button class="add_to_card" item={{row.name}} rate={{row.rate}} stock_in_qty={{row.stock_in_qty}} carton_qty={{row.carton_qty}} no_of_items_can_be_packed={{row.no_of_items_can_be_packed}}><b>+</b></button>
 					</td>
@@ -237,9 +240,11 @@
 					<td class="text_center col8">{{row.no_of_items_can_be_packed or ""}}</td>
 					<td class="text_center col9"><input class="order_qty item_order_qty" type="number"></td>
 					<td class="text_center col10 "><input class="cartan_order_qty" type="number"></td>
+					<td class="text_center col12">{{row.publisher or ""}}</td>
 					<td class="text_center col11">
 						<button class="add_to_card" item={{row.name}} rate={{row.rate}} stock_in_qty={{row.stock_in_qty}} carton_qty={{row.carton_qty}} no_of_items_can_be_packed={{row.no_of_items_can_be_packed}}><b>+</b></button>
 					</td>
+					
 				</tr>
 				{% endif %}
 				{% endfor %}

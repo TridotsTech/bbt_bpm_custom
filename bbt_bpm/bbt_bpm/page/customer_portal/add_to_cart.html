@@ -186,7 +186,7 @@
 		<table class="table table-bordered table-wrapper" width="100%" border="1px" bordercolor="#000000">
 			<thead>
 				<tr>
-					<th colspan="8" style="background-color: #8bcc96; color: white; border-right: hidden;" class="fixed">
+					<th colspan="9" style="background-color: #8bcc96; color: white; border-right: hidden;" class="fixed">
 						Add To Cart Books Details
 					</th>
 					<th colspan="4" style="background-color: #8bcc96; color: white; text-align: right; border-left: hidden;"><button class="delete" style="color: black;"><b>Delete</b></button></th>
@@ -203,6 +203,7 @@
 					<th class="text_center fixed align">Book Per<br>Carton</th>
 					<th class="text_center fixed align">Ordered<br>Qty In NOS</th>
 					<th class="text_center fixed align">Ordered<br>Qty in Cartons</th>
+					<th class="text_center fixed align">Publisher</th>
 					<th class="text_center fixed align">Amount</th>
 				</tr>
 			</thead>
@@ -220,7 +221,8 @@
 					<td class="text_center col8">{{row.book_per_carton or ""}}</td>
 					<td class="text_center col9"><input class="order_qty cart_order_qty" item="{{row.item_code}}" language="{{row.language}}" rate="{{row.rate}}" type="number" value="{{row.ordered_qty_in_nos}}"></td>
 					<td class="text_center col10 order_cartons"><input class="cartan_order_qty cart_cartan_order_qty" item="{{row.item_code}}" language="{{row.language}}" rate="{{row.rate}}" book_per_cartons="{{row.book_per_carton}}" type="number" value="{{row.ordered_qty_in_cartons}}"></td>
-					<td class="col11">{{row.amount or ""}}</td>
+					<td class="text_center col11">{{row.publisher or ""}}</td>
+					<td class="col12">{{row.amount or ""}}</td>
 				</tr>
 				{% endfor %}
 				{% if data %}
@@ -236,18 +238,89 @@
 					<td class="text_center fixed align"></td>
 					<td class="text_center fixed align total_ordered_qty">{{ data[0]["total_ordered_qty"] or ""}}</td>
 					<td class="text_center fixed align total_cartons_qty">{{ data[0]["total_cartons_qty"] or "0.0" }}</td>
+					<td class="text_center fixed align"></td>
 					<td class="text_center fixed align total_amount">{{ data[0]["total_amount"] or "0.0" }}</td>
 				</tr>
 				{% endif %}
 				<tr>
-					<td colspan="12">
+					<td colspan="13">
 						<p><label class="comment_lable">Comment/Feedback</label></p>
 						<textarea class="comment" id="comment" name="comment" rows="4" cols="50"></textarea>
 					</td>
 
 				</tr>
+
+				<tr>
+					<td colspan="13">
+						<p><label class="contact_person">Contact Person</label></p>
+						<input type="text" class="c_p" id="c_p" name="c_p"></input>
+					</td>
+
+				</tr>
+
+				<tr>
+					<td colspan="7">
+						<p><label class="transp_mode">Transportation Mode </label></p>
+						<input type="text" class="t_m" id="t_m" name="t_m" ></textarea>
+					</td>
+
+					<td colspan="6">
+						<p><label class="p_transporter">Preferred Transporter </label></p>
+						<input type="text" class="p_t" id="p_t" name="p_t"></input>
+					</td>
+
+				</tr>
+
+				<tr>
+					<td colspan="7">
+						<p><label class="f_charges">Freight Charges </label></p>
+						<select class="f_c" id="f_c" name="f_c" style="color:green;">
+							<option value="To Pay">To pay</option>
+							<option value="Paid">Paid</option>
+						</select>
+					</td>
+
+					<td colspan="6">
+						<p><label class="d_charges">Delivery Type </label></p>
+						<select class="d_t" id="d_t" name="d_t" style="color:green;">
+							<option value="Door Delivery">Door Delivery</option>
+							<option value="Godown Delivery">Godown Delivery</option>
+							<option value="Self Pickup">Self Pickup</option>
+						</select>
+					</td>
+
+				</tr>
+
+
+				<tr>
+					<td colspan="7">
+						<p><label class="d_address">Delivery Address </label></p>
+						<textarea class="comment" id="comment" name="comment" rows="4" cols="50"></textarea>
+					</td>
+
+					<td colspan="6">
+						<p><label class="b_address">Billing Address </label></p>
+						<textarea class="comment" id="comment" name="comment" rows="4" cols="50"></textarea>
+					</td>
+
+				</tr>
+
+				
+				<tr>
+					<td colspan="7">
+						<p><label class="ins_delivery">Instruction for Delivery </label></p>
+						<textarea class="i_d" id="i_d" name="i_d" rows="4" cols="50"></textarea>
+					</td>
+
+					<td colspan="6">
+						<p><label class="sp_instruction">Special Instruction </label></p>
+						<textarea class="s_i" id="s_i" name="s_i" rows="4" cols="50"></textarea>
+					</td>
+
+				</tr>
+
 				<tr style="border-top: hidden; border-bottom: hidden;">
-					<td colspan="12" class="bth bbh" style="border-top: hidden; border-bottom: hidden;">
+					<td colspan="13" class="bth bbh" style="border-top: hidden; border-bottom: hidden;">
 						<button class="submit" style="color:green;"><b>Submit Order</b></button>
 					</td>
 				</tr>

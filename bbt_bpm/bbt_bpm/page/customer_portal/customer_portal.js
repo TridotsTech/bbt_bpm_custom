@@ -43,6 +43,7 @@ frappe.customer_portal = Class.extend({
 	        callback: function (r) {
 	        	if (r.message){
 	          		var html = r.message.html
+	          		//console.log(html)
 					$('.frappe-list').html(html)
 					$('[data-fieldname="language"]').show()
 					$('[data-fieldname="home"]').hide()
@@ -53,6 +54,17 @@ frappe.customer_portal = Class.extend({
 
 	        }//calback end
 	    })
+
+	    //Get customer name
+	  //   let customer = function(){
+	  //   	frappe.call({
+			//     method: "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.customer_data", //dotted path to server method
+			//     callback: function(r) {
+			//         // code snippet
+			//         console.log()
+			//     }
+			// });
+	  //   }
 
 	},
 
@@ -180,6 +192,7 @@ frappe.customer_portal = Class.extend({
 		        args: {
 		        	client_feedback:client_feedback
 		        },
+		        //headers: {'content-type': 'application/json'},
 		        callback: function (r) {
 		        	if (r.message){
 		        		window.location.reload()
