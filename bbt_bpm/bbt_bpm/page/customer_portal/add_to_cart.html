@@ -203,8 +203,9 @@
 					<th class="text_center fixed align">Book Per<br>Carton</th>
 					<th class="text_center fixed align">Ordered<br>Qty In NOS</th>
 					<th class="text_center fixed align">Ordered<br>Qty in Cartons</th>
-					<th class="text_center fixed align">Publisher</th>
 					<th class="text_center fixed align">Amount</th>
+					<th class="text_center fixed align">Publisher</th>
+
 				</tr>
 			</thead>
 			<tbody>
@@ -221,8 +222,8 @@
 					<td class="text_center col8">{{row.book_per_carton or ""}}</td>
 					<td class="text_center col9"><input class="order_qty cart_order_qty" item="{{row.item_code}}" language="{{row.language}}" rate="{{row.rate}}" type="number" value="{{row.ordered_qty_in_nos}}"></td>
 					<td class="text_center col10 order_cartons"><input class="cartan_order_qty cart_cartan_order_qty" item="{{row.item_code}}" language="{{row.language}}" rate="{{row.rate}}" book_per_cartons="{{row.book_per_carton}}" type="number" value="{{row.ordered_qty_in_cartons}}"></td>
-					<td class="text_center col11">{{row.publisher or ""}}</td>
 					<td class="col12">{{row.amount or ""}}</td>
+					<td class="text_center col11">{{row.publisher or ""}}</td>
 				</tr>
 				{% endfor %}
 				{% if data %}
@@ -238,8 +239,8 @@
 					<td class="text_center fixed align"></td>
 					<td class="text_center fixed align total_ordered_qty">{{ data[0]["total_ordered_qty"] or ""}}</td>
 					<td class="text_center fixed align total_cartons_qty">{{ data[0]["total_cartons_qty"] or "0.0" }}</td>
-					<td class="text_center fixed align"></td>
 					<td class="text_center fixed align total_amount">{{ data[0]["total_amount"] or "0.0" }}</td>
+					<td class="text_center fixed align"></td>
 				</tr>
 				{% endif %}
 				<tr>

@@ -15,7 +15,8 @@
   "book_per_carton",
   "ordered_qty_in_nos",
   "ordered_qty_in_cartons",
-  "amount"
+  "amount",
+  "publisher"
  ],
  "fields": [
   {
@@ -86,11 +87,16 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Amount"
+  },
+  {
+   "fieldname": "publisher",
+   "fieldtype": "Data",
+   "label": "Publisher"
   }
  ],
  "istable": 1,
- "modified": "2021-09-30 16:40:05.236505",
- "modified_by": "amit.parab@i2econsulting.com",
+ "modified": "2022-03-29 15:46:17.348323",
+ "modified_by": "Administrator",
  "module": "Bbt Bpm",
  "name": "Add To Cart Item",
  "owner": "Administrator",

@@ -23,8 +23,8 @@
    "options": "Add To Cart Item"
   }
  ],
- "modified": "2021-09-21 10:44:28.134017",
- "modified_by": "amit.parab@i2econsulting.com",
+ "modified": "2022-03-29 15:47:54.137735",
+ "modified_by": "Administrator",
  "module": "Bbt Bpm",
  "name": "Add To Cart",
  "owner": "Administrator",
@@ -45,5 +45,6 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
- "track_changes": 1
+ "track_changes": 1,
+ "track_seen": 1
 }
