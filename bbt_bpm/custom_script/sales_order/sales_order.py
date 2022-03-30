@@ -140,6 +140,7 @@ def set_packaging_items(doc):
             packing_item_code=frappe.db.get_value("Item",item.item_code,"carton")
             item_doc=frappe.get_cached_doc("Item",packing_item_code)
             qty=item.qty/is_packaging_item
+            item.quantity_carton = math.ceil(item.qty / is_packaging_item) 
             conversion_factor=frappe.db.get_value("UOM Conversion Detail",{"parent":item_doc.item_code,"uom":item_doc.sales_uom},"conversion_factor")
             rate=frappe.db.get_value("Item Price",{"item_code":item_doc.item_code,"price_list":doc.selling_price_list},"price_list_rate")
             if not conversion_factor:
@@ -153,6 +154,7 @@ def set_packaging_items(doc):
             soi.description=item_doc.description
             soi.delivery_date=doc.delivery_date
             soi.qty=math.ceil(qty)
+            #soi.quantity_carton = is_packaging_item / int(soi.qty)
             soi.is_free_item = 1
             soi.rate = 0
             # soi.amount=flt(rate)*flt(math.ceil(qty))
