@@ -295,3 +295,12 @@ def billing_address_data(item_code):
 								 FROM `tabCustomer` c, `tabSales Order Item` soi;""")
 
 	return billing
+
+@frappe.whitelist()
+def create_doc():
+	doc = frappe.new_doc({
+		"doctype":"Issue",
+		"customer_name":"customer",
+		"item_name":"item"
+		})
+	doc.insert()

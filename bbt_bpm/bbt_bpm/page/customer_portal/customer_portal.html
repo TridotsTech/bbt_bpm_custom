@@ -186,8 +186,9 @@
 		<table class="table table-bordered table-wrapper" width="100%" border="1px" bordercolor="#000000">
 			<thead>
 				<tr>
-					<th colspan="8" style="background-color: #8bcc96; color: white;" class="fixed">
+					<th colspan="10" style="background-color: #8bcc96; color: white;" class="fixed">
 						Books Details
+						<!-- <button class="notify_me" style="color:black;">Notify Me when in Stock</button></a> -->
 					</th>
 					<th colspan="4" style="background-color: #8bcc96; color: white; text-align: right; border-left: hidden;">
 						<a href="/desk#home" class="button" style="color: black;"><button class="button" style="color: black;"><b>Home</b></button></a>
@@ -205,6 +206,7 @@
 					<th class="text_center fixed align">Ordered<br>Qty In NOS</th>
 					<th class="text_center fixed align">Ordered<br>Qty in Cartons</th>
 					<th class="text_center fixed align">Add To Cart</th>
+					<th class="text_center fixed align">Notify Me when in Stock</th>
 					<th class="text_center fixed align">Publisher</th>
 
 				</tr>
@@ -226,7 +228,16 @@
 					<td class="text_center col11">
 						<button class="add_to_card" item={{row.name}} rate={{row.rate}} stock_in_qty={{row.stock_in_qty}} carton_qty={{row.carton_qty}} no_of_items_can_be_packed={{row.no_of_items_can_be_packed}}><b>+</b></button>
 					</td>
-					<td class="text_center col12">{{row.publisher or ""}}</td>
+		
+					<td class="text_center col12">
+						
+						{% if not row.stock_in_qty %}
+							<button class="notify_me" onclick="create_doc()" style="color:red"><b>*</b></button>
+						{% endif %}
+					</td>
+						
+					
+					<td class="text_center col13">{{row.publisher or ""}}</td>
 				</tr>
 				{% else %}
 				<tr style="color:#ff6347;">
@@ -243,7 +254,10 @@
 					<td class="text_center col11">
 						<button class="add_to_card" item={{row.name}} rate={{row.rate}} stock_in_qty={{row.stock_in_qty}} carton_qty={{row.carton_qty}} no_of_items_can_be_packed={{row.no_of_items_can_be_packed}}><b>+</b></button>
 					</td>
-					<td class="text_center col12">{{row.publisher or ""}}</td>
+					<td class="text_center col12">
+							<button class="notify_me" onclick="create_doc()" style="color:red"><b>*</b></button>
+					</td>
+					<td class="text_center col13">{{row.publisher or ""}}</td>
 				</tr>
 				{% endif %}
 				{% endfor %}

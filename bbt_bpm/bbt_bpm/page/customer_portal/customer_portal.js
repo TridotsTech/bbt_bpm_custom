@@ -50,6 +50,7 @@ frappe.customer_portal = Class.extend({
 					me.item_order_qty(me)
 	    			me.add_to_card(me)
 	    			me.new_order(me)
+
 	        	}
 
 	        }//calback end
@@ -336,5 +337,44 @@ frappe.customer_portal = Class.extend({
 			}
 		})
 		$('[data-fieldname="add_to_cart_items"]').addClass("btn-primary")
+
+		// me.page.add_field({
+		// 	"fieldtype": 'Button',
+		// 	"label": __('Notify Me when in Stock'),
+		// 	"fieldname": 'notify',
+		// 	click: function() {
+		// 		me.notify = this.value?this.value:null
+		// 		me.get_imp_data()
+		// 		let name = $(this).attr("item_name")
+		// 		console.log(name) 
+
+		// 		frappe.call({
+		// 			method : "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.create_doc"
+		// 			args : { "user": frappe.session.user,
+		// 					  },
+		// 			callback: function(r){
+		// 				if (r.message)
+		// 			}
+		// 		})
+			
+		// 	}
+		// })
 	}
+
+	// create_doc: function(){
+	// 	$('.notify_me').click(function(){
+
+	// 		let name = $(this).attr("item_name")
+	// 		console.log(name) 
+
+	// 		frappe.call({
+	// 			method : "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.create_doc"
+	// 			args : { "user": frappe.session.user,
+	// 					  },
+	// 			callback: function(r){
+	// 				if (r.message)
+	// 			}
+	// 		})
+	// 	})
+	// }
 })
