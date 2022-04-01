@@ -120,13 +120,13 @@ def set_field_value(doc):
     for i in range(len(out_amount)):
         total_unpaid += out_amount[i]['outstanding_amount'] 
 
-
-    if int(total_unpaid) > int(doc.credit_limit):
-        #frappe.db.set_value('Sales Order', doc.credit_limit_ex, 'CLE' )
-        doc.credit_limit_ex = 'CLE'
-    else:
-        #frappe.db.set_value('Sales Order', doc.credit_limit_ex, '' )
-        doc.credit_limit_ex = ''
+    if doc.credit_limit: # Is none if custom credit limit not set
+        if int(total_unpaid) > int(doc.credit_limit):
+            #frappe.db.set_value('Sales Order', doc.credit_limit_ex, 'CLE' )
+            doc.credit_limit_ex = 'CLE'
+        else:
+            #frappe.db.set_value('Sales Order', doc.credit_limit_ex, '' )
+            doc.credit_limit_ex = ''
 
 
 def set_packaging_items(doc):
