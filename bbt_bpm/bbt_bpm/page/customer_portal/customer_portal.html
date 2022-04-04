@@ -232,7 +232,7 @@
 					<td class="text_center col12">
 						
 						{% if not row.stock_in_qty %}
-							<button class="notify_me" onclick="create_doc()" style="color:red"><b>*</b></button>
+							<button class="notify_me" onclick="create_doc()" style="color:red"><b>Notify Me</b></button>
 						{% endif %}
 					</td>
 						
@@ -255,7 +255,7 @@
 						<button class="add_to_card" item={{row.name}} rate={{row.rate}} stock_in_qty={{row.stock_in_qty}} carton_qty={{row.carton_qty}} no_of_items_can_be_packed={{row.no_of_items_can_be_packed}}><b>+</b></button>
 					</td>
 					<td class="text_center col12">
-							<button class="notify_me" onclick="create_doc()" style="color:red"><b>*</b></button>
+							<button class="notify_me" onclick="create_doc()" style="color:red"><b>Notify Me</b></button>
 					</td>
 					<td class="text_center col13">{{row.publisher or ""}}</td>
 				</tr>

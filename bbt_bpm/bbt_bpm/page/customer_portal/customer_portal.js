@@ -49,23 +49,13 @@ frappe.customer_portal = Class.extend({
 					$('[data-fieldname="home"]').hide()
 					me.item_order_qty(me)
 	    			me.add_to_card(me)
+	    			me.notify_me(me)
 	    			me.new_order(me)
 
 	        	}
 
 	        }//calback end
 	    })
-
-	    //Get customer name
-	  //   let customer = function(){
-	  //   	frappe.call({
-			//     method: "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.customer_data", //dotted path to server method
-			//     callback: function(r) {
-			//         // code snippet
-			//         console.log()
-			//     }
-			// });
-	  //   }
 
 	},
 
@@ -146,6 +136,28 @@ frappe.customer_portal = Class.extend({
 	    		
 	    })
 	},
+
+	notify_me: function(me){
+	    $('.notify_me').click(function() {
+	    	let name = $(this).closest('tr').children('td.col4').text() 
+	    	console.log(name)
+	    	console.log(frappe.session.user)
+
+	     	frappe.call({
+				method : "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.create_doc",
+				args : { "user": frappe.session.user,
+						 "name": name},
+
+				callback: function(r){
+					if (r.message){
+						console.log(r.message)
+					}
+				}
+			})
+		 })
+
+	},
+	
 
 	delete_add_to_cart_item: function(){
 		$(".check").click(function(){
@@ -370,6 +382,7 @@ frappe.customer_portal = Class.extend({
 	// 		frappe.call({
 	// 			method : "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.create_doc"
 	// 			args : { "user": frappe.session.user,
+							
 	// 					  },
 	// 			callback: function(r){
 	// 				if (r.message)

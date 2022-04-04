@@ -297,10 +297,12 @@ def billing_address_data(item_code):
 	return billing
 
 @frappe.whitelist()
-def create_doc():
-	doc = frappe.new_doc({
-		"doctype":"Issue",
-		"customer_name":"customer",
-		"item_name":"item"
-		})
-	doc.insert()
+def create_doc(user, name):
+	doc = frappe.new_doc("Issue")
+	doc.customer_name = user
+	doc.item_name = name
+	doc.insert(ignore_mandatory = True)
+	print('//////')
+	print(doc.customer_name)
+	print(doc.item_name)
+	print('//////')
