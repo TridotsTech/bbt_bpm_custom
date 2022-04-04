@@ -302,4 +302,8 @@ def create_doc(user, name):
 	doc.customer_name = user
 	doc.item_name = name
 	doc.insert(ignore_mandatory = True)
+	print('//////')
+	print(doc.customer_name)
+	print(doc.item_name)
+	print('//////')
 	
