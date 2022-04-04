@@ -271,36 +271,35 @@ def update_cartons_qty_on_cart(item, language, cartan_order_qty, rate, book_per_
 	total_amount.append(order_qty)
 	return total_amount
 
+# @frappe.whitelist()
+# def customer_data(item_code):
+
+# 	customer = frappe.db.sql(""" SELECT soi.item_code, c.customer_name 
+# 								 FROM `tabCustomer` c, `tabSales Order Item` soi
+# 								 WHERE item_code = '{item_code}' """, as_dict = 1)
+
+# 	return customer
+
+# @frappe.whitelist()
+# def shipping_address_data(item_code):
+
+# 	shipping = frappe.db.sql(""" SELECT soi.item_code, c.customer_name 
+# 								 FROM `tabCustomer` c, `tabSales Order Item` soi;""")
+
+# 	return shipping
+
+# @frappe.whitelist()
+# def billing_address_data(item_code):
+
+# 	billing = frappe.db.sql(""" SELECT soi.item_code, c.customer_name 
+# 								 FROM `tabCustomer` c, `tabSales Order Item` soi;""")
+
+# 	return billing
+
 @frappe.whitelist()
-def customer_data(item_code):
-
-	customer = frappe.db.sql(""" SELECT soi.item_code, c.customer_name 
-								 FROM `tabCustomer` c, `tabSales Order Item` soi
-								 WHERE item_code = '{item_code}' """, as_dict = 1)
-
-	return customer
-
-@frappe.whitelist()
-def shipping_address_data(item_code):
-
-	shipping = frappe.db.sql(""" SELECT soi.item_code, c.customer_name 
-								 FROM `tabCustomer` c, `tabSales Order Item` soi;""")
-
-	return shipping
-
-@frappe.whitelist()
-def billing_address_data(item_code):
-
-	billing = frappe.db.sql(""" SELECT soi.item_code, c.customer_name 
-								 FROM `tabCustomer` c, `tabSales Order Item` soi;""")
-
-	return billing
-
-@frappe.whitelist()
-def create_doc():
-	doc = frappe.new_doc({
-		"doctype":"Issue",
-		"customer_name":"customer",
-		"item_name":"item"
-		})
-	doc.insert()
+def create_doc(user, name):
+	doc = frappe.new_doc("Issue")
+	doc.customer_name = user
+	doc.item_name = name
+	doc.insert(ignore_mandatory = True)
+	
