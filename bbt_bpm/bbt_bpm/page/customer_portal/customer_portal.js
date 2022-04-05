@@ -140,17 +140,15 @@ frappe.customer_portal = Class.extend({
 	notify_me: function(me){
 	    $('.notify_me').click(function() {
 	    	let name = $(this).closest('tr').children('td.col4').text() 
-			console.log(name)
-	    	console.log(frappe.session.user)
 
 	     	frappe.call({
 				method : "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.create_doc",
-				args : { "user": frappe.session.user,
+				args : { //"user": frappe.session.user,
 						 "name": name},
 
 				callback: function(r){
 					if (r.message){
-						console.log(r.message)
+						frappe.msgprint(__("Issue generated"));
 
 					}
 				}
