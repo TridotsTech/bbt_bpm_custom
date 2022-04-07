@@ -305,4 +305,12 @@ def create_doc(name):
 	doc.insert(ignore_mandatory = True)
 	
 	return True
+
+@frappe.whitelist(allow_guest=True)
+def download_pdf(html, orientation="Landscape"):
+    html2 = '<h1><img src="/files/BBT Letterhead.PNG" style="width: 30%;"></h1>'
+    html=html2+html
+    frappe.local.response.filename = "report.pdf"
+    frappe.local.response.filecontent = get_pdf(html, {"orientation": orientation,'page-size':'A4'})
+    frappe.local.response.type = "download"
 	

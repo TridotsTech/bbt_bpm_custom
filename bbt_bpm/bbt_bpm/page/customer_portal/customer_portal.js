@@ -370,7 +370,7 @@ frappe.customer_portal = Class.extend({
 			
 		// 	}
 		// })
-	}
+	//}
 
 	// create_doc: function(){
 	// 	$('.notify_me').click(function(){
@@ -389,4 +389,78 @@ frappe.customer_portal = Class.extend({
 	// 		})
 	// 	})
 	// }
+		// me.page.add_field({
+		// 	"fieldtype": 'Button',
+		// 	"label": __('Download Pdf'),
+		// 	"fieldname": 'download_pdf',
+		// 	click: function() {
+		// 		var language = $(this).attr("language")
+		// 	// me.add_to_cart_items = this.value?this.value:null
+		// 	// $('[data-fieldname="home"]').show()
+		// 	// $('[data-fieldname="language"]').hide()
+		// 		frappe.call({
+		// 			"method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.download_pdf",
+		// 			args: {
+		// 				//user:frappe.session.user
+		// 				//language:language
+		// 			},
+		// 			callback: function (r) {
+		// 				if (r.message){
+		// 				  	var html = r.message.html
+		// 				// $('.frappe-list').html(html)
+		// 				// $('.delete').hide()
+		// 				// me.delete_add_to_cart_item()
+		// 				// me.update_qty_on_cart()
+		// 				// me.new_order()
+		// 				}
+
+		// 			}//calback end
+		// 		})
+		// 	}
+		//})
+		me.page.add_field({
+		"fieldtype": 'Button',
+		"label": __('Download Pdf'),
+		"fieldname": 'download_pdf',
+		click: function() {
+			var me = this;
+			var filters = {"language":me.language}
+			//if (me.purchase_order){
+				frappe.call({
+					"method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.get_items_data",
+					args: {
+						filters:filters
+					},
+					callback: function (r) {
+						if (r.message){
+							  var html = r.message.html
+							var formData = new FormData();
+							formData.append("html", html);
+							var blob = new Blob([], { type: "text/xml"});
+							//formData.append("webmasterfile", blob);
+							formData.append("blob", blob);
+	
+							var xhr = new XMLHttpRequest();
+							/*xhr.open("POST", '/api/method/frappe.utils.print_format.report_to_pdf');*/
+							xhr.open("POST", '/api/method/bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.download_pdf');
+	
+							xhr.setRequestHeader("X-Frappe-CSRF-Token", frappe.csrf_token);
+							xhr.responseType = "arraybuffer";
+							xhr.onload = function(success) {
+								if (this.status === 200) {
+									var blob = new Blob([success.currentTarget.response], {type: "application/pdf"});
+									var objectUrl = URL.createObjectURL(blob);
+	
+									//Open report in a new window
+									window.open(objectUrl);
+								}
+							};
+							xhr.send(formData);
+						}
+	
+					}//calback end
+				})
+			}	//}	
+	})
+}		
 })

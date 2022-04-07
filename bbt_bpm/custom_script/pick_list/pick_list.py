@@ -29,6 +29,8 @@ def carton_details(doc):
 				#i.carton_qty =  i.qty
 				carton_qty =  i.qty
 				#carton_qty = doc.locations[int(i.idx)].qty
+
+
 			start_indx=indx+1
 			end_indx=start_indx+carton_qty - 1
 			i.carton_no=str(start_indx)+"-"+str(int(end_indx))
@@ -43,18 +45,41 @@ def set_items(doc):
 		if is_packaging_item and is_carton_req:
 			carton_item_doc_name = frappe.get_cached_doc("Item", {"item_code": is_carton_req})
 			qty = item.qty / is_packaging_item
-			item.carton_qty = math.ceil(qty)
-			# print('////////')
-			# print(item.carton_qty)
-			# print('//////')
+			item.carton_qty = qty
 			print('item index__________	',int(item.idx))
 			# item.carton_qty = doc.locations[int(item.idx)+1].qty
 			item.no_of_items_can_be_packed = is_packaging_item
+			#remaining_qty = item.qty - item.no_of_items_can_be_packed
+			#add_rows(doc,remaining_qty,item.item_code)
+			# print('////////')
+			# #print(remaining_qty)
+			# print(item.item_code)
+			# print(item.qty)
+			# print(is_packaging_item)
+			# print('////////')
+
+			# if item.qty > is_packaging_item:
+			# 	remaining_qty = item.qty - item.no_of_items_can_be_packed
+			# 	row = doc.append('locations', {})
+			# 	row.idx = item.idx + 1
+			# 	row.qty = remaining_qty
+			# 	row.item_code = item.item_code
+			# 	row.no_of_items_can_be_packed = is_packaging_item
+				
+
 		elif not is_packaging_item:
 			item_link = "<a target=_blank href='#Form/Item/{0}'>{1}</a>".format(item.item_code, item.item_code)
 			msg = "Kindly Update No. of Item can be packed Field for Item {0}".format(item_link)
 			frappe.throw(msg)
+
 	carton_details(doc)
+
+# def add_rows(doc,remaining_qty, item_code):
+# 	row = doc.append('locations', {})
+# 	row.qty = remaining_qty
+# 	row.item_code = item_code
+# 	#row.amount = Math.round(deduction_amount)
+
 
 
 def on_submit(doc, method=None):
