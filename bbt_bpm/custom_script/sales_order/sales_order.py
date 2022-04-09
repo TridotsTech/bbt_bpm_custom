@@ -154,20 +154,21 @@ def set_packaging_items(doc):
         #     continue    
         is_packaging_item=frappe.db.get_value("Item",item.item_code,"no_of_items_can_be_packed")
         is_catorn_req=frappe.db.get_value("Item",item.item_code,"carton")
-        if is_packaging_item:
-            qty=item.qty/is_packaging_item
-            if item.quantity_carton:
-                item.qty = item.quantity_carton * is_packaging_item
-            else:
-                item.quantity_carton = math.ceil(item.qty / is_packaging_item)
+        # if is_packaging_item:
+        #     qty=item.qty/is_packaging_item
+        #     if item.quantity_carton:
+        #         item.qty = item.quantity_carton * is_packaging_item
+        #     else:
+        #         item.quantity_carton = math.ceil(item.qty / is_packaging_item)
         if is_packaging_item and is_catorn_req:
             packing_item_code=frappe.db.get_value("Item",item.item_code,"carton")
             item_doc=frappe.get_cached_doc("Item",packing_item_code)
             qty=item.qty/is_packaging_item
-            if item.quantity_carton:
-                item.qty = item.quantity_carton * is_packaging_item
-            else:
-                item.quantity_carton = math.ceil(item.qty / is_packaging_item)  
+            item.quantity_carton = math.ceil(item.qty / is_packaging_item)
+            # if item.quantity_carton:
+            #     item.qty = item.quantity_carton * is_packaging_item
+            # else:
+            # item.quantity_carton = math.ceil(item.qty / is_packaging_item)    
             conversion_factor=frappe.db.get_value("UOM Conversion Detail",{"parent":item_doc.item_code,"uom":item_doc.sales_uom},"conversion_factor")
             rate=frappe.db.get_value("Item Price",{"item_code":item_doc.item_code,"price_list":doc.selling_price_list},"price_list_rate")
             if not conversion_factor:
