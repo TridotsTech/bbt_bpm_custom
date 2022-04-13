@@ -1,0 +1,267 @@
+<style type="text/css">
+     .text_right{
+        text-align: right;
+    }
+    .text_center{
+        /*text-align: center;*/
+		/*width: 8%;*/
+		word-wrap: break-word;
+		/*width: 9em;*/
+    }
+    .desc{
+    	text-align: center;
+		width:20%;
+		word-wrap: break-word;
+    }
+    .font_size{
+        font-size: 15px
+    }
+    .bth{
+        border-top: hidden;
+    }
+    .bbh{
+        border-bottom: hidden;
+    }
+
+  h3 {
+		margin: auto;
+		text-align: center;
+		padding: 10px;
+		color: white;
+	}
+
+	.table {
+		background-color: white;
+		margin: auto;
+		border-collapse: separate;
+		display: block;
+		overflow-y: scroll;
+		height: 600px;
+	}
+
+	/*thead, tbody {
+		display: inline-block;
+	}*/
+
+	thead {
+		position: sticky;
+		top: 1px;
+		z-index: 3;
+	}
+
+	tbody {
+		height: 400px;
+	}
+
+	th {
+		background-color: #f5f7fa;
+	}
+
+	.fixed {
+		position: sticky;
+		/*width: 12em;*/
+		left: 0;
+		top: auto;
+		z-index: 2;
+	}
+
+	td:not(.fixed) {
+		z-index: 0;
+	}
+		
+	.ta{
+		text-align: center;
+		width:9.09%;
+		word-wrap: break-word;
+	}
+
+	td:not(.fixed) {
+		z-index: 0;
+	}
+
+	/*.first_col {
+		top: auto;
+		min-width: 77px;
+		max-width: 77px;
+		text-align: center;
+	}
+	.sec_col {
+		top: auto;
+		min-width: 56px;
+		max-width: 500px;
+		text-align: center;
+	}
+
+	.col3 {
+		top: auto;
+		min-width: 45px;
+		max-width: 50px;
+		text-align: center;
+	}*/
+
+	/*.col4 {
+		top: auto;
+		min-width: 223px;
+		max-width: 230px;
+		text-align: center;
+	}
+
+	.col5 {
+		top: auto;
+		min-width: 40px;
+		max-width: 45px;
+		text-align: center;
+	}
+
+	.col6 {
+		top: auto;
+		min-width: 43px;
+		max-width: 52px;
+		text-align: center;
+	}
+	.col7 {
+		top: auto;
+		min-width: 64px;
+		max-width: 68px;
+		text-align: center;
+	}
+	.col8 {
+		top: auto;
+		min-width: 59px;
+		max-width: 59px;
+		text-align: center;
+	}*/
+	/*.col9 {
+		top: auto;
+		min-width: 42px;
+		max-width: 67px;
+		text-align: center;
+	}
+	.col10 {
+		top: auto;
+		min-width: 65px;
+		max-width: 65px;
+		text-align: center;
+	}*/
+	
+
+	input[type=number] {
+  		width: 70px;
+	}
+
+	.align {
+		text-align: center;
+	}
+
+	.position {
+		position: absolute;
+		top: 50px;
+	}
+
+	.header2 {
+		/*position: sticky;*/
+		left: 10em;
+		top: auto;
+		min-width: 120px;
+		max-width: 120px;
+		text-align: center;
+	}
+	.last_col {
+		width: 9em;
+		top: auto;
+		min-width: 10px;
+		max-width: 10px;
+		text-align: center;
+	}
+
+	.comment_lable {
+  		position: static;
+  		bottom: 50;
+  		/*right: 0;*/
+  		width: 300px;
+	}
+</style>
+<div class="conatiner">
+	<div>
+		<table class="table table-bordered table-wrapper" width="100%" border="1px" bordercolor="#000000">
+			<thead>
+				<tr>
+					<th colspan="7" style="background-color: #8bcc96; color: white;" class="fixed">
+						Books Details
+						<!-- <button class="notify_me" style="color:black;">Notify Me when in Stock</button></a> -->
+					</th>
+					<th colspan="2" style="background-color: #8bcc96; color: white; text-align: right; border-left: hidden;">
+						<!-- <a href="/desk#home" class="button" style="color: black;"><button class="button" style="color: black;"><b>Home</b></button></a> -->
+					</th>
+				</tr>
+				<tr>
+					<th class="text_center fixed align">Language</th>
+					<th class="text_center fixed align">Category</th>
+					<th class="text_center fixed align">Item Code</th>
+					<th class="desc align">Description</th>
+					<th class="text_center fixed align">Rate</th>
+					<th class="text_center fixed align">Stock In Nos</th>
+					<th class="text_center fixed align">Stock In<br>Cartons</th>
+					<th class="text_center fixed align">Book Per<br>Carton</th>
+					<!-- <th class="text_center fixed align">Ordered<br>Qty In NOS</th>
+					<th class="text_center fixed align">Ordered<br>Qty in Cartons</th>
+					<th class="text_center fixed align">Add To Cart</th>
+					<th class="text_center fixed align">Notify Me when in Stock</th>
+					<th class="text_center fixed align">Publisher</th> -->
+
+				</tr>
+			</thead>
+			<tbody>
+				{% for row in data %}
+				{% if row.stock_in_qty %}
+				<tr>
+					<td class="text_center first_col">{{row.book_language or ""}}</td>
+					<td class="text_center sec_col">{{row.item_group or ""}}</td>
+					<td class="text_center col3">{{row.name or ""}}</td>
+					<td class="desc align col4">{{row.description or ""}}</td>
+					<td class="text_center col5">{{row.rate or ""}}</td>
+					<td class="text_center col6">{{row.stock_in_qty or ""}}</td>
+					<td class="text_center col7">{{row.carton_qty or ""}}</td>
+					<td class="text_center col8">{{row.no_of_items_can_be_packed or ""}}</td>
+					<!-- <td class="text_center col9"><input class="order_qty item_order_qty" no_of_items_can_be_packed={{row.no_of_items_can_be_packed}} type="number"></td>
+					<td class="text_center col10" last_col><input class="cartan_order_qty" type="number"></td>
+					<td class="text_center col11">
+						<button class="add_to_card" item={{row.name}} rate={{row.rate}} stock_in_qty={{row.stock_in_qty}} carton_qty={{row.carton_qty}} no_of_items_can_be_packed={{row.no_of_items_can_be_packed}}><b>+</b></button>
+					</td>
+		
+					<td class="text_center col12">
+						
+						{% if not row.stock_in_qty %}
+							<button class="notify_me" onclick="create_doc()" style="color:red"><b>Notify Me</b></button>
+						{% endif %}
+					</td>
+						
+					
+					<td class="text_center col13">{{row.publisher or ""}}</td> -->
+				</tr> 
+				{% else %}
+				<tr style="color:#ff6347;">
+					<td class="text_center first_col">{{row.book_language or ""}}</td>
+					<td class="text_center sec_col">{{row.item_group or ""}}</td>
+					<td class="text_center col3">{{row.name or ""}}</td>
+					<td class="desc align col4">{{row.description or ""}}</td>
+					<td class="text_center col5">{{row.rate or ""}}</td>
+					<td class="text_center col6">{{row.stock_in_qty or "Out of Stock"}}</td>
+					<td class="text_center col7">{{row.carton_qty or ""}}</td>
+					<td class="text_center col8">{{row.no_of_items_can_be_packed or ""}}</td>
+					<!-- <td class="text_center col9"><input class="order_qty item_order_qty" type="number"></td>
+					<td class="text_center col10 "><input class="cartan_order_qty" type="number"></td>
+					<td class="text_center col11">
+						<button class="add_to_card" item={{row.name}} rate={{row.rate}} stock_in_qty={{row.stock_in_qty}} carton_qty={{row.carton_qty}} no_of_items_can_be_packed={{row.no_of_items_can_be_packed}}><b>+</b></button>
+					</td>
+					<td class="text_center col12">
+							<button class="notify_me" onclick="create_doc()" style="color:red"><b>Notify Me</b></button>
+					</td>
+					<td class="text_center col13">{{row.publisher or ""}}</td> -->
+				</tr>
+				{% endif %}
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>

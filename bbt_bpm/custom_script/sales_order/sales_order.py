@@ -49,6 +49,7 @@ def on_submit(doc, method):
                 delivered_qty_1 = delivered_qty[0][0]
 
             actual_allocated_qty = allocated_qty_1 - delivered_qty_1
+
             
             frappe.db.set_value("Item", row.item_code, "allocated_qty", actual_allocated_qty)
 
@@ -154,12 +155,12 @@ def set_packaging_items(doc):
         #     continue    
         is_packaging_item=frappe.db.get_value("Item",item.item_code,"no_of_items_can_be_packed")
         is_catorn_req=frappe.db.get_value("Item",item.item_code,"carton")
-        # if is_packaging_item:
-        #     qty=item.qty/is_packaging_item
-        #     if item.quantity_carton:
-        #         item.qty = item.quantity_carton * is_packaging_item
-        #     else:
-        #         item.quantity_carton = math.ceil(item.qty / is_packaging_item)
+        if is_packaging_item:
+            qty=item.qty/is_packaging_item
+            if item.quantity_carton and doc.calculate_quantity_from_carton:
+                item.qty = item.quantity_carton * is_packaging_item
+            else:
+                item.quantity_carton = math.ceil(item.qty / is_packaging_item)
         if is_packaging_item and is_catorn_req:
             packing_item_code=frappe.db.get_value("Item",item.item_code,"carton")
             item_doc=frappe.get_cached_doc("Item",packing_item_code)
@@ -174,6 +175,7 @@ def set_packaging_items(doc):
             if not conversion_factor:
                 conversion_factor=1
 
+            # Adds a row(2nd) for items having carton
             soi=frappe.new_doc("Sales Order Item")
             soi.parenttype="Sales Order"
             soi.parentfield="items"

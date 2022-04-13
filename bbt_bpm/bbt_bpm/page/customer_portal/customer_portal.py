@@ -3,6 +3,7 @@ import frappe
 from frappe.model.document import Document
 from frappe.utils.pdf import get_pdf
 from datetime import timedelta,date
+from frappe.utils import now
 import datetime
 import calendar
 import json
@@ -308,9 +309,54 @@ def create_doc(name):
 
 @frappe.whitelist(allow_guest=True)
 def download_pdf(html, orientation="Landscape"):
-    html2 = '<h1><img src="/files/BBT Letterhead.PNG" style="width: 30%;"></h1>'
-    html=html2+html
-    frappe.local.response.filename = "report.pdf"
-    frappe.local.response.filecontent = get_pdf(html, {"orientation": orientation,'page-size':'A4'})
-    frappe.local.response.type = "download"
+	html2 = '<h1><img src="/files/BBT Letterhead.PNG" style="width: 30%;"></h1>'
+    #html3 = '<html><head><script>var dt = new Date(); document.getElementById('date-time').innerHTML=dt;</script></head><body><p><span id='date-time'></span></p></body></html>'
+	html=html2+now()+'<p><br></p>'+html
+	frappe.local.response.filename = "report.pdf"
+	frappe.local.response.filecontent = get_pdf(html, {"orientation": orientation,'page-size':'A4'})
+	frappe.local.response.type = "download"
 	
+
+@frappe.whitelist()
+def get_pdf_data(filters):
+	filters = json.loads(filters)
+	items_data = frappe.db.sql("""SELECT name, item_group, description, no_of_items_can_be_packed, carton, book_language,publisher from `tabItem` where {0} """.format(get_filters_codition(filters)), as_dict=1)
+		
+	for row in items_data:
+		item_qty = frappe.db.sql("""SELECT sum(actual_qty) as actual_qty from `tabBin` where item_code='{0}'""".format(row.get("name")), as_dict=1)
+		carton_qty = frappe.db.sql("""SELECT sum(actual_qty) as actual_qty from `tabBin` where item_code='{0}'""".format(row.get("carton")), as_dict=1)
+
+		item_reserved_qty = frappe.db.sql("""SELECT item_code, sum(qty) as qty From `tabStock Blocking Unblocking Table` where item_code='{0}' """.format(row.get("name")), as_dict=1)
+		cartons_reserved_qty = frappe.db.sql("""SELECT sum(qty) as qty From `tabStock Blocking Unblocking Table` where item_code='{0}' """.format(row.get("carton")), as_dict=1)
+		
+		stock_qty=0.0
+		if item_qty[0] and item_reserved_qty[0]:
+			stock_qty = abs(flt(item_qty[0].get("actual_qty"))-flt(item_reserved_qty[0].get("qty")))
+		else:
+			stock_qty=item_qty[0].get("actual_qty") if item_qty[0] else 0
+		cartons_qty = 0.0
+		if carton_qty[0] and cartons_reserved_qty[0]:
+			cartons_qty = abs(flt(carton_qty[0].get("actual_qty"))-flt(cartons_reserved_qty[0].get("qty")))
+		else:
+			cartons_qty=carton_qty[0].get("actual_qty") if carton_qty[0] else 0
+
+		allow_carton_qty = 0.0
+		if row.get("no_of_items_can_be_packed"):
+			allow_carton_qty = flt(stock_qty)/flt(row.get("no_of_items_can_be_packed"))
+		
+		customer_user = frappe.session.user
+		customer_price_list = frappe.db.get_value("Customer", {"user":customer_user}, "default_price_list")
+		item_rate = frappe.db.get_value("Item Price", {"item_code":row.get("name"), "price_list":customer_price_list}, "price_list_rate")
+
+		if stock_qty:
+			#row["rate"] = item_rate or "0"
+			row["rate"] = item_rate or "0"
+		else:
+			row["rate"] = ""
+
+		row["stock_in_qty"] = stock_qty
+		row["carton_qty"] = math.ceil(allow_carton_qty)
+
+	path = 'bbt_bpm/bbt_bpm/page/customer_portal/pdf.html'
+	html=frappe.render_template(path,{'data':items_data})
+	return {'html':html}

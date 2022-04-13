@@ -424,16 +424,22 @@ frappe.customer_portal = Class.extend({
 		"fieldname": 'download_pdf',
 		click: function() {
 			var me = this;
-			var filters = {"language":me.language}
+			var language = $(this).closest('tr').children('td.first_col').text();
+
+			//var language = $(this).attr("language");
+			var filters = {"language":language};
+			console.log(filters);
+
 			//if (me.purchase_order){
 				frappe.call({
-					"method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.get_items_data",
+					"method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.get_pdf_data",
 					args: {
 						filters:filters
 					},
 					callback: function (r) {
 						if (r.message){
 							  var html = r.message.html
+							  //console.log(r.mefilters)
 							var formData = new FormData();
 							formData.append("html", html);
 							var blob = new Blob([], { type: "text/xml"});

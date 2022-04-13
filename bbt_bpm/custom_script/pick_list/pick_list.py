@@ -41,11 +41,19 @@ def set_items(doc):
 	for item in doc.locations:
 		is_packaging_item = frappe.db.get_value("Item", item.item_code, "no_of_items_can_be_packed")
 		is_carton_req = frappe.db.get_value("Item", item.item_code, "carton")
-		
+		print('/////')
+		print("\n\n Is Packaging Item \n\n - ",is_packaging_item)
+		print('/////')
 		if is_packaging_item and is_carton_req:
 			carton_item_doc_name = frappe.get_cached_doc("Item", {"item_code": is_carton_req})
+			item.qty = 100
+			print('/////')
+			print("\n\n Qty \n\n - ",item.qty)
+			print('/////')
+
 			qty = item.qty / is_packaging_item
 			item.carton_qty = qty
+			
 			print('item index__________	',int(item.idx))
 			# item.carton_qty = doc.locations[int(item.idx)+1].qty
 			item.no_of_items_can_be_packed = is_packaging_item
@@ -58,6 +66,10 @@ def set_items(doc):
 			# print(is_packaging_item)
 			# print('////////')
 
+			# if item.qty > item.no_of_items_can_be_packed:
+			#         rows = doc.append('locations', {})
+
+				        
 			# if item.qty > is_packaging_item:
 			# 	remaining_qty = item.qty - item.no_of_items_can_be_packed
 			# 	row = doc.append('locations', {})
@@ -71,15 +83,8 @@ def set_items(doc):
 			item_link = "<a target=_blank href='#Form/Item/{0}'>{1}</a>".format(item.item_code, item.item_code)
 			msg = "Kindly Update No. of Item can be packed Field for Item {0}".format(item_link)
 			frappe.throw(msg)
-
+			
 	carton_details(doc)
-
-# def add_rows(doc,remaining_qty, item_code):
-# 	row = doc.append('locations', {})
-# 	row.qty = remaining_qty
-# 	row.item_code = item_code
-# 	#row.amount = Math.round(deduction_amount)
-
 
 
 def on_submit(doc, method=None):
