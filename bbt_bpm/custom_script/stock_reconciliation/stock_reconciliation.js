@@ -29,7 +29,7 @@ frappe.ui.form.on('Stock Reconciliation', {
         			                                  posting_date: frm.doc.posting_date,
         						                      posting_time: frm.doc.posting_time,
         						                      item_code: values.item_code,
-        						                      book_language: values.book_language,
+        						                      book_language: values.book_language
         						                   
         											  },
         			                                callback: function(r) {

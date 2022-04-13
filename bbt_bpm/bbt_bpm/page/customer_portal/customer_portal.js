@@ -349,85 +349,35 @@ frappe.customer_portal = Class.extend({
 		})
 		$('[data-fieldname="add_to_cart_items"]').addClass("btn-primary")
 
-		// me.page.add_field({
-		// 	"fieldtype": 'Button',
-		// 	"label": __('Notify Me when in Stock'),
-		// 	"fieldname": 'notify',
-		// 	click: function() {
-		// 		me.notify = this.value?this.value:null
-		// 		me.get_imp_data()
-		// 		let name = $(this).attr("item_name")
-		// 		console.log(name) 
-
-		// 		frappe.call({
-		// 			method : "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.create_doc"
-		// 			args : { "user": frappe.session.user,
-		// 					  },
-		// 			callback: function(r){
-		// 				if (r.message)
-		// 			}
-		// 		})
-			
-		// 	}
-		// })
-	//}
-
-	// create_doc: function(){
-	// 	$('.notify_me').click(function(){
-
-	// 		let name = $(this).attr("item_name")
-	// 		console.log(name) 
-
-	// 		frappe.call({
-	// 			method : "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.create_doc"
-	// 			args : { "user": frappe.session.user,
-							
-	// 					  },
-	// 			callback: function(r){
-	// 				if (r.message)
-	// 			}
-	// 		})
-	// 	})
-	// }
-		// me.page.add_field({
-		// 	"fieldtype": 'Button',
-		// 	"label": __('Download Pdf'),
-		// 	"fieldname": 'download_pdf',
-		// 	click: function() {
-		// 		var language = $(this).attr("language")
-		// 	// me.add_to_cart_items = this.value?this.value:null
-		// 	// $('[data-fieldname="home"]').show()
-		// 	// $('[data-fieldname="language"]').hide()
-		// 		frappe.call({
-		// 			"method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.download_pdf",
-		// 			args: {
-		// 				//user:frappe.session.user
-		// 				//language:language
-		// 			},
-		// 			callback: function (r) {
-		// 				if (r.message){
-		// 				  	var html = r.message.html
-		// 				// $('.frappe-list').html(html)
-		// 				// $('.delete').hide()
-		// 				// me.delete_add_to_cart_item()
-		// 				// me.update_qty_on_cart()
-		// 				// me.new_order()
-		// 				}
-
-		// 			}//calback end
-		// 		})
-		// 	}
-		//})
 		me.page.add_field({
 		"fieldtype": 'Button',
 		"label": __('Download Pdf'),
 		"fieldname": 'download_pdf',
 		click: function() {
 			var me = this;
-			var language = $(this).closest('tr').children('td.first_col').text();
+			//var language = $(this).closest('tr').children('td.first_col').text();
 
 			//var language = $(this).attr("language");
-			var filters = {"language":language};
+			var patient = frappe.ui.form.make_control({
+	// 	parent: page.main.find(".patient"),
+	// 	df: {
+	// 		fieldtype: "Link",
+	// 		options: "Patient",
+	// 		fieldname: "patient",
+	// 		change: function(){
+	// 			if(pid != patient.get_value() && patient.get_value()){
+	// 				me.start = 0;
+	// 				me.page.main.find(".patient_documents_list").html("");
+	// 				get_documents(patient.get_value(), me);
+	// 				show_patient_info(patient.get_value(), me);
+	// 				show_patient_vital_charts(patient.get_value(), me, "bp", "mmHg", "Blood Pressure");
+	// 			}
+	// 			pid = patient.get_value();
+	// 		}
+	// 	},
+	// 	only_input: true,
+	// });
+			var filters = {"language":me.language};
 			console.log(filters);
 
 			//if (me.purchase_order){
@@ -438,8 +388,7 @@ frappe.customer_portal = Class.extend({
 					},
 					callback: function (r) {
 						if (r.message){
-							  var html = r.message.html
-							  //console.log(r.mefilters)
+							var html = r.message.html
 							var formData = new FormData();
 							formData.append("html", html);
 							var blob = new Blob([], { type: "text/xml"});
@@ -466,7 +415,7 @@ frappe.customer_portal = Class.extend({
 	
 					}//calback end
 				})
-			}	//}	
+			}		
 	})
 }		
 })

@@ -136,7 +136,7 @@ doc_events = {
 
 	},
 	"Stock Reconciliation":{
-		"validate": "bbt_bpm.custom_script.stock_reconciliation.stock_reconciliation.get_warehouse_data"
+		#"validate": "bbt_bpm.custom_script.stock_reconciliation.stock_reconciliation.get_warehouse_data"
 	},
 	"User": {
 		"validate": "bbt_bpm.custom_script.user.user.validate",
