@@ -192,6 +192,7 @@ function check_set(frm) {
                 while(pending_qty>0) {
                     var childTable = frm.add_child("locations");
                     childTable.item_code= v.item_code
+                    //childTable.carton_qty= v.item_code
                     childTable.qty = pending_qty
                     childTable.stock_qty = pending_qty
                     childTable.picked_qty = pending_qty

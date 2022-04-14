@@ -354,11 +354,12 @@ frappe.customer_portal = Class.extend({
 		"label": __('Download Pdf'),
 		"fieldname": 'download_pdf',
 		click: function() {
-			var me = this;
+			//var me = this;
+			//console.log(me)
 			//var language = $(this).closest('tr').children('td.first_col').text();
 
 			//var language = $(this).attr("language");
-			var patient = frappe.ui.form.make_control({
+			//var patient = frappe.ui.form.make_control({
 	// 	parent: page.main.find(".patient"),
 	// 	df: {
 	// 		fieldtype: "Link",

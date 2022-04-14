@@ -41,19 +41,13 @@ def set_items(doc):
 	for item in doc.locations:
 		is_packaging_item = frappe.db.get_value("Item", item.item_code, "no_of_items_can_be_packed")
 		is_carton_req = frappe.db.get_value("Item", item.item_code, "carton")
-		print('/////')
-		print("\n\n Is Packaging Item \n\n - ",is_packaging_item)
-		print('/////')
 		if is_packaging_item and is_carton_req:
 			carton_item_doc_name = frappe.get_cached_doc("Item", {"item_code": is_carton_req})
-			item.qty = 100
-			print('/////')
-			print("\n\n Qty \n\n - ",item.qty)
-			print('/////')
 
 			qty = item.qty / is_packaging_item
 			item.carton_qty = qty
-			
+
+			print('\n\nIs packaging Item - \n\n',is_packaging_item)
 			print('item index__________	',int(item.idx))
 			# item.carton_qty = doc.locations[int(item.idx)+1].qty
 			item.no_of_items_can_be_packed = is_packaging_item
