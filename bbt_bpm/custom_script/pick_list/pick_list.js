@@ -164,10 +164,10 @@ frappe.ui.form.on("Pick List", {
                 });
         });
         
-   },
-   validate: function(frm){
-    frm.trigger('get_item_locations')
    }
+   // before_save: function(frm){
+   //  frm.trigger('get_item_locations')
+   // }
     
 });
 
