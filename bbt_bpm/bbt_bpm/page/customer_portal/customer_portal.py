@@ -309,7 +309,7 @@ def create_doc(name):
 
 @frappe.whitelist(allow_guest=True)
 def download_pdf(html, orientation="Landscape"):
-	html2 = '<h1><img src="/files/BBT Letterhead.png" style="width: 100%;"></h1>'
+	html2 = '<h1><img src="/files/BBT Letterhead.PNG" style="width: 100%;"></h1>'
     #html3 = '<html><head><script>var dt = new Date(); document.getElementById('date-time').innerHTML=dt;</script></head><body><p><span id='date-time'></span></p></body></html>'
 	html=html2+now()+'<p><br></p>'+html
 	frappe.local.response.filename = "report.pdf"
