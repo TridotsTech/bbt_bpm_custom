@@ -50,7 +50,9 @@ doctype_js = {
 	"Item": "custom_script/item/item.js",
 	"Pick List": "custom_script/pick_list/pick_list.js",
 	"Customer": "custom_script/customer/customer.js",
-	"Stock Reconciliation": "custom_script/stock_reconciliation/stock_reconciliation.js"
+	"Stock Reconciliation": "custom_script/stock_reconciliation/stock_reconciliation.js",
+	"Batch": "custom_script/batch/batch.js",
+	"Delivery Note": "custom_script/delivery_note/delivery_note.js"
 }
 
 # Home Pages
@@ -137,6 +139,9 @@ doc_events = {
 	},
 	"Stock Reconciliation":{
 		#"validate": "bbt_bpm.custom_script.stock_reconciliation.stock_reconciliation.get_warehouse_data"
+	},
+	"Batch":{
+		# "before_save": "bbt_bpm.custom_script.batch.batch.before_save"
 	},
 	"User": {
 		"validate": "bbt_bpm.custom_script.user.user.validate",

@@ -3,8 +3,7 @@ from erpnext.stock.utils import get_stock_balance
 
 @frappe.whitelist()
 def get_warehouse_data(warehouse, company, posting_date, posting_time,item_code=None,book_language=None):
-	print('\n\n\nPosting date\n\n', posting_date)
-	print('\n\n\nPosting time\n\n', posting_time)
+
 	lft, rgt = frappe.db.get_value("Warehouse", warehouse, ["lft", "rgt"])
 	wh_data = frappe.db.sql("""SELECT i.name, i.item_name, bin.warehouse FROM `tabBin` bin, `tabItem` i
 							   WHERE i.name = bin.item_code  and i.disabled=0 and i.is_stock_item = 1
