@@ -18,7 +18,7 @@ app_license = "MIT"
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/bbt_bpm/css/bbt_bpm.css"
+app_include_css = "/assets/bbt_bpm/css/custom.css"
 # app_include_js = "/assets/bbt_bpm/js/bbt_bpm.js"
 
 # include js, css files in header of web template
