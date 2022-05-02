@@ -3,7 +3,39 @@
 
 body{
     font-family: 'Poppins';
+    background-color: #FFFCED;
 }
+
+/*.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
+background-color: #FFFCED;}
+*/
+
+/*div#navbar navbar-default navbar-fixed-top{
+    background-color: #FFFCED;}
+*/
+
+.navbar-default {
+  background-color: #C7DFCD;
+}
+
+.btn-primary {
+    background-color: #BB6464;
+    border-color: #BB6464;
+}
+
+.btn-primary:hover {
+    background-color: #BB6464;
+    border-color: #BB6464;
+}
+
+/*.navbar-fixed-top{
+    background-color: black;
+}
+*/
+
+/*header{
+    background-color: #FFFCED;
+}*/
 
 /*
     .print-format {

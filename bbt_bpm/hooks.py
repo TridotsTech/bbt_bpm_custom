@@ -55,6 +55,8 @@ doctype_js = {
 	"Delivery Note": "custom_script/delivery_note/delivery_note.js"
 }
 
+app_logo_url = "/files/bbt_icon.png"
+
 # Home Pages
 # ----------
 
