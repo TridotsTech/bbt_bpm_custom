@@ -176,8 +176,8 @@ def new_order(client_feedback):
 			})
 		doc.save()
 		doc.add_comment('Comment', text=client_feedback)
-		# frappe.delete_doc('Add To Cart', frappe.session.user)
-		# frappe.db.commit()
+		frappe.delete_doc('Add To Cart', frappe.session.user)
+		frappe.db.commit()
 		frappe.msgprint(_("New Order Created"))
 	if frappe.db.get_value("Add To Cart", {"name":frappe.session.user}, "name") and customer and data2:
 		doc=frappe.new_doc("Sales Order")
@@ -206,8 +206,8 @@ def new_order(client_feedback):
 			})
 		doc.save()
 		doc.add_comment('Comment', text=client_feedback)
-		# frappe.delete_doc('Add To Cart', frappe.session.user)
-		# frappe.db.commit()
+		frappe.delete_doc('Add To Cart', frappe.session.user)
+		frappe.db.commit()
 		frappe.msgprint(_("New Order Created"))
 	if frappe.db.get_value("Add To Cart", {"name":frappe.session.user}, "name") and customer and data3:
 		doc=frappe.new_doc("Sales Order")
