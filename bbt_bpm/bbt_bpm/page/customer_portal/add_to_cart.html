@@ -252,20 +252,37 @@
 				</tr>
 
 				<tr>
-					<td colspan="13">
+					<td colspan="7">
 						<p><label class="contact_person">Contact Person</label></p>
-						<input type="text" class="c_p" id="c_p" name="c_p">
-							<!-- {frappe.db.get_values("Sales Order", {"user":frappe.session.user}, "contact_person")} -->
-								
-							</input>
+						<select class="c_p" id="c_p" name="c_p">
+						 {% for x in contact %}
+							<option >{{x.parent}}</option>
+						 {% endfor %}
+						 <!-- <option value='desk#Form/Contact/New%20Contact%201'>Create Contact</option> -->
+						</select>
 					</td>
+
+					<td colspan="6">
+						<p><label class="create_new">Create New Contact/Address</label></p>
+						<select onChange="window.location.href=this.value">
+							<option value="">&nbsp;</option>
+							<option value="desk#List/Contact/List">Contact List</option>
+						    <option value="desk#List/Address/List">Address List</option>
+						</select>
+					</td>
+
 
 				</tr>
 
 				<tr>
 					<td colspan="7">
-						<p><label class="transp_mode">Transportation Mode </label></p>
-						<input type="text" class="t_m" id="t_m" name="t_m" ></textarea>
+						<p><label class="transportation_mode">Transportation Mode </label></p>
+						<select class="transp_mode" id="transp_mode" name="transp_mode" style="color:green;">
+							<option value="Road">Road</option>
+							<option value="Air">Air</option>
+							<option value="Rail">Rail</option>
+							<option value="Ship">Ship</option>
+						</select>
 					</td>
 
 					<td colspan="6">
@@ -298,13 +315,22 @@
 
 				<tr>
 					<td colspan="7">
-						<p><label class="d_address">Delivery Address </label></p>
-						<textarea class="comment" id="comment" name="comment" rows="4" cols="50"></textarea>
+						<p><label class="shipping_address">Delivery Address </label></p>
+						<select class="s_address" id="s_address" name="s_address">
+						 {% for x in addresses %}
+							<option >{{x.parent}}</option>
+						 {% endfor %}
+						</select>
+						
 					</td>
 
 					<td colspan="6">
-						<p><label class="b_address">Billing Address </label></p>
-						<textarea class="comment" id="comment" name="comment" rows="4" cols="50"></textarea>
+						<p><label class="billing_address">Billing Address </label></p>
+						<select class="b_address" id="b_address" name="b_address">
+						 {% for x in addresses %}
+							<option >{{x.parent}}</option>
+						 {% endfor %}
+						</select>
 					</td>
 
 				</tr>

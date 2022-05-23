@@ -136,13 +136,22 @@ def add_to_cart_details(user):
 		row["total_cartons_qty"] = add_qty[0].get("total_cartons_qty")
 		row["total_amount"] = add_qty[0].get("total_amount")
 
+	cust = frappe.db.get_value("Customer", {"user":user}, "name")
+
+	contact = frappe.get_all('Dynamic Link', filters={'link_doctype': 'Customer', 'link_name': cust, 'parenttype': 'Contact'}, fields=['parent'])
+	# c_person = frappe.db.get_value('Contact', contact[0].parent)
+
+	addresses = frappe.get_all('Dynamic Link', filters={'link_doctype': 'Customer', 'link_name': cust, 'parenttype': 'Address'}, fields=['parent'])
+	# shipping_address = frappe.db.get_value('Address', addresses[0].parent, ['address_line1','city','country'])
+	# billing_address = frappe.db.get_value('Address', addresses[1].parent, 'address_line1')
+
 	path = 'bbt_bpm/bbt_bpm/page/customer_portal/add_to_cart.html'
-	html=frappe.render_template(path,{'data':add_to_cart})
+	html=frappe.render_template(path,{'data':add_to_cart, 'contact': contact, 'addresses':addresses})
 	return {'html':html}
 
 
 @frappe.whitelist()
-def new_order(client_feedback):
+def new_order(client_feedback, contact_person, transportation_mode, preferred_transporter, freight_charges, delivery_type, shipping_address, billing_address, instruction_delivery, special_instruction):
 	user = frappe.session.user
 	data = frappe.db.sql("""SELECT item_code, item_name, item_group, description, rate, language, stock_in_nos, stock_in_cartons, book_per_carton, ordered_qty_in_nos, ordered_qty_in_cartons from `tabAdd To Cart Item` where publisher="BBT" and parent='{0}' """.format(user), as_dict=1)
 	data2 = frappe.db.sql("""SELECT item_code, item_name, item_group, description, rate, language, stock_in_nos, stock_in_cartons, book_per_carton, ordered_qty_in_nos, ordered_qty_in_cartons from `tabAdd To Cart Item` where publisher="SRST" and parent='{0}' """.format(user), as_dict=1)
@@ -174,6 +183,15 @@ def new_order(client_feedback):
 				"item_tax_template": item_taxes_template
 				# "warehouse": "Stores - SRST"
 			})
+		doc.contact_person = contact_person
+		doc.mode_of_transport = transportation_mode
+		doc.preferred_transporter = preferred_transporter
+		doc.payment = freight_charges
+		doc.delivery_type = delivery_type
+		doc.shipping_address_name = shipping_address
+		doc.customer_address =  billing_address
+		doc.instruction_for_delivery = instruction_delivery
+		doc.special_instruction = special_instruction
 		doc.save()
 		doc.add_comment('Comment', text=client_feedback)
 		#frappe.delete_doc('Add To Cart', frappe.session.user)
@@ -204,6 +222,15 @@ def new_order(client_feedback):
 				"item_tax_template": item_taxes_template
 				# "warehouse": "Stores - SRST"
 			})
+		doc.contact_person = contact_person
+		doc.mode_of_transport = transportation_mode
+		doc.preferred_transporter = preferred_transporter
+		doc.payment = freight_charges
+		doc.delivery_type = delivery_type
+		doc.shipping_address_name = shipping_address
+		doc.customer_address =  billing_address
+		doc.instruction_for_delivery = instruction_delivery
+		doc.special_instruction = special_instruction
 		doc.save()
 		doc.add_comment('Comment', text=client_feedback)
 		#frappe.delete_doc('Add To Cart', frappe.session.user)
@@ -234,6 +261,15 @@ def new_order(client_feedback):
 				"item_tax_template": item_taxes_template
 				# "warehouse": "Stores - SRST"
 			})
+		doc.contact_person = contact_person
+		doc.mode_of_transport = transportation_mode
+		doc.preferred_transporter = preferred_transporter
+		doc.payment = freight_charges
+		doc.delivery_type = delivery_type
+		doc.shipping_address_name = shipping_address
+		doc.customer_address =  billing_address
+		doc.instruction_for_delivery = instruction_delivery
+		doc.special_instruction = special_instruction
 		doc.save()
 		doc.add_comment('Comment', text=client_feedback)
 		frappe.delete_doc('Add To Cart', frappe.session.user)

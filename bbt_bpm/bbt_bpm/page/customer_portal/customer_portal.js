@@ -51,6 +51,7 @@ frappe.customer_portal = Class.extend({
 	    			me.add_to_card(me)
 	    			me.notify_me(me)
 	    			me.new_order(me)
+	    			//me.add_field_details(me)
 
 	        	}
 
@@ -156,6 +157,8 @@ frappe.customer_portal = Class.extend({
 		 })
 
 	},
+
+
 	
 
 	delete_add_to_cart_item: function(){
@@ -199,10 +202,28 @@ frappe.customer_portal = Class.extend({
 	new_order: function(){
 		$(".submit").click(function(){
 			client_feedback = $(".comment").val()
+			contact_person = $(".c_p").val()
+			transportation_mode = $(".transp_mode").val()
+			preferred_transporter = $(".p_t").val()
+			freight_charges = $(".f_c").val()
+			delivery_type = $(".d_t").val()
+			shipping_address = $(".s_address").val()
+			billing_address = $(".b_address").val()
+			instruction_delivery = $(".i_d").val()
+			special_instruction = $(".s_i").val()
 			frappe.call({
 		        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.new_order",
 		        args: {
-		        	client_feedback:client_feedback
+		        	client_feedback:client_feedback,
+		        	contact_person: contact_person,
+		        	transportation_mode: transportation_mode,
+		        	preferred_transporter: preferred_transporter,
+		        	freight_charges: freight_charges,
+		        	delivery_type: delivery_type,
+		        	shipping_address: shipping_address,
+		        	billing_address: billing_address,
+		        	instruction_delivery: instruction_delivery,
+		        	special_instruction: special_instruction
 		        },
 		        //headers: {'content-type': 'application/json'},
 		        callback: function (r) {
