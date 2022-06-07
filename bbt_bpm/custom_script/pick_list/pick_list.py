@@ -9,6 +9,7 @@ def save(doc, method):
 
 def carton_details(doc):
 	indx=0
+	count=0
 	for i in doc.get("locations"):
 		is_packaging=frappe.db.get_value("Item",i.item_code,"item_group")
 		if is_packaging in ["Carton","packaging material"]:
@@ -17,7 +18,7 @@ def carton_details(doc):
 			end_indx=""
 			# indx=end_indx
 
-			i.carton_no=str(start_indx)+"-"+str(end_indx)
+			#i.carton_no=str(start_indx)+"-"+str(end_indx)
 			i.carton_qty = str(start_indx)+"-"+str(end_indx)
 			i.no_of_items_can_be_packed = str(start_indx)+"-"+ str(end_indx)
 		
@@ -31,10 +32,14 @@ def carton_details(doc):
 				#carton_qty = doc.locations[int(i.idx)].qty
 
 
-			start_indx=indx+1
-			end_indx=start_indx+carton_qty - 1
-			i.carton_no=str(start_indx)+"-"+str(int(end_indx))
+			start_indx=int(indx+1)
+			#end_indx=start_indx+carton_qty - 1
+			end_indx = count + int(i.carton_qty)
+			#count = end_indx + int(i.carton_qty)
+			#i.carton_no=str(start_indx)+"-"+str(int(end_indx))
+			i.carton_no=str(start_indx)+"-"+str(end_indx)
 			indx=end_indx
+			count = int(indx)
 			
 def set_items(doc):
 	
@@ -47,32 +52,11 @@ def set_items(doc):
 			qty = item.qty / is_packaging_item
 			item.carton_qty = qty
 
-			print('\n\nIs packaging Item - \n\n',is_packaging_item)
-			print('item index__________	',int(item.idx))
+			#print('\n\nIs packaging Item - \n\n',is_packaging_item)
+			#print('item index__________	',int(item.idx))
 			# item.carton_qty = doc.locations[int(item.idx)+1].qty
 			item.no_of_items_can_be_packed = is_packaging_item
-			#remaining_qty = item.qty - item.no_of_items_can_be_packed
-			#add_rows(doc,remaining_qty,item.item_code)
-			# print('////////')
-			# #print(remaining_qty)
-			# print(item.item_code)
-			# print(item.qty)
-			# print(is_packaging_item)
-			# print('////////')
-
-			# if item.qty > item.no_of_items_can_be_packed:
-			#         rows = doc.append('locations', {})
-
-				        
-			# if item.qty > is_packaging_item:
-			# 	remaining_qty = item.qty - item.no_of_items_can_be_packed
-			# 	row = doc.append('locations', {})
-			# 	row.idx = item.idx + 1
-			# 	row.qty = remaining_qty
-			# 	row.item_code = item.item_code
-			# 	row.no_of_items_can_be_packed = is_packaging_item
 				
-
 		elif not is_packaging_item:
 			item_link = "<a target=_blank href='#Form/Item/{0}'>{1}</a>".format(item.item_code, item.item_code)
 			msg = "Kindly Update No. of Item can be packed Field for Item {0}".format(item_link)

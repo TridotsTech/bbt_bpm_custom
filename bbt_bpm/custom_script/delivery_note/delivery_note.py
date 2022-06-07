@@ -36,6 +36,7 @@ def save(doc, method):
 
 def carton_num(doc):
 	indx=0
+	count=0
 	for i in doc.items:
 		is_packaging=frappe.db.get_value("Item",i.item_code,"item_group")
 		
@@ -55,10 +56,13 @@ def carton_num(doc):
 				# i.carton_qty =  doc.items[int(i.idx)].qty
 				# carton_qty = doc.items[int(i.idx)].qty
 				carton_qty =  i.qty
+
 			start_indx=indx+1
-			end_indx=start_indx+carton_qty-1
+			#end_indx=start_indx+carton_qty-1
+			end_indx = count + int(i.carton_qty)
 			i.carton_no=str(start_indx)+"-"+str(int(end_indx))
 			indx=end_indx
+			count = int(indx)
 
 def set_items(doc):
 	
