@@ -8,8 +8,6 @@ def save(doc, method):
 	set_items(doc)
 
 def carton_details(doc):
-	indx=0
-	count=0
 	for i in doc.get("locations"):
 		is_packaging=frappe.db.get_value("Item",i.item_code,"item_group")
 		if is_packaging in ["Carton","packaging material"]:
@@ -19,7 +17,7 @@ def carton_details(doc):
 			# indx=end_indx
 
 			#i.carton_no=str(start_indx)+"-"+str(end_indx)
-			i.carton_qty = str(start_indx)+"-"+str(end_indx)
+			#i.carton_qty = str(start_indx)+"-"+str(end_indx)
 			i.no_of_items_can_be_packed = str(start_indx)+"-"+ str(end_indx)
 		
 		else:
@@ -31,23 +29,15 @@ def carton_details(doc):
 				carton_qty =  i.qty
 				#carton_qty = doc.locations[int(i.idx)].qty
 
-
-			start_indx=int(indx+1)
-			#end_indx=start_indx+carton_qty - 1
-			end_indx = count + int(i.carton_qty)
-			#count = end_indx + int(i.carton_qty)
-			#i.carton_no=str(start_indx)+"-"+str(int(end_indx))
-			i.carton_no=str(start_indx)+"-"+str(end_indx)
-			indx=end_indx
-			count = int(indx)
+	calculate_carton_no(doc)
 			
 def set_items(doc):
 	
 	for item in doc.locations:
 		is_packaging_item = frappe.db.get_value("Item", item.item_code, "no_of_items_can_be_packed")
 		is_carton_req = frappe.db.get_value("Item", item.item_code, "carton")
-		if is_packaging_item and is_carton_req:
-			carton_item_doc_name = frappe.get_cached_doc("Item", {"item_code": is_carton_req})
+		if is_packaging_item:
+			# carton_item_doc_name = frappe.get_cached_doc("Item", {"item_code": is_carton_req})
 
 			qty = item.qty / is_packaging_item
 			item.carton_qty = qty
@@ -63,6 +53,20 @@ def set_items(doc):
 			frappe.throw(msg)
 			
 	carton_details(doc)
+
+def calculate_carton_no(doc):
+	indx=0
+	count=0
+	for i in doc.locations:
+		if int(i.carton_qty) > 0:
+			start_indx=int(indx+1)
+			end_indx = count + int(i.carton_qty)
+			i.carton_no=str(start_indx)+"-"+str(end_indx)
+			indx=end_indx
+			count = int(indx)
+
+		elif int(i.carton_qty) == 0:
+			i.carton_no == None
 
 
 def on_submit(doc, method=None):

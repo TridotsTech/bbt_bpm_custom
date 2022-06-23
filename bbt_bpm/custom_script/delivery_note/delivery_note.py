@@ -35,9 +35,12 @@ def save(doc, method):
 	set_items(doc)
 
 def carton_num(doc):
+	nos_rows=0
 	indx=0
 	count=0
 	for i in doc.items:
+		nos_rows += 1
+		print('\n\n Carton Qty \n\n', int(i.carton_qty))
 		is_packaging=frappe.db.get_value("Item",i.item_code,"item_group")
 		
 		if is_packaging in ["Carton","packaging material"]:
@@ -52,17 +55,25 @@ def carton_num(doc):
 			if not i.carton_qty:
 				carton_qty = 0
 			else:
-				# carton_qty = i.carton_qty
-				# i.carton_qty =  doc.items[int(i.idx)].qty
-				# carton_qty = doc.items[int(i.idx)].qty
 				carton_qty =  i.qty
 
-			start_indx=indx+1
-			#end_indx=start_indx+carton_qty-1
+		if int(i.carton_qty) > 0:
+			start_indx=int(indx+1)
 			end_indx = count + int(i.carton_qty)
-			i.carton_no=str(start_indx)+"-"+str(int(end_indx))
+			i.carton_no=str(start_indx)+"-"+str(end_indx)
 			indx=end_indx
 			count = int(indx)
+
+		elif int(i.carton_qty) == 0:
+			i.carton_no == None
+
+	print('\n\n Rows \n\n', nos_rows)
+
+			# start_indx=indx+1
+			# end_indx = count + int(i.carton_qty)
+			# i.carton_no=str(start_indx)+"-"+str(int(end_indx))
+			# indx=end_indx
+			# count = int(indx)
 
 def set_items(doc):
 	
@@ -72,7 +83,7 @@ def set_items(doc):
 		item_weight = frappe.db.get_value("Item", item.item_code, "weight_per_unit")
 		available_qty = frappe.db.sql_list("""select sum(actual_qty) from tabBin 
 							where item_code='{0}' and warehouse='{1}'""".format(item.item_code, item.warehouse))
-		if is_packaging_item and is_carton_req:
+		if is_packaging_item:
 			carton_item_doc_name = frappe.get_cached_doc("Item", {"item_code": is_carton_req})
 			item.carton_name = carton_item_doc_name.item_code
 			qty = item.qty / is_packaging_item
