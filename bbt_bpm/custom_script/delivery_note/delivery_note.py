@@ -35,12 +35,10 @@ def save(doc, method):
 	set_items(doc)
 
 def carton_num(doc):
-	nos_rows=0
 	indx=0
 	count=0
 	for i in doc.items:
-		nos_rows += 1
-		print('\n\n Carton Qty \n\n', int(i.carton_qty))
+		# nos_rows += 1
 		is_packaging=frappe.db.get_value("Item",i.item_code,"item_group")
 		
 		if is_packaging in ["Carton","packaging material"]:
@@ -48,7 +46,7 @@ def carton_num(doc):
 			start_indx=""
 			end_indx=""
 			
-			i.carton_no=str(start_indx)+"-"+str(end_indx)
+			# i.carton_no=str(start_indx)+"-"+str(end_indx)
 			i.carton_qty = str(start_indx)+"-"+str(end_indx)
 			i.no_of_items_can_be_packed = str(start_indx)+"-"+str(end_indx)
 		else:
@@ -57,23 +55,14 @@ def carton_num(doc):
 			else:
 				carton_qty =  i.qty
 
-		if int(i.carton_qty) > 0:
+		# carton_no calculation
+		if int(i.carton_qty) > 0 and not doc.edit_carton_qty_and_no:
 			start_indx=int(indx+1)
 			end_indx = count + int(i.carton_qty)
 			i.carton_no=str(start_indx)+"-"+str(end_indx)
 			indx=end_indx
 			count = int(indx)
 
-		elif int(i.carton_qty) == 0:
-			i.carton_no == None
-
-	print('\n\n Rows \n\n', nos_rows)
-
-			# start_indx=indx+1
-			# end_indx = count + int(i.carton_qty)
-			# i.carton_no=str(start_indx)+"-"+str(int(end_indx))
-			# indx=end_indx
-			# count = int(indx)
 
 def set_items(doc):
 	
@@ -83,8 +72,10 @@ def set_items(doc):
 		item_weight = frappe.db.get_value("Item", item.item_code, "weight_per_unit")
 		available_qty = frappe.db.sql_list("""select sum(actual_qty) from tabBin 
 							where item_code='{0}' and warehouse='{1}'""".format(item.item_code, item.warehouse))
-		if is_packaging_item:
-			carton_item_doc_name = frappe.get_cached_doc("Item", {"item_code": is_carton_req})
+		item_code = frappe.db.get_value("Item", item.item_code, "item_code")
+
+		if is_packaging_item and not doc.edit_carton_qty_and_no:
+			carton_item_doc_name = frappe.get_cached_doc("Item", {"item_code": item_code})
 			item.carton_name = carton_item_doc_name.item_code
 			qty = item.qty / is_packaging_item
 			item.carton_qty = math.ceil(qty)
@@ -95,6 +86,19 @@ def set_items(doc):
 			item.available_stock = available_qty[0]
 			item.used_qty = item.qty
 			item.is_free_item = 1
+
+		elif doc.edit_carton_qty_and_no:
+			carton_item_doc_name = frappe.get_cached_doc("Item", {"item_code": item_code})
+			item.carton_name = carton_item_doc_name.item_code
+			item.no_of_items_can_be_packed = is_packaging_item
+			item.per_carton_weight_in_kg = carton_item_doc_name.per_carton_weight_kgs
+			item.total_carton_weight_in_kg = item_weight * item.qty + item.per_carton_weight_in_kg * item.carton_qty
+			item.dimension = carton_item_doc_name.dimension
+			item.available_stock = available_qty[0]
+			item.used_qty = item.qty
+			item.is_free_item = 1
+
+
 		elif not is_packaging_item:
 			item_link = "<a target=_blank href='#Form/Item/{0}'>{1}</a>".format(item.item_code, item.item_code)
 			msg = "Kindly Update No. of Item can be packed Field for Item {0}".format(item_link)

@@ -16,7 +16,6 @@ def carton_details(doc):
 			end_indx=""
 			# indx=end_indx
 
-			#i.carton_no=str(start_indx)+"-"+str(end_indx)
 			#i.carton_qty = str(start_indx)+"-"+str(end_indx)
 			i.no_of_items_can_be_packed = str(start_indx)+"-"+ str(end_indx)
 		
@@ -40,7 +39,11 @@ def set_items(doc):
 			# carton_item_doc_name = frappe.get_cached_doc("Item", {"item_code": is_carton_req})
 
 			qty = item.qty / is_packaging_item
-			item.carton_qty = qty
+			if not doc.edit_carton_qty_and_no:
+				item.carton_qty = qty
+
+			# elif doc.edit_carton_qty_and_no:
+			# 	item.carton_qty = None
 
 			#print('\n\nIs packaging Item - \n\n',is_packaging_item)
 			#print('item index__________	',int(item.idx))
@@ -58,15 +61,18 @@ def calculate_carton_no(doc):
 	indx=0
 	count=0
 	for i in doc.locations:
-		if int(i.carton_qty) > 0:
+		if not doc.edit_carton_qty_and_no and int(i.carton_qty) > 0:
 			start_indx=int(indx+1)
 			end_indx = count + int(i.carton_qty)
 			i.carton_no=str(start_indx)+"-"+str(end_indx)
 			indx=end_indx
 			count = int(indx)
 
-		elif int(i.carton_qty) == 0:
-			i.carton_no == None
+		# elif int(i.carton_qty) == 0:
+		# 	i.carton_no = str(input())
+
+		# elif doc.edit_carton_qty_and_no:
+		# 	i.carton_no == None
 
 
 def on_submit(doc, method=None):
