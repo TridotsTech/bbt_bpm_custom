@@ -47,7 +47,7 @@ def carton_num(doc):
 			end_indx=""
 			
 			# i.carton_no=str(start_indx)+"-"+str(end_indx)
-			i.carton_qty = str(start_indx)+"-"+str(end_indx)
+			#i.carton_qty = str(start_indx)+"-"+str(end_indx)
 			i.no_of_items_can_be_packed = str(start_indx)+"-"+str(end_indx)
 		else:
 			if not i.carton_qty:
@@ -55,13 +55,20 @@ def carton_num(doc):
 			else:
 				carton_qty =  i.qty
 
-		# carton_no calculation
+		#carton_no calculation
 		if int(i.carton_qty) > 0 and not doc.edit_carton_qty_and_no:
 			start_indx=int(indx+1)
 			end_indx = count + int(i.carton_qty)
 			i.carton_no=str(start_indx)+"-"+str(end_indx)
 			indx=end_indx
 			count = int(indx)
+
+		#carton_no calculation
+		# if not doc.edit_carton_qty_and_no:
+		# 	#i.carton_no=str(start_indx)+"-"+str(end_indx)
+		# 	#i.carton_no = frappe.db.get_value("Pick List Item",{"name":i.item_code}, "carton_no")
+		# 	i.carton_no = frappe.db.sql(""" SELECT carton_no FROM `tabPick List Item` pli WHERE pli.parent = """, as_dict = 1) 
+		# 	print(f'\n\n\n{i.carton_no}\n\n\n')
 
 
 def set_items(doc):
@@ -78,7 +85,9 @@ def set_items(doc):
 			carton_item_doc_name = frappe.get_cached_doc("Item", {"item_code": item_code})
 			item.carton_name = carton_item_doc_name.item_code
 			qty = item.qty / is_packaging_item
-			item.carton_qty = math.ceil(qty)
+			#print('\n\n Qty \n\n', qty)
+			item.carton_qty = math.floor(qty)
+			#print('\n\n Carton Qty \n\n', item.carton_qty)
 			item.no_of_items_can_be_packed = is_packaging_item
 			item.per_carton_weight_in_kg = carton_item_doc_name.per_carton_weight_kgs
 			item.total_carton_weight_in_kg = item_weight * item.qty + item.per_carton_weight_in_kg * item.carton_qty
