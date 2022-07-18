@@ -20,8 +20,9 @@ import math
 @frappe.whitelist()
 def get_items_data(filters):
 	filters = json.loads(filters)
-	items_data = frappe.db.sql("""SELECT name, item_group, description, no_of_items_can_be_packed, carton, book_language,publisher from `tabItem` where {0} """.format(get_filters_codition(filters)), as_dict=1)
-		
+	#print(f'\n\n{filters}\n\n')
+	items_data = frappe.db.sql("""SELECT name, item_group, description, no_of_items_can_be_packed, carton, book_language,publisher from `tabItem` where {0} ORDER BY description""".format(get_filters_codition(filters)), as_dict=1)
+	#print(f'\n\n{items_data}\n\n')	
 	for row in items_data:
 		item_qty = frappe.db.sql("""SELECT sum(actual_qty) as actual_qty from `tabBin` where item_code='{0}'""".format(row.get("name")), as_dict=1)
 		carton_qty = frappe.db.sql("""SELECT sum(actual_qty) as actual_qty from `tabBin` where item_code='{0}'""".format(row.get("carton")), as_dict=1)
@@ -64,10 +65,29 @@ def get_items_data(filters):
 
 def get_filters_codition(filters):
 	conditions = "1=1"
-	if filters.get("language"):
-		conditions += " and book_language = '{0}'".format(filters.get('language'))
+	if filters.get("language"):conditions += " and book_language = '{0}'".format(filters.get('language'))
+	elif filters.get("category"):conditions += " and item_group = '{0}'".format(filters.get('category'))
+	elif filters.get("item_code"):conditions += " and name = '{0}'".format(filters.get('item_code'))
+	elif filters.get("description"):conditions += " and description = '{0}'".format(filters.get('description'))
+	elif filters.get("ratee"):conditions += " and rate = '{0}'".format(filters.get('ratee'))
+	elif filters.get("stock_nos"):conditions += " and stock_in_qty = '{0}'".format(filters.get('stock_nos'))
+	elif filters.get("stock_cartons"):conditions += " and carton_qty = '{0}'".format(filters.get('stock_cartons'))
+	elif filters.get("books_carton"):conditions += " and no_of_items_can_be_packed = '{0}'".format(filters.get('books_carton'))
+	# print(f'\n\n{conditions}\n\n')
 	return conditions
 
+def cart_page_condition(filters):
+	conditions = "1=1"
+	if filters.get("language"):conditions += " and language = '{0}'".format(filters.get('language'))
+	elif filters.get("category"):conditions += " and item_group = '{0}'".format(filters.get('category'))
+	elif filters.get("item_code"):conditions += " and item_code = '{0}'".format(filters.get('item_code'))
+	elif filters.get("description"):conditions += " and description = '{0}'".format(filters.get('description'))
+	elif filters.get("ratee"):conditions += " and rate = '{0}'".format(filters.get('ratee'))
+	elif filters.get("stock_nos"):conditions += " and stock_in_qty = '{0}'".format(filters.get('stock_nos'))
+	elif filters.get("stock_cartons"):conditions += " and carton_qty = '{0}'".format(filters.get('stock_cartons'))
+	elif filters.get("books_carton"):conditions += " and book_per_carton = '{0}'".format(filters.get('books_carton'))
+	# print(f'\n\n{conditions}\n\n')
+	return conditions
 
 @frappe.whitelist()
 def add_to_cart_item(filters):
@@ -127,9 +147,10 @@ def add_to_cart_item(filters):
 	return True
 
 @frappe.whitelist()
-def add_to_cart_details(user):
+def add_to_cart_details(user, filters):
+	filters = json.loads(filters)
 	#add_to_cart = frappe.db.sql("""SELECT name, item_code, item_group, description, rate, language, stock_in_nos, stock_in_cartons, book_per_carton, ordered_qty_in_nos, ordered_qty_in_cartons, amount from `tabAdd To Cart Item` where parent='{0}' """.format(user), as_dict=1)
-	add_to_cart = frappe.db.sql("""SELECT name, item_code, item_group, description, rate, language, stock_in_nos, stock_in_cartons, book_per_carton, ordered_qty_in_nos, ordered_qty_in_cartons, amount, publisher from `tabAdd To Cart Item`  where parent='{0}' """.format(user), as_dict=1)	
+	add_to_cart = frappe.db.sql("""SELECT name, item_code, item_group, description, rate, language, stock_in_nos, stock_in_cartons, book_per_carton, ordered_qty_in_nos, ordered_qty_in_cartons, amount, publisher from `tabAdd To Cart Item`  where parent='{0}' and {1}""".format(user,cart_page_condition(filters)), as_dict=1)	
 	add_qty =  frappe.db.sql("""SELECT sum(ordered_qty_in_nos) as total_ordered_qty, sum(ordered_qty_in_cartons) as total_cartons_qty, sum(amount) as total_amount from `tabAdd To Cart Item` where parent='{0}' """.format(user), as_dict=1)
 	for row in add_to_cart:
 		row["total_ordered_qty"] = add_qty[0].get("total_ordered_qty")
@@ -310,30 +331,6 @@ def update_cartons_qty_on_cart(item, language, cartan_order_qty, rate, book_per_
 	total_amount.append(order_qty)
 	return total_amount
 
-# @frappe.whitelist()
-# def customer_data(item_code):
-
-# 	customer = frappe.db.sql(""" SELECT soi.item_code, c.customer_name 
-# 								 FROM `tabCustomer` c, `tabSales Order Item` soi
-# 								 WHERE item_code = '{item_code}' """, as_dict = 1)
-
-# 	return customer
-
-# @frappe.whitelist()
-# def shipping_address_data(item_code):
-
-# 	shipping = frappe.db.sql(""" SELECT soi.item_code, c.customer_name 
-# 								 FROM `tabCustomer` c, `tabSales Order Item` soi;""")
-
-# 	return shipping
-
-# @frappe.whitelist()
-# def billing_address_data(item_code):
-
-# 	billing = frappe.db.sql(""" SELECT soi.item_code, c.customer_name 
-# 								 FROM `tabCustomer` c, `tabSales Order Item` soi;""")
-
-# 	return billing
 
 @frappe.whitelist()
 def create_doc(name):
