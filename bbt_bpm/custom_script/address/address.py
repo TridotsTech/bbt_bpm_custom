@@ -7,8 +7,13 @@ from frappe import _, msgprint, scrub
 from frappe.utils import has_common
 from datetime import date
 
+@frappe.whitelist()
+def address_links(user):
+	# doc = frappe.get_doc('Address', name)
+	cust_name = frappe.db.get_value("Customer", {"user":user}, "name")
+	address_link_dT = frappe.get_all('Dynamic Link', filters={'link_name': cust_name, 'parenttype': 'Address'}, fields=['link_doctype'])[0]['link_doctype']
 
-
+	return address_link_dT, cust_name
 #------------------------------------------------------------------
 #Permission Query
 #------------------------------------------------------------------

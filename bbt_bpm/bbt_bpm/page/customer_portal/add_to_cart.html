@@ -180,10 +180,32 @@
   		/*right: 0;*/
   		width: 300px;
 	}
+
+	.table-sortable th {
+	  cursor: pointer;
+	}
+
+	.table-sortable .th-sort-asc::after {
+	  content: "\25b4";
+	}
+
+	.table-sortable .th-sort-desc::after {
+	  content: "\25be";
+	}
+
+	.table-sortable .th-sort-asc::after,
+	.table-sortable .th-sort-desc::after {
+	  margin-left: 5px;
+	}
+
+	.table-sortable .th-sort-asc,
+	.table-sortable .th-sort-desc {
+	  background: rgba(0, 0, 0, 0.1);
+	}
 </style>
 <div class="conatiner">
 	<div>
-		<table class="table table-bordered table-wrapper" width="100%" border="1px" bordercolor="#000000">
+		<table class="table table-bordered table-wrapper table-sortable" width="100%" border="1px" bordercolor="#000000" id="portalTable">
 			<thead>
 				<tr>
 					<th colspan="9" style="background-color: #C7DFCD; color: black; border-right: hidden;" class="fixed">
@@ -266,8 +288,8 @@
 						<p><label class="create_new">Create New Contact/Address</label></p>
 						<select onChange="window.location.href=this.value">
 							<option value="">&nbsp;</option>
-							<option value="desk#List/Contact/List">Contact List</option>
-						    <option value="desk#List/Address/List">Address List</option>
+							<option value="desk#Form/Contact/New Contact 1">Contact List</option>
+						    <option value="desk#Form/Address/New Address 1">Address List</option>
 						</select>
 					</td>
 
@@ -354,7 +376,7 @@
 						<button class="submit" style="color:green;"><b>Submit Order</b></button>
 					</td>
 				</tr>
-			<tbody>
+			</tbody>
 		</table>
 	</div>
 </div>

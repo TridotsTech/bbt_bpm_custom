@@ -150,7 +150,7 @@ def add_to_cart_item(filters):
 def add_to_cart_details(user, filters):
 	filters = json.loads(filters)
 	#add_to_cart = frappe.db.sql("""SELECT name, item_code, item_group, description, rate, language, stock_in_nos, stock_in_cartons, book_per_carton, ordered_qty_in_nos, ordered_qty_in_cartons, amount from `tabAdd To Cart Item` where parent='{0}' """.format(user), as_dict=1)
-	add_to_cart = frappe.db.sql("""SELECT name, item_code, item_group, description, rate, language, stock_in_nos, stock_in_cartons, book_per_carton, ordered_qty_in_nos, ordered_qty_in_cartons, amount, publisher from `tabAdd To Cart Item`  where parent='{0}' and {1}""".format(user,cart_page_condition(filters)), as_dict=1)	
+	add_to_cart = frappe.db.sql("""SELECT name, item_code, item_group, description, rate, language, stock_in_nos, stock_in_cartons, book_per_carton, ordered_qty_in_nos, ordered_qty_in_cartons, amount, publisher from `tabAdd To Cart Item`  where parent='{0}' and {1} ORDER BY language""".format(user,cart_page_condition(filters)), as_dict=1)	
 	add_qty =  frappe.db.sql("""SELECT sum(ordered_qty_in_nos) as total_ordered_qty, sum(ordered_qty_in_cartons) as total_cartons_qty, sum(amount) as total_amount from `tabAdd To Cart Item` where parent='{0}' """.format(user), as_dict=1)
 	for row in add_to_cart:
 		row["total_ordered_qty"] = add_qty[0].get("total_ordered_qty")
@@ -217,7 +217,7 @@ def new_order(client_feedback, contact_person, transportation_mode, preferred_tr
 		doc.add_comment('Comment', text=client_feedback)
 		#frappe.delete_doc('Add To Cart', frappe.session.user)
 		#frappe.db.commit()
-		frappe.msgprint(_("New Order Created"))
+		frappe.msgprint(_("Order Shall be processed Upon Approval"))
 	if frappe.db.get_value("Add To Cart", {"name":frappe.session.user}, "name") and customer and data2:
 		doc=frappe.new_doc("Sales Order")
 		doc.customer = customer[0][0] if customer[0][0] else ""
@@ -256,7 +256,7 @@ def new_order(client_feedback, contact_person, transportation_mode, preferred_tr
 		doc.add_comment('Comment', text=client_feedback)
 		#frappe.delete_doc('Add To Cart', frappe.session.user)
 		#frappe.db.commit()
-		frappe.msgprint(_("New Order Created"))
+		frappe.msgprint(_("Order Shall be processed Upon Approval"))
 	if frappe.db.get_value("Add To Cart", {"name":frappe.session.user}, "name") and customer and data3:
 		doc=frappe.new_doc("Sales Order")
 		doc.customer = customer[0][0] if customer[0][0] else ""
@@ -295,7 +295,7 @@ def new_order(client_feedback, contact_person, transportation_mode, preferred_tr
 		doc.add_comment('Comment', text=client_feedback)
 		frappe.delete_doc('Add To Cart', frappe.session.user)
 		frappe.db.commit()
-		frappe.msgprint(_("New Order Created"))
+		frappe.msgprint(_("Order Shall be processed Upon Approval"))
 
 	frappe.delete_doc('Add To Cart', frappe.session.user)
 
@@ -395,3 +395,49 @@ def get_pdf_data(filters):
 	path = 'bbt_bpm/bbt_bpm/page/customer_portal/pdf.html'
 	html=frappe.render_template(path,{'data':items_data})
 	return {'html':html}
+
+
+# @frappe.whitelist()
+# def new_address(user):
+# 	doc = frappe.new_doc("Address")
+# 	cust_name = frappe.db.get_value("Customer", {"user":user}, "name")
+# 	address_link_dT = frappe.get_all('Dynamic Link', filters={'link_name': cust_name, 'parenttype': 'Address'}, fields=['link_doctype'])[0]['link_doctype']
+
+	
+# 	# doc.address_title = 'abc'
+# 	# doc.pincode = 'xyz'
+# 	# doc.address_line1 = 'edfed'
+# 	# doc.city = 'Pune'
+
+# 	# for l in doc.links:  WILL NOT WORK AS doc IS ADDRESS OBJECT AND NOT DOCUMENT
+# 	# 	l.link_doctype = address_link_dT
+# 	# 	l.link_name =  cust_name
+
+# 	# doc.user = frappe.session.user
+# 	doc.append("links", {
+# 		"link_doctype": address_link_dT,
+# 		"link_name": cust_name
+# 	})
+
+		
+# 	# doc.save(ignore_permissions=True)
+# 	# doc.save()
+# 	# doc.insert(ignore_mandatory = True, ignore_permissions=True)
+# 	#doc.save(ignore_permissions=True)
+	
+# 	return True
+
+# @frappe.whitelist()
+# def new_contact(user):
+# 	doc = frappe.new_doc("Contact")
+# 	cust_name = frappe.db.get_value("Customer", {"user":user}, "name")
+# 	contact_link_dT = frappe.get_all('Dynamic Link', filters={'link_name': cust_name, 'parenttype': 'Contact'}, fields=['link_doctype'])[0]['link_doctype']
+
+# 	doc.append("links", {
+# 		"link_doctype": contact_link_dT,
+# 		"link_name": cust_name
+# 	})
+
+# 	doc.insert(ignore_mandatory = True, ignore_permissions=True)
+	
+# 	return True

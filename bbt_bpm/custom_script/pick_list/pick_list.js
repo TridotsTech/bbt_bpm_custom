@@ -175,8 +175,11 @@ function check_set(frm) {
         $.each(frm.doc.locations, function(i,v) {
             var entered_qty = v.qty
             var loops = Math.floor(entered_qty/v.no_of_items_can_be_packed)
+            console.log(loops);
             var pending_qty = Math.abs(entered_qty-(v.no_of_items_can_be_packed*loops))
-            
+            console.log(pending_qty);
+            var remaining_qty = Math.abs(v.no_of_items_can_be_packed - entered_qty)
+
             if (v.no_of_items_can_be_packed < entered_qty ){
                 frappe.model.set_value(v.doctype, v.name, "picked_qty",v.no_of_items_can_be_packed*loops);
                 frappe.model.set_value(v.doctype, v.name, "qty",v.no_of_items_can_be_packed*loops);
@@ -198,6 +201,21 @@ function check_set(frm) {
                     childTable.picked_qty = pending_qty
                     pending_qty = 0
                 }
+            }
+            else if(entered_qty < v.no_of_items_can_be_packed){
+                frappe.model.set_value(v.doctype, v.name, "picked_qty",v.no_of_items_can_be_packed*loops);
+                frappe.model.set_value(v.doctype, v.name, "qty",v.no_of_items_can_be_packed*loops);
+        
+                while(remaining_qty>0) {
+                    var childTable = frm.add_child("locations");
+                    childTable.item_code= v.item_code
+                    //childTable.carton_qty= v.item_code
+                    childTable.qty = entered_qty
+                    childTable.stock_qty = entered_qty
+                    childTable.picked_qty = entered_qty
+                    remaining_qty = 0
+                }
+
             }
             frm.refresh_fields("locations");
         }); 

@@ -52,7 +52,9 @@ doctype_js = {
 	"Customer": "custom_script/customer/customer.js",
 	"Stock Reconciliation": "custom_script/stock_reconciliation/stock_reconciliation.js",
 	"Batch": "custom_script/batch/batch.js",
-	"Delivery Note": "custom_script/delivery_note/delivery_note.js"
+	"Delivery Note": "custom_script/delivery_note/delivery_note.js",
+	"Address": "custom_script/address/address.js",
+	"Contact": "custom_script/contact/contact.js"
 }
 
 app_logo_url = "/files/bbt_icon.png"

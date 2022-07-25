@@ -180,11 +180,32 @@
   		/*right: 0;*/
   		width: 300px;
 	}
+
+	.table-sortable th {
+	  cursor: pointer;
+	}
+
+	.table-sortable .th-sort-asc::after {
+	  content: "\25b4";
+	}
+
+	.table-sortable .th-sort-desc::after {
+	  content: "\25be";
+	}
+
+	.table-sortable .th-sort-asc::after,
+	.table-sortable .th-sort-desc::after {
+	  margin-left: 5px;
+	}
+
+	.table-sortable .th-sort-asc,
+	.table-sortable .th-sort-desc {
+	  background: rgba(0, 0, 0, 0.1);
+	}
 </style>
-<div class="conatiner">
-	<div>
-		<script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
-		<table class="table table-bordered table-wrapper sortable" width="100%" border="1px" bordercolor="#000000">
+	
+<body>
+		<table class="table table-bordered table-wrapper table-sortable" width="100%" border="1px" bordercolor="#000000" id="portalTable">
 			<thead>
 				<tr>
 					<th colspan="10" style="background-color: #C7DFCD; color: black;" class="fixed">
@@ -264,5 +285,5 @@
 				{% endfor %}
 			</tbody>
 		</table>
-	</div>
-</div>
+		<!-- <script src="/customer_portal/sorter.js"></script> -->
+</body>

@@ -21,6 +21,7 @@ def validate(doc, method):
     set_packaging_items(doc)
     set_valid_customer_warehouse(doc)
     set_item_warehouses(doc)
+    sort_table(doc)
 
 def on_update(doc, method):
     rm_unwanted_items(doc)
@@ -246,6 +247,11 @@ def rm_unwanted_items(doc):
             frappe.db.sql("DELETE FROM `tabSales Order Item` WHERE name=%(name)s",{"name":rm_item.name})
 
 
+def sort_table(doc):
+     for i, item in enumerate(sorted(doc.items, key=lambda item: (item.item_code, item.item_name)), start=1):
+        # print(f'\n\n{i}\n\n') 1,2,3,4,.....
+        # print(f'\n\n{item}\n\n') <erpnext.selling.doctype.sales_order_item.sales_order_item.SalesOrderItem object at 0x7f43902ad9b0>
+        item.idx = i
 #------------------------------------------------------------------
 #Permission Query
 #------------------------------------------------------------------
