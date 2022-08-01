@@ -6,6 +6,7 @@ import math
 
 def save(doc, method):
 	set_items(doc)
+	set_so_qty(doc)
 
 def carton_details(doc):
 	for i in doc.get("locations"):
@@ -112,7 +113,32 @@ def on_submit(doc, method=None):
 				doc.append("sales_invoice", {
 					"sales_invoice": row[0]
 				})
-			
+
+	sort_table(doc)
+
+def sort_table(doc):
+
+    	for i, item in enumerate(sorted(doc.locations, key=lambda item: item.carton_no), start=1):
+    		item.idx = i
+
+# Fetch qty in PL from SO, update in custom so_qty field
+def set_so_qty(doc):
+
+	l = []
+	for i in doc.locations:
+		so_number = i.sales_order
+		l.append(so_number)
+
+	so_no = l[0]
+
+	so_data = frappe.db.sql("""SELECT DISTINCT soi.qty FROM `tabSales Order Item` as soi, `tabPick List Item` as pli
+						WHERE soi.parent = %(so_no)s ORDER BY soi.idx;""", {"so_no":so_no},as_dict=1)
+
+	for i in doc.locations:
+		for x in so_data:
+			if i.qty == x['qty']:
+				i.so_qty = x['qty']
+
 
 def before_save(doc, method=None):
 	so_doc = frappe.get_cached_doc("Sales Order", doc.locations[0].sales_order)
@@ -140,4 +166,6 @@ def before_save(doc, method=None):
 		items.append(item_details)
 	doc.locations = items
 	set_items(doc)
+	
+	
 

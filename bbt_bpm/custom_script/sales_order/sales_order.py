@@ -22,6 +22,7 @@ def validate(doc, method):
     set_valid_customer_warehouse(doc)
     set_item_warehouses(doc)
     sort_table(doc)
+    
 
 def on_update(doc, method):
     rm_unwanted_items(doc)
@@ -248,10 +249,15 @@ def rm_unwanted_items(doc):
 
 
 def sort_table(doc):
-     for i, item in enumerate(sorted(doc.items, key=lambda item: (item.item_code, item.item_name)), start=1):
-        # print(f'\n\n{i}\n\n') 1,2,3,4,.....
-        # print(f'\n\n{item}\n\n') <erpnext.selling.doctype.sales_order_item.sales_order_item.SalesOrderItem object at 0x7f43902ad9b0>
-        item.idx = i
+    # built-in function that return a list of (index, item) of a given list of objects, `start` is a parameter to define the first value of the index
+    # `key` to get the value to be used in the sort comparization.
+    for i, item in enumerate(sorted(doc.items, key=lambda item: item.item_code), start=1):
+        # print(f'\n\n{i}\n\n') 
+        # print(f'\n\n{item}\n\n') 
+        item.idx = i # define the new index to the object based on the sorted order
+
+
+
 #------------------------------------------------------------------
 #Permission Query
 #------------------------------------------------------------------
