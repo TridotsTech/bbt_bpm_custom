@@ -251,9 +251,7 @@ def rm_unwanted_items(doc):
 def sort_table(doc):
     # built-in function that return a list of (index, item) of a given list of objects, `start` is a parameter to define the first value of the index
     # `key` to get the value to be used in the sort comparization.
-    for i, item in enumerate(sorted(doc.items, key=lambda item: item.item_code), start=1):
-        # print(f'\n\n{i}\n\n') 
-        # print(f'\n\n{item}\n\n') 
+    for i, item in enumerate(sorted(doc.items, key=lambda item: (frappe.db.get_value("Item",{"item_code":item.item_code},"book_language"), item.item_name)), start=1):
         item.idx = i # define the new index to the object based on the sorted order
 
 

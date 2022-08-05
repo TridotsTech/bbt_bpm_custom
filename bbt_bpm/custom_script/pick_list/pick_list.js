@@ -136,12 +136,13 @@
 
 frappe.ui.form.on("Pick List", {
 
+
     refresh:function(frm) {
         cur_frm.add_custom_button(__('Check & Update entries'), function() {           
                 check_set(frm)
             });
-
-    },
+        },
+        
    get_item_locations: function(frm) {
         $.each(frm.doc.locations, function(i,v) {
                 frappe.call({
@@ -220,3 +221,20 @@ function check_set(frm) {
             frm.refresh_fields("locations");
         }); 
    }
+
+// frappe.ui.form.on("Pick List Item", {
+
+//     qty:function(frm,cdt,cdn) {
+//         row = locals[cdt][cdn];
+//         console.log(row);
+//         console.log('loaded');
+//         for (let i in frm.doc.locations){
+//             // console.log(i.so_qty);
+//             console.log(i.qty);
+//             i.so_qty = i.qty;
+//         }
+//         frm.refresh_fields("locations");
+
+//     },
+
+// });

@@ -181,27 +181,27 @@
   		width: 300px;
 	}
 
-	.table-sortable th {
+	/*.table-sortable th {
 	  cursor: pointer;
-	}
+	}*/
 
-	.table-sortable .th-sort-asc::after {
+	/*.table-sortable .th-sort-asc::after {
 	  content: "\25b4";
 	}
 
 	.table-sortable .th-sort-desc::after {
 	  content: "\25be";
-	}
+	}*/
 
 	.table-sortable .th-sort-asc::after,
 	.table-sortable .th-sort-desc::after {
 	  margin-left: 5px;
 	}
 
-	.table-sortable .th-sort-asc,
+	/*.table-sortable .th-sort-asc,
 	.table-sortable .th-sort-desc {
 	  background: rgba(0, 0, 0, 0.1);
-	}
+	}*/
 </style>
 	
 <body>
@@ -219,17 +219,17 @@
 				<tr>
 					<th class="text_center fixed align">Language</th>
 					<th class="text_center fixed align">Category</th>
-					<th class="text_center fixed align">Item Code</th>
-					<th class="desc align">Description</th>
-					<th class="text_center fixed align">Rate</th>
-					<th class="text_center fixed align">Stock In Nos</th>
-					<th class="text_center fixed align">Stock In<br>Cartons</th>
-					<th class="text_center fixed align">Book Per<br>Carton</th>
+					<th class="text_center fixed align" style="cursor: pointer;">Item Code &#8645;</th>
+					<th class="desc align" style="cursor: pointer;">Description &#8645;</th>
+					<th class="text_center fixed align" style="cursor: pointer;">Rate &#8645;</th>
+					<th class="text_center fixed align" style="cursor: pointer;">Stock In Nos &#8645;</th>
+					<th class="text_center fixed align" style="cursor: pointer;">Stock In<br>Cartons &#8645;</th>
+					<th class="text_center fixed align" style="cursor: pointer;">Book Per<br>Carton &#8645;</th>
 					<th class="text_center fixed align">Ordered<br>Qty In NOS</th>
 					<th class="text_center fixed align">Ordered<br>Qty in Cartons</th>
 					<th class="text_center fixed align">Add To Cart</th>
 					<th class="text_center fixed align">Notify Me when in Stock</th>
-					<th class="text_center fixed align">Publisher</th>
+					<th class="text_center fixed align" style="cursor: pointer;">Publisher &#8645;</th>
 
 				</tr>
 			</thead>

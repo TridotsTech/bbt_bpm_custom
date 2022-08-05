@@ -6,7 +6,8 @@ import math
 
 def save(doc, method):
 	set_items(doc)
-	set_so_qty(doc)
+	
+	
 
 def carton_details(doc):
 	for i in doc.get("locations"):
@@ -114,12 +115,15 @@ def on_submit(doc, method=None):
 					"sales_invoice": row[0]
 				})
 
-	sort_table(doc)
 
 def sort_table(doc):
 
-    	for i, item in enumerate(sorted(doc.locations, key=lambda item: item.carton_no), start=1):
-    		item.idx = i
+	if doc.sort_table_carton_no_wise: # check
+
+		# Sort locations table carton_no wise
+		for i, item in enumerate(sorted(doc.locations, key=lambda item:int(item.carton_no) if '-' not in item.carton_no else False), start=1):
+			item.idx = i
+
 
 # Fetch qty in PL from SO, update in custom so_qty field
 def set_so_qty(doc):
@@ -131,41 +135,56 @@ def set_so_qty(doc):
 
 	so_no = l[0]
 
-	so_data = frappe.db.sql("""SELECT DISTINCT soi.qty FROM `tabSales Order Item` as soi, `tabPick List Item` as pli
+	so_data = frappe.db.sql("""SELECT DISTINCT soi.item_code,soi.qty FROM `tabSales Order Item` as soi, `tabPick List Item` as pli
 						WHERE soi.parent = %(so_no)s ORDER BY soi.idx;""", {"so_no":so_no},as_dict=1)
+
+	print(f'\n\n{so_data}\n\n')
+	# print('\n\nfrappe.db.get_value("Item",i.item_code,"no_of_items_can_be_packed")\n\n')
 
 	for i in doc.locations:
 		for x in so_data:
-			if i.qty == x['qty']:
+			
+			# print(f'\n\n{type(i.no_of_items_can_be_packed)}\n\n')
+			# print(f'\n\n{type(i.qty)}\n\n')
+
+			if i.qty == x['qty'] and i.item_code == x['item_code']:
 				i.so_qty = x['qty']
+
+			# loops = math.floor(int(i.qty)/int(i.no_of_items_can_be_packed))
+			# print(loops)
+			if int(i.no_of_items_can_be_packed) > 0:
+				if i.item_code == x['item_code'] and int(i.qty) % int(i.no_of_items_can_be_packed) == 0:
+			 		i.so_qty = x['qty']
 
 
 def before_save(doc, method=None):
-	so_doc = frappe.get_cached_doc("Sales Order", doc.locations[0].sales_order)
-	items = []
-	for item in so_doc.items:
+	set_so_qty(doc)
+	sort_table(doc)
+	# so_doc = frappe.get_cached_doc("Sales Order", doc.locations[0].sales_order)
+	# items = []
+	# for item in so_doc.items:
 		
-		item_details = frappe.new_doc("Pick List Item")
-		item_details.item_code = item.item_code
-		item_details.item_name = item.item_name
-		item_details.description = item.description
-		item_details.item_group =frappe.db.get_value("Item", item.item_code, "item_group")
-		item_details.warehouse = item.warehouse
-		item_details.qty = item.qty
-		item_details.uom = item.uom
-		item_details.picked_qty = item.qty
-		item_details.stock_uom = item.stock_uom
-		item_details.stock_qty = item.stock_qty
-		item_details.conversion_factor = item.conversion_factor
-		item_details.sales_order = item.parent
-		item_details.parent = doc.name
-		item_details.parenttype = "Pick List"
-		item_details.parentfield = "locations"
-		item_details.sales_order_item = item.name
-		item_details.idx = item.idx
-		items.append(item_details)
-	doc.locations = items
-	set_items(doc)
+	# 	item_details = frappe.new_doc("Pick List Item")
+	# 	item_details.item_code = item.item_code
+	# 	item_details.item_name = item.item_name
+	# 	item_details.description = item.description
+	# 	item_details.item_group =frappe.db.get_value("Item", item.item_code, "item_group")
+	# 	item_details.warehouse = item.warehouse
+	# 	item_details.qty = item.qty
+	# 	item_details.uom = item.uom
+	# 	item_details.picked_qty = item.qty
+	# 	item_details.stock_uom = item.stock_uom
+	# 	item_details.stock_qty = item.stock_qty
+	# 	item_details.conversion_factor = item.conversion_factor
+	# 	item_details.sales_order = item.parent
+	# 	item_details.parent = doc.name
+	# 	item_details.parenttype = "Pick List"
+	# 	item_details.parentfield = "locations"
+	# 	item_details.sales_order_item = item.name
+	# 	item_details.idx = item.idx
+	# 	items.append(item_details)
+	# doc.locations = items
+	# set_items(doc)
 	
 	
 

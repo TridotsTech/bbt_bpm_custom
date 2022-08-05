@@ -34,7 +34,7 @@ frappe.customer_portal = Class.extend({
 	get_imp_data:function(){
 	    var me = this
 	    $('.frappe-list').html("")
-	    var filters = {"language":me.language,"category":me.category,"item_code":me.item_code,"description":me.description,"books_carton":me.books_carton}
+	    var filters = {"language":me.language,"category":me.category,"item_code":me.item_code,"description":me.description}
 	    frappe.call({
 	        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.get_items_data",
 	        args: {
@@ -416,7 +416,7 @@ frappe.customer_portal = Class.extend({
 				me.get_imp_data()
 			}
 		})
-		$('[data-fieldname="item_code"]').css({"border": "1px solid Brown", "width": "100px"})
+		$('[data-fieldname="item_code"]').css({"border": "1px solid Brown", "width": "80px"})
 
 		me.page.add_field({
 			"fieldtype": 'Autocomplete',
@@ -434,21 +434,21 @@ frappe.customer_portal = Class.extend({
 				me.get_imp_data()
 			}
 		})
-		$('[data-fieldname="description"]').css({"border": "1px solid Brown", "width": "200px"})
+		$('[data-fieldname="description"]').css({"border": "1px solid Brown", "width": "190px"})
 
-		me.page.add_field({
-			"fieldtype": 'Data',
-			"label": __("Books Per Carton"),
-			"fieldname": "books_carton",
-			// "placeholder":"Search By Language",
-			// "options": [ "", "Assamese", "Bengali", "Chhattisgarhi", "English", "French", "Gujarati", "Hindi", "Japanese", "Kannada", "Marathi", "Korean", "Nepali", "Odia", "Punjabi", "Sinhala", "Tamil", "Telugu", "Urdu"],
-			"reqd": 0,
-			onchange: function() {
-				me.books_carton = this.value?this.value:null
-				me.get_imp_data()
-			}
-		})
-		$('[data-fieldname="books_carton"]').css({"border": "1px solid Brown", "width": "110px"})
+		// me.page.add_field({
+		// 	"fieldtype": 'Data',
+		// 	"label": __("Books Per Carton"),
+		// 	"fieldname": "books_carton",
+		// 	// "placeholder":"Search By Language",
+		// 	// "options": [ "", "Assamese", "Bengali", "Chhattisgarhi", "English", "French", "Gujarati", "Hindi", "Japanese", "Kannada", "Marathi", "Korean", "Nepali", "Odia", "Punjabi", "Sinhala", "Tamil", "Telugu", "Urdu"],
+		// 	"reqd": 0,
+		// 	onchange: function() {
+		// 		me.books_carton = this.value?this.value:null
+		// 		me.get_imp_data()
+		// 	}
+		// })
+		// $('[data-fieldname="books_carton"]').css({"border": "1px solid Brown", "width": "110px"})
 
 		me.page.add_field({
 			"fieldtype": 'Button',
@@ -462,7 +462,7 @@ frappe.customer_portal = Class.extend({
 			        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.add_to_cart_details",
 			        args: {
 			        	user:frappe.session.user,
-			        	filters: {"language":me.language,"category":me.category,"item_code":me.item_code,"description":me.description,"books_carton":me.books_carton}
+			        	filters: {"language":me.language,"category":me.category,"item_code":me.item_code,"description":me.description}
 			        },
 			        callback: function (r) {
 			        	if (r.message){

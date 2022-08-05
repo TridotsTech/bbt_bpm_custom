@@ -133,7 +133,7 @@ doc_events = {
 	"Pick List": {
 		"on_submit": "bbt_bpm.custom_script.pick_list.pick_list.on_submit",
 		"validate": "bbt_bpm.custom_script.pick_list.pick_list.save",
-		#"before_save": "bbt_bpm.custom_script.pick_list.pick_list.before_save"
+		"before_save": "bbt_bpm.custom_script.pick_list.pick_list.before_save",
 
 	},
 	"Sales Invoice": {
