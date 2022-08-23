@@ -90,7 +90,7 @@ def set_items(doc):
 			#print('\n\n Carton Qty \n\n', item.carton_qty)
 			item.no_of_items_can_be_packed = is_packaging_item
 			item.per_carton_weight_in_kg = carton_item_doc_name.per_carton_weight_kgs
-			item.total_carton_weight_in_kg = item_weight * item.qty + item.per_carton_weight_in_kg * item.carton_qty
+			item.total_carton_weight_in_kg = item.per_carton_weight_in_kg * item.carton_qty
 			item.dimension = carton_item_doc_name.dimension
 			item.available_stock = available_qty[0]
 			item.used_qty = item.qty
@@ -101,7 +101,7 @@ def set_items(doc):
 			item.carton_name = carton_item_doc_name.item_code
 			item.no_of_items_can_be_packed = is_packaging_item
 			item.per_carton_weight_in_kg = carton_item_doc_name.per_carton_weight_kgs
-			item.total_carton_weight_in_kg = item_weight * item.qty + item.per_carton_weight_in_kg * item.carton_qty
+			item.total_carton_weight_in_kg = item.per_carton_weight_in_kg * item.carton_qty
 			item.dimension = carton_item_doc_name.dimension
 			item.available_stock = available_qty[0]
 			item.used_qty = item.qty
