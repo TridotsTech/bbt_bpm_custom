@@ -457,7 +457,10 @@ frappe.customer_portal = Class.extend({
 			click: function() {
 				me.add_to_cart_items = this.value?this.value:null
 				$('[data-fieldname="home"]').show()
-				$('[data-fieldname="language"]').show()
+				$('[data-fieldname="language"]').hide()
+				$('[data-fieldname="category"]').hide()
+				$('[data-fieldname="item_code"]').hide()
+				$('[data-fieldname="description"]').hide()
 				frappe.call({
 			        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.add_to_cart_details",
 			        args: {
