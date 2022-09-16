@@ -13,8 +13,10 @@ def address_links(user):
 	cust_name = frappe.db.get_value("Customer", {"user":user}, "name")
 	address_link = frappe.get_all('Dynamic Link', filters={'link_name': cust_name, 'parenttype': 'Address'}, fields=['link_doctype'])
 
-	if address_link:
-		return address_link[0]['link_doctype'], cust_name
+	if not address_link:
+		return 'Customer', cust_name
+		
+	return address_link[0]['link_doctype'], cust_name
 #------------------------------------------------------------------
 #Permission Query
 #------------------------------------------------------------------
