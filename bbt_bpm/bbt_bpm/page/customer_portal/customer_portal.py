@@ -398,47 +398,26 @@ def get_pdf_data(filters):
 	return {'html':html}
 
 
-# @frappe.whitelist()
-# def new_address(user):
-# 	doc = frappe.new_doc("Address")
-# 	cust_name = frappe.db.get_value("Customer", {"user":user}, "name")
-# 	address_link_dT = frappe.get_all('Dynamic Link', filters={'link_name': cust_name, 'parenttype': 'Address'}, fields=['link_doctype'])[0]['link_doctype']
+@frappe.whitelist()
+def get_item_code(user):
 
-	
-# 	# doc.address_title = 'abc'
-# 	# doc.pincode = 'xyz'
-# 	# doc.address_line1 = 'edfed'
-# 	# doc.city = 'Pune'
+	l1 = []
+	data = frappe.db.sql("""SELECT item_code FROM `tabItem`;""", as_dict=1)
 
-# 	# for l in doc.links:  WILL NOT WORK AS doc IS ADDRESS OBJECT AND NOT DOCUMENT
-# 	# 	l.link_doctype = address_link_dT
-# 	# 	l.link_name =  cust_name
+	for i in data:
+		# print(type(i['item_code']))
+		l1.append(i['item_code'])
 
-# 	# doc.user = frappe.session.user
-# 	doc.append("links", {
-# 		"link_doctype": address_link_dT,
-# 		"link_name": cust_name
-# 	})
+	return l1
 
-		
-# 	# doc.save(ignore_permissions=True)
-# 	# doc.save()
-# 	# doc.insert(ignore_mandatory = True, ignore_permissions=True)
-# 	#doc.save(ignore_permissions=True)
-	
-# 	return True
+@frappe.whitelist()
+def get_description(user):
 
-# @frappe.whitelist()
-# def new_contact(user):
-# 	doc = frappe.new_doc("Contact")
-# 	cust_name = frappe.db.get_value("Customer", {"user":user}, "name")
-# 	contact_link_dT = frappe.get_all('Dynamic Link', filters={'link_name': cust_name, 'parenttype': 'Contact'}, fields=['link_doctype'])[0]['link_doctype']
+	l2 = []
+	data = frappe.db.sql("""SELECT description FROM `tabItem`;""", as_dict=1)
 
-# 	doc.append("links", {
-# 		"link_doctype": contact_link_dT,
-# 		"link_name": cust_name
-# 	})
+	for i in data:
+		# print(type(i['item_code']))
+		l2.append(i['description'])
 
-# 	doc.insert(ignore_mandatory = True, ignore_permissions=True)
-	
-# 	return True
+	return l2
