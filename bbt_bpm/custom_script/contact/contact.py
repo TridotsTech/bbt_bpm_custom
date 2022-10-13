@@ -1,4 +1,6 @@
 import frappe
+from frappe.utils import has_common
+
 
 @frappe.whitelist()
 def contact_links(user):
@@ -11,3 +13,25 @@ def contact_links(user):
 		return 'Customer', cust_name
 
 	return contact_link[0]['link_doctype'], cust_name
+
+
+
+#------------------------------------------------------------------
+#Permission Query
+#------------------------------------------------------------------
+
+def add_get_permission_query_conditions(user):
+	if not user: user = frappe.session.user
+
+	cust = frappe.db.get_value("Customer", {"user":user}, "name")
+	contact = frappe.db.sql("""select parent from `tabDynamic Link` where link_name ='{0}' """.format(cust), as_dict=1)
+
+	con_list = [ '"%s"'%con.get("parent") for con in contact ]
+
+	roles = frappe.get_roles();
+	if user != "Administrator" and has_common(['Customer'],roles) :
+		if con_list:
+			return """(`tabContact`.name in ({0}) )""".format(','.join(con_list))
+		else:
+			# return "1=2"
+			return """(`tabContact`.name is null)"""

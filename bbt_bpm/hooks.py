@@ -104,7 +104,8 @@ permission_query_conditions = {
 	"Sales Order": "bbt_bpm.custom_script.sales_order.sales_order.so_get_permission_query_conditions",
 	"Sales Invoice": "bbt_bpm.custom_script.sales_invoice.sales_invoice.si_get_permission_query_conditions",
 	"Delivery Note": "bbt_bpm.custom_script.delivery_note.delivery_note.dn_get_permission_query_conditions",
-	"Address": "bbt_bpm.custom_script.address.address.add_get_permission_query_conditions"
+	"Address": "bbt_bpm.custom_script.address.address.add_get_permission_query_conditions",
+	"Contact": "bbt_bpm.custom_script.contact.contact.add_get_permission_query_conditions"
 }
 	
 
