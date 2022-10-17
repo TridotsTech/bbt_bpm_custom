@@ -18,12 +18,14 @@ frappe.customer_portal = Class.extend({
 			title: 'Customer Portal',
 			single_column: true
 		});
+
     	this.wrapper = wrapper
     	this.make()
 		this.get_imp_data()
 		this.add_filters()
-		// $('[data-fieldname="language"]').val("Search By Language")
-		// frm.set_df_property("language", "placeholder", "Search By Language");
+
+    	var view_cart = window.location.href.split('?').reverse()[0]
+    	
 	},
 
 	make: function() {
@@ -31,10 +33,40 @@ frappe.customer_portal = Class.extend({
 		$(`<div class="frappe-list list-container"></div>`).appendTo(me.page.main);
 	},
 
-	get_imp_data:function(){
-	    var me = this
-	    $('.frappe-list').html("")
-	    var filters = {"language":me.language,"category":me.category,"item_code":me.item_code,"description":me.description}
+	show_view_cart_template:function(me){
+			var me = this;
+			me.add_to_cart_items = this.value?this.value:null
+			$('[data-fieldname="home"]').show()
+			$('[data-fieldname="language"]').show()
+			$('[data-fieldname="category"]').show()
+			$('[data-fieldname="item_code"]').show()
+			$('[data-fieldname="description"]').show()
+			frappe.call({
+		        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.add_to_cart_details",
+		        args: {
+		        	user:frappe.session.user,
+		        	filters: {"language":me.language,"category":me.category,"item_code":me.item_code,"description":me.description}
+		        },
+		        callback: function (r) {
+		        	if (r.message){
+		          		var html = r.message.html
+						$('.frappe-list').html(html)
+						$('.delete').hide()
+						me.delete_add_to_cart_item()
+						me.update_qty_on_cart()
+						me.new_order()
+						me.sort_table()
+		        	}
+
+		        }
+		    })
+
+
+	},
+
+	show_book_list_template(){
+		var me = this;
+		var filters = {"language":me.language,"category":me.category,"item_code":me.item_code,"description":me.description}
 	    frappe.call({
 	        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.get_items_data",
 	        args: {
@@ -60,6 +92,20 @@ frappe.customer_portal = Class.extend({
 
 	        }//calback end
 	    })
+
+	},
+
+	get_imp_data:function(){
+	    var me = this
+	    $('.frappe-list').html("")
+	    var view_cart = window.location.href.split('?').reverse()[0]
+	    
+	    if (view_cart == "viewcart=true"){
+	    	me.show_view_cart_template()
+	    } else{
+	    	me.show_book_list_template()
+	    }
+
 
 	},
 
@@ -418,6 +464,8 @@ frappe.customer_portal = Class.extend({
 			"fieldname": 'home',
 			click: function() {
 				me.home = this.value?this.value:null
+				window.location.href = "desk#customer_portal"
+				window.location.reload()
 				me.get_imp_data()
 			}
 		})
@@ -476,7 +524,7 @@ frappe.customer_portal = Class.extend({
 		})
 		$('[data-fieldname="description"]').css({"border": "1px solid Brown", "width": "190px"})
 
-		me.page.add_field({
+		this.view_cart_button =  me.page.add_field({
 			"fieldtype": 'Button',
 			"label": __('View Cart'),
 			"fieldname": 'add_to_cart_items',
@@ -565,3 +613,5 @@ frappe.customer_portal = Class.extend({
 
     }		
 })
+
+
