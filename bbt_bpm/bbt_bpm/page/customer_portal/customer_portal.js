@@ -20,6 +20,10 @@ frappe.customer_portal = Class.extend({
 		});
 
     	this.wrapper = wrapper
+    	$('.viewcustomcart').click(function() {
+    		window.location.href = '/desk#customer_portal?viewcart=true'
+    		window.location.reload()
+    	})
     	this.make()
 		this.get_imp_data()
 		this.add_filters()
@@ -35,12 +39,13 @@ frappe.customer_portal = Class.extend({
 
 	show_view_cart_template:function(me){
 			var me = this;
+			$('.frappe-list').html('')
 			me.add_to_cart_items = this.value?this.value:null
 			$('[data-fieldname="home"]').show()
-			$('[data-fieldname="language"]').show()
-			$('[data-fieldname="category"]').show()
-			$('[data-fieldname="item_code"]').show()
-			$('[data-fieldname="description"]').show()
+			$('[data-fieldname="language"]').hide()
+			$('[data-fieldname="category"]').hide()
+			$('[data-fieldname="item_code"]').hide()
+			$('[data-fieldname="description"]').hide()
 			frappe.call({
 		        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.add_to_cart_details",
 		        args: {
@@ -56,12 +61,16 @@ frappe.customer_portal = Class.extend({
 						me.update_qty_on_cart()
 						me.new_order()
 						me.sort_table()
+						$('[data-fieldname="download_pdf"]').hide()
+						$('[data-fieldname="language"]').hide()
+						$('[data-fieldname="category"]').hide()
+						$('[data-fieldname="item_code"]').hide()
+						$('[data-fieldname="description"]').hide()
+
 		        	}
 
 		        }
 		    })
-
-
 	},
 
 	show_book_list_template(){
@@ -95,17 +104,18 @@ frappe.customer_portal = Class.extend({
 
 	},
 
+	
 	get_imp_data:function(){
 	    var me = this
 	    $('.frappe-list').html("")
+
 	    var view_cart = window.location.href.split('?').reverse()[0]
 	    
 	    if (view_cart == "viewcart=true"){
 	    	me.show_view_cart_template()
-	    } else{
+	    }else{
 	    	me.show_book_list_template()
 	    }
-
 
 	},
 
@@ -550,6 +560,7 @@ frappe.customer_portal = Class.extend({
 							me.update_qty_on_cart()
 							me.new_order()
 							me.sort_table()
+							$('[data-fieldname="download_pdf"]').hide()
 			        	}
 
 			        }//calback end
