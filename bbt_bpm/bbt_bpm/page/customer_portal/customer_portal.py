@@ -335,11 +335,14 @@ def update_cartons_qty_on_cart(item, language, cartan_order_qty, rate, book_per_
 
 
 @frappe.whitelist()
-def create_doc(name):
+def create_doc(name,required_qty,remark):
 	doc = frappe.new_doc("Issue")
 	cust = frappe.db.get_values("Customer", {"user":frappe.session.user}, ["name", "company", "default_currency", "default_price_list"])
+
 	doc.customer = cust[0][0]
 	doc.item_name = name
+	doc.required_qty = required_qty
+	doc.remark = remark
 	doc.insert(ignore_mandatory = True)
 	
 	return True

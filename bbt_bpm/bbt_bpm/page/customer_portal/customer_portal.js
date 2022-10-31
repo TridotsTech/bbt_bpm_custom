@@ -199,12 +199,35 @@ frappe.customer_portal = Class.extend({
 
 	notify_me: function(me){
 	    $('.notify_me').click(function() {
-	    	let name = $(this).closest('tr').children('td.col4').text() 
+	    	let name = $(this).closest('tr').children('td.col4').text()
+			
+	     	var d = new frappe.ui.Dialog({
+			fields: [
+				{
+					"label" : "Required QTY",
+					"fieldname": "required_qty",
+					"fieldtype": "Data",
+					
 
-	     	frappe.call({
+				},
+				{
+					"label" : "Remark",
+					"fieldname": "remark",
+					"fieldtype": "Small Text",
+					
+
+				}
+			],
+			primary_action: function() {
+	     		var data = d.get_values();
+
+				frappe.call({
 				method : "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.create_doc",
 				args : { //"user": frappe.session.user,
-						 "name": name},
+						 "name": name,
+						 "required_qty":data.required_qty,
+						 "remark":data.remark,
+						},
 
 				callback: function(r){
 					if (r.message){
@@ -212,8 +235,12 @@ frappe.customer_portal = Class.extend({
 
 					}
 				}
-			})
-		 })
+			});
+			d.hide();
+			},
+		});
+		d.show();
+	})
 
 	},
 
