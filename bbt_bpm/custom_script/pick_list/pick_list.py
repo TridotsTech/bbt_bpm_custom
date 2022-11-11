@@ -5,6 +5,8 @@ import json
 import math
 
 def save(doc, method):
+	set_items(doc)
+
 	for row in doc.locations:
 		if doc.edit_carton_qty_and_no:
 			row.total_weight = row.total_weight
@@ -12,8 +14,6 @@ def save(doc, method):
 		else:
 			total_weight = row.carton_qty * row.per_carton_weight_kgs
 			row.total_weight = total_weight
-
-	set_items(doc)
 
 	
 def carton_details(doc):
