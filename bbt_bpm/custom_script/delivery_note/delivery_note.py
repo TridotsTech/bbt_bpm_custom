@@ -7,6 +7,10 @@ from frappe import _, msgprint, scrub
 from frappe.utils import has_common
 from datetime import date
 
+from frappe.utils import get_site_path
+import base64
+
+
 
 def on_submit(doc, method):
 	for row in doc.items:
@@ -22,7 +26,35 @@ def on_submit(doc, method):
 		goods_in_transit = flt(item_qty)+flt(row.qty)
 		frappe.db.set_value("Item", row.item_code, "goods_in_transit", goods_in_transit)
 
+	''' Dispatch Order Email Trigger'''
 
+	dict_list = []
+	_file_name = frappe.db.sql('''SELECT file_name from `tabFile` where attached_to_name = '{0}' '''.format(doc.name),as_dict=True)
+	for file in _file_name:
+		path = get_site_path("public", "files")
+		path = path + "/"+ file.get('file_name')
+		image_file = open(path, "rb")
+
+		encoded_string = ""
+		image_file.seek(0)
+		encoded_string = image_file.read()
+		dict_list.append({"fname":file.get('file_name'),"fcontent":encoded_string})
+
+
+	args = {"doc":doc}
+	_path = 'bbt_bpm/custom_script/delivery_note/dispatch_order.html'
+	user = frappe.db.get_value("Customer",{"name":doc.customer},"user")
+
+	frappe.sendmail(
+		user,
+		subject='Order Delivery Confirmation',
+		cc = ["admin@indiabbt.com","frontoffice@indiabbt.com","amit.parab@i2econsulting.com","swapnil.pawar@i2econsulting.com"],
+		content=frappe.render_template(_path,args),
+		attachments = dict_list,
+        
+		)
+
+	
 def on_update_after_submit(doc, method):
 	if doc.delivered:
 		for row in doc.items:
@@ -33,6 +65,44 @@ def on_update_after_submit(doc, method):
 
 def save(doc, method):
 	set_items(doc)
+	
+	box = []
+	for boxes in doc.items:
+		box.append(boxes.carton_qty)
+	doc.total_no_of_boxes = sum(box)
+
+	''' Order Delivery Confirmation  '''
+
+	if doc.delivered:
+		dict_list = []
+		_file_name = frappe.db.sql('''SELECT file_name from `tabFile` where attached_to_name = '{0}' '''.format(doc.name),as_dict=True)
+		for file in _file_name:
+			path = get_site_path("public", "files")
+			path = path + "/"+ file.get('file_name')
+			image_file = open(path, "rb")
+
+
+			encoded_string = ""
+			image_file.seek(0)
+			encoded_string = image_file.read()
+			dict_list.append({"fname":file.get('file_name'),"fcontent":encoded_string})
+
+
+		args = {"doc":doc}
+		_path = 'bbt_bpm/custom_script/delivery_note/order_delivery_confirmation.html'
+		
+		user = frappe.db.get_value("Customer",{"name":doc.customer},"user")
+
+		frappe.sendmail(
+			user,
+			subject='Delivery Notes Dispatch',
+			cc = ["admin@indiabbt.com","frontoffice@indiabbt.com","amit.parab@i2econsulting.com","swapnil.pawar@i2econsulting.com"],
+			content=frappe.render_template(_path,args),
+			attachments = dict_list,
+
+			)
+
+	
 
 def carton_num(doc):
 	indx=0

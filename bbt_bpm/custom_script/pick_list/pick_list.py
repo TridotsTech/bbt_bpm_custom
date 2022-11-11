@@ -5,18 +5,16 @@ import json
 import math
 
 def save(doc, method):
-	set_items(doc)
-
-
-def validate(doc,method):
 	for row in doc.locations:
 		if doc.edit_carton_qty_and_no:
 			row.total_weight = row.total_weight
-
+			
 		else:
 			total_weight = row.carton_qty * row.per_carton_weight_kgs
 			row.total_weight = total_weight
-		
+
+	set_items(doc)
+
 	
 def carton_details(doc):
 	for i in doc.get("locations"):
@@ -147,7 +145,7 @@ def set_so_qty(doc):
 	so_data = frappe.db.sql("""SELECT DISTINCT soi.item_code,soi.qty FROM `tabSales Order Item` as soi, `tabPick List Item` as pli
 						WHERE soi.parent = %(so_no)s ORDER BY soi.idx;""", {"so_no":so_no},as_dict=1)
 
-	# print(f'\n\n{so_data}\n\n')
+	print(f'\n\n{so_data}\n\n')
 	# print('\n\nfrappe.db.get_value("Item",i.item_code,"no_of_items_can_be_packed")\n\n')
 
 	for i in doc.locations:

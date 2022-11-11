@@ -149,7 +149,6 @@ def add_to_cart_item(filters):
 @frappe.whitelist()
 def add_to_cart_details(user, filters):
 	filters = json.loads(filters)
-	print('filters',filters)
 	#add_to_cart = frappe.db.sql("""SELECT name, item_code, item_group, description, rate, language, stock_in_nos, stock_in_cartons, book_per_carton, ordered_qty_in_nos, ordered_qty_in_cartons, amount from `tabAdd To Cart Item` where parent='{0}' """.format(user), as_dict=1)
 	add_to_cart = frappe.db.sql("""SELECT name, item_code, item_group, description, rate, language, stock_in_nos, stock_in_cartons, book_per_carton, ordered_qty_in_nos, ordered_qty_in_cartons, amount, publisher from `tabAdd To Cart Item`  where parent='{0}' ORDER BY language, description""".format(user), as_dict=1)	
 	# print(f'\n\n{add_to_cart}\n\n')
@@ -341,6 +340,7 @@ def create_doc(name,required_qty,remark):
 
 	doc.customer = cust[0][0]
 	doc.item_name = name
+	doc.item_code = frappe.db.get_value('Item', {'item_name': name}, 'item_code')
 	doc.required_qty = required_qty
 	doc.remark = remark
 	doc.insert(ignore_mandatory = True)

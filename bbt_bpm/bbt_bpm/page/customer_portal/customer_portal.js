@@ -67,6 +67,17 @@ frappe.customer_portal = Class.extend({
 						$('[data-fieldname="item_code"]').hide()
 						$('[data-fieldname="description"]').hide()
 
+
+				    	$('#d_t').on("change", function(){
+					    	var delivery_type = $(".d_t").val()
+					    	if (delivery_type == "Self Pickup"){
+					    		$(".f_c").val('NA') 	
+					    	}else{
+					    		$(".f_c").val('')
+					    	}
+					    	
+						})
+
 		        	}
 
 		        }
@@ -86,16 +97,16 @@ frappe.customer_portal = Class.extend({
 	          		var html = r.message.html
 	          		//console.log(html)
 					$('.frappe-list').html(html)
-					$('[data-fieldname="language"]').show()
-					$('[data-fieldname="category"]').show()
-					$('[data-fieldname="item_code"]').show()
-					$('[data-fieldname="description"]').show()
-					$('[data-fieldname="home"]').hide()
 					me.item_order_qty(me)
 	    			me.add_to_card(me)
 	    			me.notify_me(me)
 	    			me.new_order(me)
 	    			me.sort_table(me)
+					$('[data-fieldname="language"]').show()
+					$('[data-fieldname="category"]').show()
+					$('[data-fieldname="item_code"]').show()
+					$('[data-fieldname="description"]').show()
+					$('[data-fieldname="home"]').hide()
 
 	        	}
 
@@ -200,7 +211,7 @@ frappe.customer_portal = Class.extend({
 	notify_me: function(me){
 	    $('.notify_me').click(function() {
 	    	let name = $(this).closest('tr').children('td.col4').text()
-			
+	    	// let item_code = frappe.model.get_value('Item', {'item_name': name}, 'item_code')
 	     	var d = new frappe.ui.Dialog({
 			fields: [
 				{
@@ -588,6 +599,20 @@ frappe.customer_portal = Class.extend({
 							me.new_order()
 							me.sort_table()
 							$('[data-fieldname="download_pdf"]').hide()
+
+							//Delivery type on change
+
+
+							$('#d_t').on("change", function(){
+						    	var delivery_type = $(".d_t").val()
+						    	if (delivery_type == "Self Pickup"){
+						    		$(".f_c").val('NA') 	
+						    	}else{
+						    		$(".f_c").val('')
+						    	}
+					    	
+							})
+
 			        	}
 
 			        }//calback end

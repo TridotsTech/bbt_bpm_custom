@@ -275,7 +275,7 @@
 
 				<tr>
 					<td colspan="7">
-						<p><label class="contact_person">Contact Person</label></p>
+						<p><label class="contact_person">Delivery Contact Person</label></p>
 						<select class="c_p" id="c_p" name="c_p">
 						 {% for x in contact %}
 							<option >{{x.parent}}</option>
@@ -315,23 +315,30 @@
 				</tr>
 
 				<tr>
+
+					<td colspan="7">
+						<p><label class="d_charges">Delivery Type </label></p>
+						<select class="d_t" id="d_t" name="d_t" style="color:green;">
+							<option value="blk"> </option>
+							<option value="Self Pickup">Self Pickup</option>
+							<option value="Door Delivery">Door Delivery</option>
+							<option value="Godown Delivery">Godown Delivery</option>
+						</select>
+					</td>
+					
+				</tr>
+
+				<tr>
 					<td colspan="7">
 						<p><label class="f_charges">Freight Charges </label></p>
 						<select class="f_c" id="f_c" name="f_c" style="color:green;">
+							<option value="bl"> </option>
+							<option value="NA">NA</option>
 							<option value="To Pay">To pay</option>
 							<option value="Paid">Paid</option>
+							
 						</select>
 					</td>
-
-					<td colspan="6">
-						<p><label class="d_charges">Delivery Type </label></p>
-						<select class="d_t" id="d_t" name="d_t" style="color:green;">
-							<option value="Door Delivery">Door Delivery</option>
-							<option value="Godown Delivery">Godown Delivery</option>
-							<option value="Self Pickup">Self Pickup</option>
-						</select>
-					</td>
-
 				</tr>
 
 
