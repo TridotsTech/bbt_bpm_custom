@@ -54,7 +54,7 @@
                         <tr>
                         
                         <td style="background-color: #D0D0D0; text-align: right;">Delivery Contact Number:</td>
-                        <td> {{doc.contact_phone}} </td>
+                        <td> {{frappe.db.get_value("Contact",{"name":doc.contact_person},"phone")}} </td>
                         
                         </tr>
 

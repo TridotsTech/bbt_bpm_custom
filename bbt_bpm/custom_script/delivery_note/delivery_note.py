@@ -43,12 +43,13 @@ def on_submit(doc, method):
 
 	args = {"doc":doc}
 	_path = 'bbt_bpm/custom_script/delivery_note/dispatch_order.html'
-	user = frappe.db.get_value("Customer",{"name":doc.customer},"user")
+	# user = frappe.db.get_value("Customer",{"name":doc.customer},"user")
+	user = 'swapnilpawar26041999@gmail.com'
 
 	frappe.sendmail(
 		user,
-		subject='Order Delivery Confirmation',
-		cc = ["admin@indiabbt.com","frontoffice@indiabbt.com","amit.parab@i2econsulting.com","swapnil.pawar@i2econsulting.com"],
+		subject= doc.customer+ " " + 'Dispatch Details #: ' + doc.name,
+		cc = ["amit.parab@i2econsulting.com","swapnil.pawar@i2econsulting.com"],
 		content=frappe.render_template(_path,args),
 		attachments = dict_list,
         
@@ -62,18 +63,9 @@ def on_update_after_submit(doc, method):
 			goods_in_transit = flt(item_qty)-flt(row.qty)
 			frappe.db.set_value("Item", row.item_code, "goods_in_transit", goods_in_transit)
 
-
-def save(doc, method):
-	set_items(doc)
-	
-	box = []
-	for boxes in doc.items:
-		box.append(boxes.carton_qty)
-	doc.total_no_of_boxes = sum(box)
-
 	''' Order Delivery Confirmation  '''
 
-	if doc.delivered:
+	if doc.delivered and doc.delivery_confirmed:
 		dict_list = []
 		_file_name = frappe.db.sql('''SELECT file_name from `tabFile` where attached_to_name = '{0}' '''.format(doc.name),as_dict=True)
 		for file in _file_name:
@@ -91,18 +83,27 @@ def save(doc, method):
 		args = {"doc":doc}
 		_path = 'bbt_bpm/custom_script/delivery_note/order_delivery_confirmation.html'
 		
-		user = frappe.db.get_value("Customer",{"name":doc.customer},"user")
-
+		# user = frappe.db.get_value("Customer",{"name":doc.customer},"user")
+		user = 'swapnilpawar26041999@gmail.com'
 		frappe.sendmail(
 			user,
-			subject='Delivery Notes Dispatch',
-			cc = ["admin@indiabbt.com","frontoffice@indiabbt.com","amit.parab@i2econsulting.com","swapnil.pawar@i2econsulting.com"],
+			subject = 'Order Delivery Confirmation -'+ " " + doc.customer,
+			cc = ["amit.parab@i2econsulting.com","swapnil.pawar@i2econsulting.com"],
 			content=frappe.render_template(_path,args),
 			attachments = dict_list,
 
-			)
+			)	
 
+
+def save(doc, method):
+	set_items(doc)
 	
+	box = []
+	for boxes in doc.items:
+		box.append(boxes.carton_qty)
+	doc.total_no_of_boxes = sum(box)
+
+
 
 def carton_num(doc):
 	indx=0
