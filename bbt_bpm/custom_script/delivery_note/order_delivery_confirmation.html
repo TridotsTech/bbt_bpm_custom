@@ -29,7 +29,7 @@ Your order has been delivered as per below details. </p>
       </tr>
 <tr>
 <td style="background-color: #D0D0D0; text-align: right;">Registered Email Id from Which Order Received:</td>
-        <td>{{frappe.session.user}}</td>
+        <td>{{ frappe.db.get_value("Customer",{"name":doc.customer},"user") }}</td>
       </tr>
 <tr>
 <td style="background-color: #D0D0D0; text-align: right;">Delivery Challan / Packing Slip No.:</td>
@@ -46,7 +46,7 @@ Your order has been delivered as per below details. </p>
       
       <tr>
 <td style="background-color: #D0D0D0; text-align: right;">Contact Number:</td>
-        <td> - </td>
+        <td> {{doc.contact_phone}} </td>
       </tr>
 
 <tr>
@@ -88,7 +88,12 @@ Your order has been delivered as per below details. </p>
 <tr>
 <td style="background-color: #D0D0D0; text-align: right;">Transportation Payment Type:</td>
         <td>{{ doc.freight_charges }}</td>
-      </tr>
+</tr>
+
+<tr>
+        <td style="background-color: #D0D0D0; text-align: right;">Attachment Details:</td>
+        <td> {{ doc.attachment_details }} </td>
+</tr>
 
 
     </table>

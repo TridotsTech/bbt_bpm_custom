@@ -36,7 +36,7 @@
                         </tr>
                         <tr>
                                 <td style="background-color: #D0D0D0; text-align: right;">Registered Email Id from Which Order Received:</td>
-                        <td> {{frappe.session.user}} </td>
+                        <td> {{frappe.db.get_value("Customer",{"name":doc.customer},"user")}} </td>
                         </tr>
                         <tr>
                                 <td style="background-color: #D0D0D0; text-align: right;">Delivery Challan / Packing Slip No.:</td>
@@ -47,8 +47,15 @@
                                 <td>{{ doc.shipping_address }}</td>
                         </tr>
                         <tr>
-                                <td style="background-color: #D0D0D0; text-align: right;">Dispatched Contact person:</td>
+                                <td style="background-color: #D0D0D0; text-align: right;">Delivery Contact Person:</td>
                                 <td>{{ doc.contact_display }}</td>
+                        </tr>
+
+                        <tr>
+                        
+                        <td style="background-color: #D0D0D0; text-align: right;">Delivery Contact Number:</td>
+                        <td> {{doc.contact_phone}} </td>
+                        
                         </tr>
 
                         <tr>
@@ -119,7 +126,7 @@
 
                         <tr>
                                <td style="background-color: #D0D0D0; text-align: right;">Attachment Details:</td>
-                                <td> - </td>
+                                <td> {{ doc.attachment_details }} </td>
                         </tr>
                         
                 </table>
