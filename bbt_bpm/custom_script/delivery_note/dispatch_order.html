@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-        <p>Hare Krishna {{ doc.contact_display }}Prabhu Ji, 
+        <p>Hare Krishna {{ frappe.db.get_value("Customer",{"name":doc.customer},"authorized_person") }}Prabhu Ji, 
         <br>
         Your order has been dispatched as per below details. </p>
         <p>
