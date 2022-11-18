@@ -10,12 +10,19 @@ def save(doc, method):
 	for row in doc.locations:
 		if doc.edit_carton_qty_and_no:
 			row.total_weight = row.total_weight
-			
-		else:
-			total_weight = row.carton_qty * row.per_carton_weight_kgs
-			row.total_weight = total_weight
+			row.total_carton_weight_in_kg = row.total_carton_weight_in_kg
 
-	
+		else:
+			if row.so_qty == 0:
+				row.total_weight = 0
+				row.total_carton_weight_in_kg = 0
+			else:
+				total_weight = row.carton_qty * row.per_carton_weight_kgs
+				row.total_weight = total_weight
+				row.total_carton_weight_in_kg = total_weight
+
+
+
 def carton_details(doc):
 	for i in doc.get("locations"):
 		is_packaging=frappe.db.get_value("Item",i.item_code,"item_group")
