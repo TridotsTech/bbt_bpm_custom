@@ -102,17 +102,6 @@ def on_update_after_submit(doc, method):
 def save(doc, method):
 	set_items(doc)
 	
-	box = []
-	for boxes in doc.items:
-		if not boxes.total_carton_weight_in_kg:
-			boxes.total_carton_weight_in_kg = boxes.per_carton_weight_in_kg * boxes.carton_qty
-		else:
-			boxes.total_carton_weight_in_kg = boxes.total_carton_weight_in_kg 
-
-		box.append(boxes.carton_qty)
-	doc.total_no_of_boxes = sum(box)
-
-
 def carton_num(doc):
 	indx=0
 	count=0
@@ -212,6 +201,20 @@ def set_items(doc):
 			item_link = "<a target=_blank href='#Form/Item/{0}'>{1}</a>".format(item.item_code, item.item_code)
 			msg = "Kindly Update No. of Item can be packed Field for Item {0}".format(item_link)
 			frappe.throw(msg)
+
+
+	box = []
+	total_craton_weight = []
+	for boxes in doc.items:
+		if not boxes.total_carton_weight_in_kg:
+			boxes.total_carton_weight_in_kg = boxes.per_carton_weight_in_kg * boxes.carton_qty
+		else:
+			boxes.total_carton_weight_in_kg = boxes.total_carton_weight_in_kg 
+
+		box.append(boxes.carton_qty)
+		total_craton_weight.append(int(boxes.total_carton_weight_in_kg))
+	doc.total_no_of_boxes = sum(box)
+	doc.total_craton_weight = sum(total_craton_weight)
 
 	carton_num(doc)
 
