@@ -67,6 +67,17 @@ frappe.customer_portal = Class.extend({
 						$('[data-fieldname="item_code"]').hide()
 						$('[data-fieldname="description"]').hide()
 
+
+				    	$('#d_t').on("change", function(){
+					    	var delivery_type = $(".d_t").val()
+					    	if (delivery_type == "Self Pickup"){
+					    		$(".f_c").val('NA') 	
+					    	}else{
+					    		$(".f_c").val('')
+					    	}
+					    	
+						})
+
 		        	}
 
 		        }
@@ -85,17 +96,16 @@ frappe.customer_portal = Class.extend({
 	        	if (r.message){
 	          		var html = r.message.html
 	          		//console.log(html)
-					$('.frappe-list').html(html)
-					$('[data-fieldname="language"]').show()
-					$('[data-fieldname="category"]').show()
-					$('[data-fieldname="item_code"]').show()
-					$('[data-fieldname="description"]').show()
-					$('[data-fieldname="landing_page"]').hide()
 					me.item_order_qty(me)
 	    			me.add_to_card(me)
 	    			me.notify_me(me)
 	    			me.new_order(me)
 	    			me.sort_table(me)
+					$('[data-fieldname="language"]').show()
+					$('[data-fieldname="category"]').show()
+					$('[data-fieldname="item_code"]').show()
+					$('[data-fieldname="description"]').show()
+					$('[data-fieldname="home"]').hide()
 
 	        	}
 
@@ -199,7 +209,7 @@ frappe.customer_portal = Class.extend({
 	notify_me: function(me){
 	    $('.notify_me').click(function() {
 	    	let name = $(this).closest('tr').children('td.col4').text()
-			
+	    	// let item_code = frappe.model.get_value('Item', {'item_name': name}, 'item_code')
 	     	var d = new frappe.ui.Dialog({
 			fields: [
 				{
@@ -340,6 +350,7 @@ frappe.customer_portal = Class.extend({
 			billing_address = $(".b_address").val()
 			instruction_delivery = $(".i_d").val()
 			special_instruction = $(".s_i").val()
+			delivery_contact_person = $(".p_g").val()
 			frappe.call({
 		        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.new_order",
 		        args: {
@@ -352,7 +363,8 @@ frappe.customer_portal = Class.extend({
 		        	shipping_address: shipping_address,
 		        	billing_address: billing_address,
 		        	instruction_delivery: instruction_delivery,
-		        	special_instruction: special_instruction
+		        	special_instruction: special_instruction,
+		        	delivery_contact_person: delivery_contact_person
 		        },
 		        //headers: {'content-type': 'application/json'},
 		        callback: function (r) {
@@ -587,6 +599,20 @@ frappe.customer_portal = Class.extend({
 							me.new_order()
 							me.sort_table()
 							$('[data-fieldname="download_pdf"]').hide()
+
+							//Delivery type on change
+
+
+							$('#d_t').on("change", function(){
+						    	var delivery_type = $(".d_t").val()
+						    	if (delivery_type == "Self Pickup"){
+						    		$(".f_c").val('NA') 	
+						    	}else{
+						    		$(".f_c").val('')
+						    	}
+					    	
+							})
+
 			        	}
 
 			        }//calback end

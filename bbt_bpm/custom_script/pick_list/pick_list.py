@@ -5,19 +5,11 @@ import json
 import math
 
 def save(doc, method):
+	set_so_qty(doc)
 	set_items(doc)
+	carton_data(doc)
 
 
-def validate(doc,method):
-	for row in doc.locations:
-		if doc.edit_carton_qty_and_no:
-			row.total_weight = row.total_weight
-
-		else:
-			total_weight = row.carton_qty * row.per_carton_weight_kgs
-			row.total_weight = total_weight
-		
-	
 def carton_details(doc):
 	for i in doc.get("locations"):
 		is_packaging=frappe.db.get_value("Item",i.item_code,"item_group")
@@ -42,7 +34,6 @@ def carton_details(doc):
 	calculate_carton_no(doc)
 			
 def set_items(doc):
-	
 	for item in doc.locations:
 		is_packaging_item = frappe.db.get_value("Item", item.item_code, "no_of_items_can_be_packed")
 		is_carton_req = frappe.db.get_value("Item", item.item_code, "carton")
@@ -65,8 +56,34 @@ def set_items(doc):
 			item_link = "<a target=_blank href='#Form/Item/{0}'>{1}</a>".format(item.item_code, item.item_code)
 			msg = "Kindly Update No. of Item can be packed Field for Item {0}".format(item_link)
 			frappe.throw(msg)
-			
+
 	carton_details(doc)
+
+def carton_data(doc):
+	total_craton_weight = []
+	for row in doc.locations:
+		if not doc.edit_carton_qty_and_no:
+			if row.so_qty > 0:
+				total_weight = row.carton_qty * row.per_carton_weight_kgs
+				row.total_weight = total_weight
+				row.total_carton_weight_in_kg = total_weight
+
+			elif row.so_qty == 0:
+				row.total_weight = 0
+				row.total_carton_weight_in_kg = 0
+
+		elif doc.edit_carton_qty_and_no:
+			if row.so_qty > 0:
+				total_weight = row.carton_qty * row.per_carton_weight_kgs
+				row.total_weight = total_weight
+				row.total_carton_weight_in_kg = total_weight
+
+			else:
+				row.total_weight = row.total_weight
+				row.total_carton_weight_in_kg = row.total_carton_weight_in_kg
+
+		total_craton_weight.append(float(row.total_carton_weight_in_kg))
+	doc.total_craton_weight = sum(total_craton_weight)
 
 def calculate_carton_no(doc):
 	indx=0
@@ -136,7 +153,6 @@ def sort_table(doc):
 
 # Fetch qty in PL from SO, update in custom so_qty field
 def set_so_qty(doc):
-
 	l = []
 	for i in doc.locations:
 		so_number = i.sales_order
@@ -147,7 +163,7 @@ def set_so_qty(doc):
 	so_data = frappe.db.sql("""SELECT DISTINCT soi.item_code,soi.qty FROM `tabSales Order Item` as soi, `tabPick List Item` as pli
 						WHERE soi.parent = %(so_no)s ORDER BY soi.idx;""", {"so_no":so_no},as_dict=1)
 
-	# print(f'\n\n{so_data}\n\n')
+	print(f'\n\n{so_data}\n\n')
 	# print('\n\nfrappe.db.get_value("Item",i.item_code,"no_of_items_can_be_packed")\n\n')
 
 	for i in doc.locations:

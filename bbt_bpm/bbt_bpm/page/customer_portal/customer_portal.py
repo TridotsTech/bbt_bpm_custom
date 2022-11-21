@@ -149,7 +149,6 @@ def add_to_cart_item(filters):
 @frappe.whitelist()
 def add_to_cart_details(user, filters):
 	filters = json.loads(filters)
-	print('filters',filters)
 	#add_to_cart = frappe.db.sql("""SELECT name, item_code, item_group, description, rate, language, stock_in_nos, stock_in_cartons, book_per_carton, ordered_qty_in_nos, ordered_qty_in_cartons, amount from `tabAdd To Cart Item` where parent='{0}' """.format(user), as_dict=1)
 	add_to_cart = frappe.db.sql("""SELECT name, item_code, item_group, description, rate, language, stock_in_nos, stock_in_cartons, book_per_carton, ordered_qty_in_nos, ordered_qty_in_cartons, amount, publisher from `tabAdd To Cart Item`  where parent='{0}' ORDER BY language, description""".format(user), as_dict=1)	
 	# print(f'\n\n{add_to_cart}\n\n')
@@ -174,7 +173,7 @@ def add_to_cart_details(user, filters):
 
 
 @frappe.whitelist()
-def new_order(client_feedback, contact_person, transportation_mode, preferred_transporter, freight_charges, delivery_type, shipping_address, billing_address, instruction_delivery, special_instruction):
+def new_order(client_feedback, contact_person, transportation_mode, preferred_transporter, freight_charges, delivery_type, shipping_address, billing_address, instruction_delivery, special_instruction,delivery_contact_person):
 	user = frappe.session.user
 	data = frappe.db.sql("""SELECT item_code, item_name, item_group, description, rate, language, stock_in_nos, stock_in_cartons, book_per_carton, ordered_qty_in_nos, ordered_qty_in_cartons from `tabAdd To Cart Item` where publisher="BBT" and parent='{0}' """.format(user), as_dict=1)
 	data2 = frappe.db.sql("""SELECT item_code, item_name, item_group, description, rate, language, stock_in_nos, stock_in_cartons, book_per_carton, ordered_qty_in_nos, ordered_qty_in_cartons from `tabAdd To Cart Item` where publisher="SRST" and parent='{0}' """.format(user), as_dict=1)
@@ -215,6 +214,7 @@ def new_order(client_feedback, contact_person, transportation_mode, preferred_tr
 		doc.customer_address =  billing_address
 		doc.instruction_for_delivery = instruction_delivery
 		doc.special_instruction = special_instruction
+		doc.delivery_contact_person_pan_no_or_gst_no = delivery_contact_person
 		doc.save()
 		doc.add_comment('Comment', text=client_feedback)
 		#frappe.delete_doc('Add To Cart', frappe.session.user)
@@ -254,6 +254,7 @@ def new_order(client_feedback, contact_person, transportation_mode, preferred_tr
 		doc.customer_address =  billing_address
 		doc.instruction_for_delivery = instruction_delivery
 		doc.special_instruction = special_instruction
+		doc.delivery_contact_person_pan_no_or_gst_no = delivery_contact_person
 		doc.save()
 		doc.add_comment('Comment', text=client_feedback)
 		#frappe.delete_doc('Add To Cart', frappe.session.user)
@@ -293,6 +294,7 @@ def new_order(client_feedback, contact_person, transportation_mode, preferred_tr
 		doc.customer_address =  billing_address
 		doc.instruction_for_delivery = instruction_delivery
 		doc.special_instruction = special_instruction
+		doc.delivery_contact_person_pan_no_or_gst_no = delivery_contact_person
 		doc.save()
 		doc.add_comment('Comment', text=client_feedback)
 		frappe.delete_doc('Add To Cart', frappe.session.user)
@@ -335,12 +337,15 @@ def update_cartons_qty_on_cart(item, language, cartan_order_qty, rate, book_per_
 
 
 @frappe.whitelist()
-def create_doc(name,required_qty,remark):
+def create_doc(name,required_qty,remark=None):
+
 	doc = frappe.new_doc("Issue")
+
 	cust = frappe.db.get_values("Customer", {"user":frappe.session.user}, ["name", "company", "default_currency", "default_price_list"])
 
 	doc.customer = cust[0][0]
 	doc.item_name = name
+	doc.item_code = frappe.db.get_value('Item', {'item_name': name}, 'item_code')
 	doc.required_qty = required_qty
 	doc.remark = remark
 	doc.insert(ignore_mandatory = True)
