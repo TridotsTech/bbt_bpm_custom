@@ -23,13 +23,13 @@
    "type": "Link"
   }
  ],
- "modified": "2022-11-01 19:36:29.074306",
+ "modified": "2022-11-21 21:13:04.574338",
  "modified_by": "Administrator",
  "module": "Bbt Bpm",
  "name": "Customer Portal",
  "owner": "Administrator",
  "pin_to_bottom": 0,
- "pin_to_top": 0,
+ "pin_to_top": 1,
  "shortcuts": [
   {
    "doc_view": "New",
