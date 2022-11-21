@@ -21,7 +21,7 @@ frappe.customer_portal = Class.extend({
 
     	this.wrapper = wrapper
     	$('.viewcustomcart').click(function() {
-    		window.location.href = '/desk#customer_portal?viewcart=true'
+    		window.location.href = '/app/customer_portal?viewcart=true'
     		window.location.reload()
     	})
     	this.make()
@@ -41,7 +41,7 @@ frappe.customer_portal = Class.extend({
 			var me = this;
 			$('.frappe-list').html('')
 			me.add_to_cart_items = this.value?this.value:null
-			$('[data-fieldname="home"]').show()
+			$('[data-fieldname="landing_page"]').show()
 			$('[data-fieldname="language"]').hide()
 			$('[data-fieldname="category"]').hide()
 			$('[data-fieldname="item_code"]').hide()
@@ -90,7 +90,7 @@ frappe.customer_portal = Class.extend({
 					$('[data-fieldname="category"]').show()
 					$('[data-fieldname="item_code"]').show()
 					$('[data-fieldname="description"]').show()
-					$('[data-fieldname="home"]').hide()
+					$('[data-fieldname="landing_page"]').hide()
 					me.item_order_qty(me)
 	    			me.add_to_card(me)
 	    			me.notify_me(me)
@@ -103,7 +103,6 @@ frappe.customer_portal = Class.extend({
 	    })
 
 	},
-
 	
 	get_imp_data:function(){
 	    var me = this
@@ -498,10 +497,10 @@ frappe.customer_portal = Class.extend({
 		me.page.add_field({
 			"fieldtype": 'Button',
 			"label": __('Back'),
-			"fieldname": 'home',
+			"fieldname": 'landing_page',
 			click: function() {
-				me.home = this.value?this.value:null
-				window.location.href = "desk#customer_portal"
+				me.landing_page = this.value?this.value:null
+				window.location.href = "app/customer_portal"
 				window.location.reload()
 				me.get_imp_data()
 			}
@@ -567,7 +566,7 @@ frappe.customer_portal = Class.extend({
 			"fieldname": 'add_to_cart_items',
 			click: function() {
 				me.add_to_cart_items = this.value?this.value:null
-				$('[data-fieldname="home"]').show()
+				$('[data-fieldname="landing_page"]').show()
 				$('[data-fieldname="language"]').hide()
 				$('[data-fieldname="category"]').hide()
 				$('[data-fieldname="item_code"]').hide()
