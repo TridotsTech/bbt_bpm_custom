@@ -96,7 +96,7 @@ frappe.customer_portal = Class.extend({
 	        	if (r.message){
 	          		var html = r.message.html
 	          		$('.frappe-list').html(html)
-	          		$('.delete').hide()
+	          		// $('.delete').hide()
 	          		// console.log(html)
 					me.item_order_qty(me)
 	    			me.add_to_card(me)
@@ -532,7 +532,9 @@ frappe.customer_portal = Class.extend({
 				me.get_imp_data()
 			}
 		})
-		$('[data-fieldname="language"]').css({"border": "0px solid Brown", "width": "90px"})
+		$('[data-fieldname="language"]').css({"border": "0px solid Brown", "width": "90px", "margin-right": "10px"})
+
+		$('[data-fieldname="language"]').removeClass("col-md-2")
 
 		me.page.add_field({
 			"fieldtype": 'Autocomplete',
@@ -546,7 +548,10 @@ frappe.customer_portal = Class.extend({
 				me.get_imp_data()
 			}
 		})
-		$('[data-fieldname="category"]').css({"border": "0px solid Brown","width": "90px"})
+		
+		$('[data-fieldname="category"]').css({"border": "0px solid Brown", "width": "90px", "margin-right": "10px"})
+
+		$('[data-fieldname="category"]').removeClass("col-md-2")
 
 		me.page.add_field({
 			"fieldtype": 'Autocomplete',
@@ -559,7 +564,10 @@ frappe.customer_portal = Class.extend({
 				me.get_imp_data()
 			}
 		})
-		$('[data-fieldname="item_code"]').css({"border": "0px solid Brown", "width": "80px"})
+
+		$('[data-fieldname="item_code"]').css({"border": "0px solid Brown", "width": "90px", "margin-right": "10px"})
+
+		$('[data-fieldname="item_code"]').removeClass("col-md-2")
 
 		me.page.add_field({
 			"fieldtype": 'Autocomplete',
@@ -572,7 +580,11 @@ frappe.customer_portal = Class.extend({
 				me.get_imp_data()
 			}
 		})
-		$('[data-fieldname="description"]').css({"border": "0px solid Brown", "width": "190px"})
+
+
+		$('[data-fieldname="description"]').css({"border": "0px solid Brown", "width": "90px", "margin-right": "10px"})
+
+		$('[data-fieldname="description"]').removeClass("col-md-2")
 
 		this.view_cart_button =  me.page.add_field({
 			"fieldtype": 'Button',
@@ -621,7 +633,10 @@ frappe.customer_portal = Class.extend({
 			    })
 			}
 		})
-		$('[data-fieldname="add_to_cart_items"]').addClass("btn-primary")
+		$('[data-fieldname="add_to_cart_items"] > button').addClass("btn-primary")
+
+    	$('[data-fieldname="add_to_cart_items"] > button').css({"border":"none","color":"white"})
+		$('[data-fieldname="add_to_cart_items"] > button').removeClass("btn")
 
 		me.page.add_field({
 		"fieldtype": 'Button',
