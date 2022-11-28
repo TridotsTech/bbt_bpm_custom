@@ -4,6 +4,13 @@ from frappe.utils import cint, cstr,flt
 import json
 import math
 
+
+from frappe.model.mapper import map_child_doc
+from erpnext.selling.doctype.sales_order.sales_order import (
+	make_delivery_note as create_delivery_note_from_sales_order,
+)
+from erpnext.stock.doctype.pick_list.pick_list import update_delivery_note_item,set_delivery_note_missing_values,validate_item_locations
+
 def save(doc, method):
 	set_so_qty(doc)
 	set_items(doc)
@@ -213,6 +220,69 @@ def before_save(doc, method=None):
 	# 	items.append(item_details)
 	# doc.locations = items
 	# set_items(doc)
+
+
+@frappe.whitelist()
+def create_delivery_notes(source_name, target_doc=None):
+	pick_list = frappe.get_doc('Pick List', source_name)
+	validate_item_locations(pick_list)
+
+	sales_orders = [d.sales_order for d in pick_list.locations if d.sales_order]
+	sales_orders = set(sales_orders)
+
+	delivery_note = None
+	for sales_order in sales_orders:
+		delivery_note = create_delivery_note_from_sales_order(sales_order,
+			delivery_note, skip_item_mapping=True)
+
+	# map rows without sales orders as well
+	if not delivery_note:
+		delivery_note = frappe.new_doc("Delivery Note")
+
+	item_table_mapper = {
+		'doctype': 'Delivery Note Item',
+		'field_map': {
+			'rate': 'rate',
+			'name': 'so_detail',
+			'parent': 'against_sales_order',
+		},
+		'condition': lambda doc: abs(doc.delivered_qty) < abs(doc.qty) and doc.delivered_by_supplier!=1
+	}
+
+	item_table_mapper_without_so = {
+		'doctype': 'Delivery Note Item',
+		'field_map': {
+			'rate': 'rate',
+			'name': 'name',
+			'parent': '',
+		}
+	}
+
+	for location in pick_list.locations:
+		if location.sales_order_item:
+			sales_order_item = frappe.get_cached_doc('Sales Order Item', {'name':location.sales_order_item})
+		else:
+			sales_order_item = None
+
+		source_doc, table_mapper = [sales_order_item, item_table_mapper] if sales_order_item \
+			else [location, item_table_mapper_without_so]
+
+		dn_item = map_child_doc(source_doc, delivery_note, table_mapper)
+
+		if dn_item:
+			dn_item.warehouse = location.warehouse
+			dn_item.qty = location.picked_qty
+			dn_item.batch_no = location.batch_no
+			dn_item.serial_no = location.serial_no
+
+			update_delivery_note_item(source_doc, dn_item, delivery_note)
+
+	set_delivery_note_missing_values(delivery_note)
+
+	delivery_note.pick_list = pick_list.name
+	delivery_note.customer = pick_list.customer if pick_list.customer else None
+
+	return delivery_note
 	
 	
 
