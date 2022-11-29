@@ -91,7 +91,7 @@ def carton_data(doc):
 					row.total_carton_weight_in_kg = row.total_carton_weight_in_kg
 
 			total_craton_weight.append(float(row.total_carton_weight_in_kg))
-		doc.total_craton_weight = sum(total_craton_weight)
+		doc._total_carton_weight = sum(total_craton_weight)
 	except Exception as e:
 		print(e)
 

@@ -41,21 +41,21 @@ def on_submit(doc, method):
 		dict_list.append({"fname":file.get('file_name'),"fcontent":encoded_string})
 
 
-	args = {"doc":doc}
-	_path = 'bbt_bpm/custom_script/delivery_note/dispatch_order.html'
-	# user = frappe.db.get_value("Customer",{"name":doc.customer},"user")
-	user = 'swapnilpawar26041999@gmail.com'
+	# args = {"doc":doc}
+	# _path = 'bbt_bpm/custom_script/delivery_note/dispatch_order.html'
+	# # user = frappe.db.get_value("Customer",{"name":doc.customer},"user")
+	# user = 'swapnilpawar26041999@gmail.com'
 
-	frappe.sendmail(
-		user,
-		subject= doc.customer+ " " + 'Dispatch Details #: ' + doc.name,
-		cc = ["amit.parab@i2econsulting.com","swapnil.pawar@i2econsulting.com",
-				"admin@indiabbt.com",
-				"frontoffice@indiabbt.com"],
-		content=frappe.render_template(_path,args),
-		attachments = dict_list,
+	# frappe.sendmail(
+	# 	user,
+	# 	subject= doc.customer+ " " + 'Dispatch Details #: ' + doc.name,
+	# 	cc = ["amit.parab@i2econsulting.com","swapnil.pawar@i2econsulting.com",
+	# 			"admin@indiabbt.com",
+	# 			"frontoffice@indiabbt.com"],
+	# 	content=frappe.render_template(_path,args),
+	# 	attachments = dict_list,
         
-		)
+	# 	)
 
 	
 def on_update_after_submit(doc, method):
@@ -82,21 +82,21 @@ def on_update_after_submit(doc, method):
 			dict_list.append({"fname":file.get('file_name'),"fcontent":encoded_string})
 
 
-		args = {"doc":doc}
-		_path = 'bbt_bpm/custom_script/delivery_note/order_delivery_confirmation.html'
+		# args = {"doc":doc}
+		# _path = 'bbt_bpm/custom_script/delivery_note/order_delivery_confirmation.html'
 		
-		# user = frappe.db.get_value("Customer",{"name":doc.customer},"user")
-		user = 'swapnilpawar26041999@gmail.com'
-		frappe.sendmail(
-			user,
-			subject = 'Order Delivery Confirmation -'+ " " + doc.customer,
-			cc = ["amit.parab@i2econsulting.com","swapnil.pawar@i2econsulting.com",
-				"admin@indiabbt.com",
-				"frontoffice@indiabbt.com"],
-			content=frappe.render_template(_path,args),
-			attachments = dict_list,
+		# # user = frappe.db.get_value("Customer",{"name":doc.customer},"user")
+		# user = 'swapnilpawar26041999@gmail.com'
+		# frappe.sendmail(
+		# 	user,
+		# 	subject = 'Order Delivery Confirmation -'+ " " + doc.customer,
+		# 	cc = ["amit.parab@i2econsulting.com","swapnil.pawar@i2econsulting.com",
+		# 		"admin@indiabbt.com",
+		# 		"frontoffice@indiabbt.com"],
+		# 	content=frappe.render_template(_path,args),
+		# 	attachments = dict_list,
 
-			)	
+		# 	)	
 
 
 def save(doc, method):
@@ -137,7 +137,7 @@ def carton_num(doc):
 
 		if is_packaging_item and not doc.edit_carton_qty_and_no:
 			_carton_no = i.qty / is_packaging_item
-			if _carton_no > 1:
+			if _carton_no >= 1:
 				start_indx=int(indx+1)
 				end_indx = count + int(i.carton_qty)
 				i.carton_no=str(start_indx)+"-"+str(end_indx)
@@ -179,9 +179,9 @@ def set_items(doc):
 				item.dimension = carton_item_doc_name.dimension
 				item.available_stock = available_qty[0]
 				item.used_qty = item.qty
-				item.is_free_item = 1
+				# item.is_free_item = 1
 
-				if qty > 1:
+				if qty >= 1:
 					item.carton_qty = math.floor(qty)
 				else:
 					item.carton_qty = item.carton_qty
@@ -196,7 +196,7 @@ def set_items(doc):
 				item.dimension = carton_item_doc_name.dimension
 				item.available_stock = available_qty[0]
 				item.used_qty = item.qty
-				item.is_free_item = 1
+				# item.is_free_item = 1
 
 
 			elif not is_packaging_item:
@@ -216,7 +216,7 @@ def set_items(doc):
 			box.append(boxes.carton_qty)
 			total_craton_weight.append(float(boxes.total_carton_weight_in_kg))
 		doc.total_no_of_boxes = sum(box)
-		doc.total_craton_weight = sum(total_craton_weight)
+		doc.total_carton_weight = sum(total_craton_weight)
 
 		carton_num(doc)
 	except Exception as e:
