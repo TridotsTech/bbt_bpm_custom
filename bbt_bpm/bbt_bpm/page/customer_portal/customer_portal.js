@@ -353,6 +353,7 @@ frappe.customer_portal = Class.extend({
 			instruction_delivery = $(".i_d").val()
 			special_instruction = $(".s_i").val()
 			delivery_contact_person = $(".p_g").val()
+			booking_to_be_done_in_the_name_of = $("#bk_name").val()
 			frappe.call({
 		        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.new_order",
 		        args: {
@@ -366,7 +367,8 @@ frappe.customer_portal = Class.extend({
 		        	billing_address: billing_address,
 		        	instruction_delivery: instruction_delivery,
 		        	special_instruction: special_instruction,
-		        	delivery_contact_person: delivery_contact_person
+		        	delivery_contact_person: delivery_contact_person,
+		        	booking_to_be_done_in_the_name_of:booking_to_be_done_in_the_name_of
 		        },
 		        //headers: {'content-type': 'application/json'},
 		        callback: function (r) {

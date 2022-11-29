@@ -173,7 +173,7 @@ def add_to_cart_details(user, filters):
 
 
 @frappe.whitelist()
-def new_order(client_feedback, contact_person, transportation_mode, preferred_transporter, freight_charges, delivery_type, shipping_address, billing_address, instruction_delivery, special_instruction,delivery_contact_person):
+def new_order(client_feedback, contact_person, transportation_mode, preferred_transporter, freight_charges, delivery_type, shipping_address, billing_address, instruction_delivery, special_instruction,delivery_contact_person,booking_to_be_done_in_the_name_of):
 	user = frappe.session.user
 	data = frappe.db.sql("""SELECT item_code, item_name, item_group, description, rate, language, stock_in_nos, stock_in_cartons, book_per_carton, ordered_qty_in_nos, ordered_qty_in_cartons from `tabAdd To Cart Item` where publisher="BBT" and parent='{0}' """.format(user), as_dict=1)
 	data2 = frappe.db.sql("""SELECT item_code, item_name, item_group, description, rate, language, stock_in_nos, stock_in_cartons, book_per_carton, ordered_qty_in_nos, ordered_qty_in_cartons from `tabAdd To Cart Item` where publisher="SRST" and parent='{0}' """.format(user), as_dict=1)
@@ -215,6 +215,7 @@ def new_order(client_feedback, contact_person, transportation_mode, preferred_tr
 		doc.instruction_for_delivery = instruction_delivery
 		doc.special_instruction = special_instruction
 		doc.delivery_contact_person_pan_no_or_gst_no = delivery_contact_person
+		doc.booking_to_be_done_in_the_name_of = booking_to_be_done_in_the_name_of
 		doc.save()
 		doc.add_comment('Comment', text=client_feedback)
 		#frappe.delete_doc('Add To Cart', frappe.session.user)
@@ -255,6 +256,7 @@ def new_order(client_feedback, contact_person, transportation_mode, preferred_tr
 		doc.instruction_for_delivery = instruction_delivery
 		doc.special_instruction = special_instruction
 		doc.delivery_contact_person_pan_no_or_gst_no = delivery_contact_person
+		doc.booking_to_be_done_in_the_name_of = booking_to_be_done_in_the_name_of
 		doc.save()
 		doc.add_comment('Comment', text=client_feedback)
 		#frappe.delete_doc('Add To Cart', frappe.session.user)
@@ -295,6 +297,7 @@ def new_order(client_feedback, contact_person, transportation_mode, preferred_tr
 		doc.instruction_for_delivery = instruction_delivery
 		doc.special_instruction = special_instruction
 		doc.delivery_contact_person_pan_no_or_gst_no = delivery_contact_person
+		doc.booking_to_be_done_in_the_name_of = booking_to_be_done_in_the_name_of
 		doc.save()
 		doc.add_comment('Comment', text=client_feedback)
 		frappe.delete_doc('Add To Cart', frappe.session.user)

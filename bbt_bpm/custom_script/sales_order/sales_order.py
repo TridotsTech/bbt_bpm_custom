@@ -235,11 +235,12 @@ def map_on_stock_entry(source_name, target_doc=None):
 	return target_doc
 
 
-def set_item_warehouses(doc): 
-
+def set_item_warehouses(doc):
         for item in doc.items:
-             if not doc.edit_item_warehouse:
+            if not doc.edit_item_warehouse:
                 item.warehouse=doc.set_warehouse
+            else:
+                doc.set_warehouse=item.warehouse
 
 def rm_unwanted_items(doc):
     db_items=frappe.db.sql(""" select item_code, warehouse,projected_qty,name from `tabSales Order Item` where parent=%(doc_name)s """,{"doc_name":doc.name},as_dict=1)
