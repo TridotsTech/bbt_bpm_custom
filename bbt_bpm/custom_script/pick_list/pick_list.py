@@ -67,9 +67,11 @@ def set_items(doc):
 	carton_details(doc)
 
 def carton_data(doc):
+
 	total_craton_weight = []
 	try:
 		for row in doc.locations:
+			frappe.db.set_value('Sales Order',{"name":row.sales_order},"pick_list_reference",doc.name)
 			if not doc.edit_carton_qty_and_no:
 				if row.so_qty > 0:
 					total_weight = row.carton_qty * row.per_carton_weight_kgs
@@ -225,6 +227,7 @@ def before_save(doc, method=None):
 @frappe.whitelist()
 def create_delivery_notes(source_name, target_doc=None):
 	pick_list = frappe.get_doc('Pick List', source_name)
+	# pick_list.delivery_note_reference = source_name
 	validate_item_locations(pick_list)
 
 	sales_orders = [d.sales_order for d in pick_list.locations if d.sales_order]
