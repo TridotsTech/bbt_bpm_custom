@@ -100,6 +100,8 @@ def on_update_after_submit(doc, method):
 
 
 def save(doc, method):
+	set_items(doc)
+
 	for ref in doc.items:
 		pick_list_name = frappe.db.get_value('Sales Order',{"name":ref.against_sales_order},"pick_list_reference")
 		if pick_list_name:
@@ -107,7 +109,6 @@ def save(doc, method):
 			frappe.db.set_value('Pick List',{"name":pick_list_doc.name},"delivery_note_reference",doc.name)
 		else:
 			return False
-	set_items(doc)
 	
 def carton_num(doc):
 	indx=0
@@ -163,7 +164,6 @@ def carton_num(doc):
 
 def set_items(doc):
 	try:
-	
 		for item in doc.items:
 			is_packaging_item = frappe.db.get_value("Item", item.item_code, "no_of_items_can_be_packed")
 
@@ -218,7 +218,7 @@ def set_items(doc):
 			if not boxes.total_carton_weight_in_kg:
 				boxes.total_carton_weight_in_kg = boxes.per_carton_weight_in_kg * boxes.carton_qty
 			else:
-				boxes.total_carton_weight_in_kg = boxes.total_carton_weight_in_kg 
+				boxes.total_carton_weight_in_kg = boxes.total_carton_weight_in_kg
 
 			box.append(boxes.carton_qty)
 			total_craton_weight.append(float(boxes.total_carton_weight_in_kg))
