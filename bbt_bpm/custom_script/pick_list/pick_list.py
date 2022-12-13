@@ -63,21 +63,29 @@ def carton_data(doc):
 	total_craton_weight = []
 	for row in doc.locations:
 		if not doc.edit_carton_qty_and_no:
-			if row.so_qty > 0:
+			if row.so_qty > 0 and row.qty > row.no_of_items_can_be_packed:
 				total_weight = row.carton_qty * row.per_carton_weight_kgs
 				row.total_weight = total_weight
 				row.total_carton_weight_in_kg = total_weight
 
-			elif row.so_qty == 0:
+			# elif row.qty < row.no_of_items_can_be_packed:
+			# 	row.total_weight = 0
+			# 	row.total_carton_weight_in_kg = 0
+
+			elif row.so_qty == 0 or row.qty < row.no_of_items_can_be_packed:
 				row.total_weight = 0
 				row.total_carton_weight_in_kg = 0
 
 		elif doc.edit_carton_qty_and_no:
-			if row.so_qty > 0:
+			if row.so_qty > 0 and row.qty > row.no_of_items_can_be_packed:
 				total_weight = row.carton_qty * row.per_carton_weight_kgs
 				row.total_weight = total_weight
 				row.total_carton_weight_in_kg = total_weight
 
+			elif row.so_qty > 0 and row.qty < row.no_of_items_can_be_packed:
+				row.total_weight = row.total_weight
+				row.total_carton_weight_in_kg = row.total_carton_weight_in_kg
+			
 			else:
 				row.total_weight = row.total_weight
 				row.total_carton_weight_in_kg = row.total_carton_weight_in_kg
