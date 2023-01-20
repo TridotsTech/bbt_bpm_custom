@@ -60,38 +60,30 @@ def set_items(doc):
 	carton_details(doc)
 
 def carton_data(doc):
-	total_craton_weight = []
 	for row in doc.locations:
 		if not doc.edit_carton_qty_and_no:
-			if row.so_qty > 0 and row.qty > row.no_of_items_can_be_packed:
+			if row.so_qty > 0 and row.sales_order:
 				total_weight = row.carton_qty * row.per_carton_weight_kgs
 				row.total_weight = total_weight
 				row.total_carton_weight_in_kg = total_weight
-
-			# elif row.qty < row.no_of_items_can_be_packed:
-			# 	row.total_weight = 0
-			# 	row.total_carton_weight_in_kg = 0
-
-			elif row.so_qty == 0 or row.qty < row.no_of_items_can_be_packed:
-				row.total_weight = 0
-				row.total_carton_weight_in_kg = 0
-
-		elif doc.edit_carton_qty_and_no:
-			if row.so_qty > 0 and row.qty > row.no_of_items_can_be_packed:
-				total_weight = row.carton_qty * row.per_carton_weight_kgs
-				row.total_weight = total_weight
-				row.total_carton_weight_in_kg = total_weight
-
-			elif row.so_qty > 0 and row.qty < row.no_of_items_can_be_packed:
+			else:
 				row.total_weight = row.total_weight
 				row.total_carton_weight_in_kg = row.total_carton_weight_in_kg
+
+		elif doc.edit_carton_qty_and_no:
+			if row.so_qty > 0 and row.sales_order:
+				total_weight = row.carton_qty * row.per_carton_weight_kgs
+				row.total_weight = total_weight
+				row.total_carton_weight_in_kg = total_weight
 			
 			else:
 				row.total_weight = row.total_weight
 				row.total_carton_weight_in_kg = row.total_carton_weight_in_kg
 
-		total_craton_weight.append(float(row.total_carton_weight_in_kg))
-	doc.total_craton_weight = sum(total_craton_weight)
+	# 	total_craton_weight.append(float(row.total_carton_weight_in_kg))
+	# doc.total_craton_weight = sum(total_craton_weight)
+
+
 
 def calculate_carton_no(doc):
 	indx=0
@@ -193,6 +185,7 @@ def set_so_qty(doc):
 def before_save(doc, method=None):
 	set_so_qty(doc)
 	sort_table(doc)
+	total_craton_weight(doc)
 	# so_doc = frappe.get_cached_doc("Sales Order", doc.locations[0].sales_order)
 	# items = []
 	# for item in so_doc.items:
@@ -218,6 +211,13 @@ def before_save(doc, method=None):
 	# 	items.append(item_details)
 	# doc.locations = items
 	# set_items(doc)
+
+def total_craton_weight(doc):
+	total_craton_weight = []
+	for row in doc.locations:
+		if row.total_carton_weight_in_kg:
+			total_craton_weight.append(float(row.total_carton_weight_in_kg))
+	doc.total_craton_weight = sum(total_craton_weight)
 	
 	
 
