@@ -64,8 +64,11 @@ def carton_data(doc):
 		if not doc.edit_carton_qty_and_no:
 			if row.so_qty > 0 and row.sales_order:
 				total_weight = row.carton_qty * row.per_carton_weight_kgs
-				row.total_weight = total_weight
-				row.total_carton_weight_in_kg = total_weight
+				# row.total_weight = total_weight
+				# row.total_carton_weight_in_kg = total_weight 
+
+				row.total_weight = round(total_weight, 2)
+				row.total_carton_weight_in_kg = round(total_weight, 2)
 			else:
 				row.total_weight = row.total_weight
 				row.total_carton_weight_in_kg = row.total_carton_weight_in_kg
@@ -73,8 +76,8 @@ def carton_data(doc):
 		elif doc.edit_carton_qty_and_no:
 			if row.so_qty > 0 and row.sales_order:
 				total_weight = row.carton_qty * row.per_carton_weight_kgs
-				row.total_weight = total_weight
-				row.total_carton_weight_in_kg = total_weight
+				row.total_weight = round(total_weight, 2)
+				row.total_carton_weight_in_kg = round(total_weight, 2)
 			
 			else:
 				row.total_weight = row.total_weight
