@@ -6,6 +6,10 @@ frappe.ui.form.on("Sales Order", {
 	refresh: function(frm){
 		frm.trigger("hide_sidebar")
 		frm.trigger("map_on_stock_entry")
+		
+		if (frappe.user_roles.includes("Customer User")){
+			$(".form-footer").hide()
+		}
 	},
 	map_on_stock_entry: function(frm){
 		if (frm.doc.docstatus==0 && !frm.doc.stock_transfer_ref){

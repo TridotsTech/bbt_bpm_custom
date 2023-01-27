@@ -54,7 +54,9 @@ doctype_js = {
 	"Batch": "custom_script/batch/batch.js",
 	"Delivery Note": "custom_script/delivery_note/delivery_note.js",
 	"Address": "custom_script/address/address.js",
-	"Contact": "custom_script/contact/contact.js"
+	"Contact": "custom_script/contact/contact.js",
+	"Pick List": "custom_script/pick_list/pick_list.js",
+	"Payment Entry": "custom_script/payment_entry/payment_entry.js",
 }
 
 app_logo_url = "/files/bbt_icon.png"

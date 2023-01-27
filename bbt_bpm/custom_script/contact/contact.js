@@ -19,6 +19,11 @@ frappe.ui.form.on("Contact", {
 		})
 		// frm.clear_table("links"); CT getting populated but not reflecting
 		
+	},
+	refresh: function(frm){
+		if (frappe.user_roles.includes("Customer User")){
+			$(".form-footer").hide()
+		}
 	}
 
 });
