@@ -7,7 +7,7 @@ frappe.ui.form.on("Sales Order", {
 		frm.trigger("hide_sidebar")
 		frm.trigger("map_on_stock_entry")
 		
-		if (frappe.user_roles.includes("Customer User")){
+		if (frappe.session.user != "Administrator" && frappe.user_roles.includes("Customer User")){
 			$(".form-footer").hide()
 		}
 	},

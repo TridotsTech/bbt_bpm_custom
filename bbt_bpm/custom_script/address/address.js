@@ -24,7 +24,7 @@ frappe.ui.form.on("Address", {
 		
 	},
 	refresh: function(frm){
-		if (frappe.user_roles.includes("Customer User")){
+		if (frappe.session.user != "Administrator" && frappe.user_roles.includes("Customer User")){
 			$(".form-footer").hide()
 		}
 	}
