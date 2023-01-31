@@ -137,7 +137,7 @@ def carton_num(doc):
 
 		if is_packaging_item and not doc.edit_carton_qty_and_no:
 			_carton_no = i.qty / is_packaging_item
-			if _carton_no >= 1:
+			if _carton_no <= 1:
 				start_indx=int(indx+1)
 				end_indx = count + int(i.carton_qty)
 				i.carton_no=str(start_indx)+"-"+str(end_indx)
@@ -219,7 +219,7 @@ def set_items(doc):
 	carton_num(doc)
 
 
-
+	
 #------------------------------------------------------------------
 #Permission Query
 #------------------------------------------------------------------
