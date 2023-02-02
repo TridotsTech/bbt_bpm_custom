@@ -6,6 +6,11 @@ frappe.ui.form.on("Sales Order", {
 	refresh: function(frm){
 		frm.trigger("hide_sidebar")
 		frm.trigger("map_on_stock_entry")
+
+		frm.add_custom_button(__('Duplicate'), function() {           
+                var new_so = frappe.model.copy_doc(frm.doc);
+                frappe.set_route('Form', 'Sales Order', new_so.name);
+            });
 		
 		if (frappe.session.user != "Administrator" && frappe.user_roles.includes("Customer User")){
 			$(".form-footer").hide()
