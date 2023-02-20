@@ -31,8 +31,12 @@ def on_submit(doc, method):
 	dict_list = []
 	_file_name = frappe.db.sql('''SELECT file_name from `tabFile` where attached_to_name = '{0}' '''.format(doc.name),as_dict=True)
 	for file in _file_name:
-		path = get_site_path("public", "files")
-		path = path + "/"+ file.get('file_name')
+		private_path = get_site_path("private", "files")
+		public_path = get_site_path("public", "files")
+		if public_path:
+			path = public_path + "/"+ file.get('file_name')
+		elif private_path:
+			path = private_path + "/"+ file.get('file_name')
 		image_file = open(path, "rb")
 
 		encoded_string = ""
@@ -71,10 +75,13 @@ def on_update_after_submit(doc, method):
 		dict_list = []
 		_file_name = frappe.db.sql('''SELECT file_name from `tabFile` where attached_to_name = '{0}' '''.format(doc.name),as_dict=True)
 		for file in _file_name:
-			path = get_site_path("public", "files")
-			path = path + "/"+ file.get('file_name')
+			private_path = get_site_path("private", "files")
+			public_path = get_site_path("public", "files")
+			if public_path:
+				path = public_path + "/"+ file.get('file_name')
+			elif private_path:
+				path = private_path + "/"+ file.get('file_name')
 			image_file = open(path, "rb")
-
 
 			encoded_string = ""
 			image_file.seek(0)
