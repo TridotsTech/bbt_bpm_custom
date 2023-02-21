@@ -44,6 +44,11 @@ def on_submit(doc, method):
 		encoded_string = image_file.read()
 		dict_list.append({"fname":file.get('file_name'),"fcontent":encoded_string})
 
+	print_format = "New Delivery Note" if not cint(frappe.db.get_value('Print Format', 'New Delivery Note', 'disabled')) else None
+
+	default_attachment = frappe.attach_print('Delivery Note', doc.name, print_format=print_format)
+
+	dict_list.append(default_attachment)
 
 	args = {"doc":doc}
 	_path = 'bbt_bpm/custom_script/delivery_note/dispatch_order.html'
@@ -88,7 +93,11 @@ def on_update_after_submit(doc, method):
 			encoded_string = image_file.read()
 			dict_list.append({"fname":file.get('file_name'),"fcontent":encoded_string})
 
+		print_format = "New Delivery Note" if not cint(frappe.db.get_value('Print Format', 'New Delivery Note', 'disabled')) else None
 
+		default_attachment = frappe.attach_print('Delivery Note', doc.name, print_format=print_format)
+		dict_list.append(default_attachment)
+		
 		args = {"doc":doc}
 		_path = 'bbt_bpm/custom_script/delivery_note/order_delivery_confirmation.html'
 		
