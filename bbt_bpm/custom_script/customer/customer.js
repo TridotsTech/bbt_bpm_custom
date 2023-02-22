@@ -4,6 +4,9 @@ frappe.ui.form.on("Customer", {
 	},
 	refresh: function(frm){
 		frm.trigger("hide_sidebar")
+		if (frappe.session.user != "Administrator" && frappe.user_roles.includes("Customer User")){
+			$(".form-footer").hide()
+		}
 	},
 
 	hide_sidebar: function(frm){

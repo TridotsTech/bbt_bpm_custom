@@ -239,6 +239,8 @@ def set_item_warehouses(doc):
         for item in doc.items:
             if not doc.edit_item_warehouse:
                 item.warehouse=doc.set_warehouse
+            else:
+                doc.set_warehouse=item.warehouse
 
             else:
                 doc.set_warehouse=item.warehouse

@@ -31,8 +31,12 @@ def on_submit(doc, method):
 	dict_list = []
 	_file_name = frappe.db.sql('''SELECT file_name from `tabFile` where attached_to_name = '{0}' '''.format(doc.name),as_dict=True)
 	for file in _file_name:
-		path = get_site_path("public", "files")
-		path = path + "/"+ file.get('file_name')
+		private_path = get_site_path("private", "files")
+		public_path = get_site_path("public", "files")
+		if public_path:
+			path = public_path + "/"+ file.get('file_name')
+		elif private_path:
+			path = private_path + "/"+ file.get('file_name')
 		image_file = open(path, "rb")
 
 		encoded_string = ""
@@ -40,6 +44,11 @@ def on_submit(doc, method):
 		encoded_string = image_file.read()
 		dict_list.append({"fname":file.get('file_name'),"fcontent":encoded_string})
 
+	print_format = "New Delivery Note" if not cint(frappe.db.get_value('Print Format', 'New Delivery Note', 'disabled')) else None
+
+	default_attachment = frappe.attach_print('Delivery Note', doc.name, print_format=print_format)
+
+	dict_list.append(default_attachment)
 
 	# args = {"doc":doc}
 	# _path = 'bbt_bpm/custom_script/delivery_note/dispatch_order.html'
@@ -71,19 +80,30 @@ def on_update_after_submit(doc, method):
 		dict_list = []
 		_file_name = frappe.db.sql('''SELECT file_name from `tabFile` where attached_to_name = '{0}' '''.format(doc.name),as_dict=True)
 		for file in _file_name:
-			path = get_site_path("public", "files")
-			path = path + "/"+ file.get('file_name')
+			private_path = get_site_path("private", "files")
+			public_path = get_site_path("public", "files")
+			if public_path:
+				path = public_path + "/"+ file.get('file_name')
+			elif private_path:
+				path = private_path + "/"+ file.get('file_name')
 			image_file = open(path, "rb")
-
 
 			encoded_string = ""
 			image_file.seek(0)
 			encoded_string = image_file.read()
 			dict_list.append({"fname":file.get('file_name'),"fcontent":encoded_string})
 
+		print_format = "New Delivery Note" if not cint(frappe.db.get_value('Print Format', 'New Delivery Note', 'disabled')) else None
+
+
+		default_attachment = frappe.attach_print('Delivery Note', doc.name, print_format=print_format)
+		dict_list.append(default_attachment)
+		
+
 
 		# args = {"doc":doc}
 		# _path = 'bbt_bpm/custom_script/delivery_note/order_delivery_confirmation.html'
+
 		
 		# # user = frappe.db.get_value("Customer",{"name":doc.customer},"user")
 		# user = 'swapnilpawar26041999@gmail.com'
@@ -124,8 +144,6 @@ def carton_num(doc):
 			start_indx=""
 			end_indx=""
 			
-			# i.carton_no=str(start_indx)+"-"+str(end_indx)
-			#i.carton_qty = str(start_indx)+"-"+str(end_indx)
 			i.no_of_items_can_be_packed = str(start_indx)+"-"+str(end_indx)
 		else:
 			i.carton_qty = i.carton_qty
@@ -134,18 +152,11 @@ def carton_num(doc):
 			else:
 				carton_qty =  i.qty
 
-		#carton_no calculation
-		# if int(i.carton_qty) > 1 and not doc.edit_carton_qty_and_no:
-		# 	print('if carton_qty----------------',i.carton_qty)
-		# 	start_indx=int(indx+1)
-		# 	end_indx = count + int(i.carton_qty)
-		# 	i.carton_no=str(start_indx)+"-"+str(end_indx)
-		# 	indx=end_indx
-		# 	count = int(indx)
-
 		if is_packaging_item and not doc.edit_carton_qty_and_no:
 			_carton_no = i.qty / is_packaging_item
-			if _carton_no >= 1:
+
+			if _carton_no <= 1:
+
 				start_indx=int(indx+1)
 				end_indx = count + int(i.carton_qty)
 				i.carton_no=str(start_indx)+"-"+str(end_indx)
@@ -154,71 +165,58 @@ def carton_num(doc):
 			else:
 				i.carton_no = i.carton_no
 
-		#carton_no calculation
-		# if not doc.edit_carton_qty_and_no:
-		# 	#i.carton_no=str(start_indx)+"-"+str(end_indx)
-		# 	#i.carton_no = frappe.db.get_value("Pick List Item",{"name":i.item_code}, "carton_no")
-		# 	i.carton_no = frappe.db.sql(""" SELECT carton_no FROM `tabPick List Item` pli WHERE pli.parent = """, as_dict = 1) 
-		# 	print(f'\n\n\n{i.carton_no}\n\n\n')
-
 
 def set_items(doc):
-	try:
-		for item in doc.items:
-			is_packaging_item = frappe.db.get_value("Item", item.item_code, "no_of_items_can_be_packed")
+	
+	for item in doc.items:
+		is_packaging_item = frappe.db.get_value("Item", item.item_code, "no_of_items_can_be_packed")
+		is_carton_req = frappe.db.get_value("Item", item.item_code, "carton")
+		item_weight = frappe.db.get_value("Item", item.item_code, "weight_per_unit")
+		available_qty = frappe.db.sql_list("""select sum(actual_qty) from tabBin 
+							where item_code='{0}' and warehouse='{1}'""".format(item.item_code, item.warehouse))
+		item_code = frappe.db.get_value("Item", item.item_code, "item_code")
 
-			is_carton_req = frappe.db.get_value("Item", item.item_code, "carton")
-			item_weight = frappe.db.get_value("Item", item.item_code, "weight_per_unit")
-			available_qty = frappe.db.sql_list("""select sum(actual_qty) from tabBin 
-								where item_code='{0}' and warehouse='{1}'""".format(item.item_code, item.warehouse))
-			item_code = frappe.db.get_value("Item", item.item_code, "item_code")
+		if is_packaging_item and not doc.edit_carton_qty_and_no:
+			carton_item_doc_name = frappe.get_cached_doc("Item", {"item_code": item_code})
+			item.carton_name = carton_item_doc_name.item_code
+			qty = item.qty / is_packaging_item
+			item.no_of_items_can_be_packed = is_packaging_item
+			item.per_carton_weight_in_kg = carton_item_doc_name.per_carton_weight_kgs
+			item.dimension = carton_item_doc_name.dimension
+			item.available_stock = available_qty[0]
+			item.used_qty = item.qty
+			item.is_free_item = 1
 
-			if is_packaging_item and not doc.edit_carton_qty_and_no:
-				carton_item_doc_name = frappe.get_cached_doc("Item", {"item_code": item_code})
-				item.carton_name = carton_item_doc_name.item_code
-				qty = item.qty / is_packaging_item
-				#print('\n\n Qty \n\n', qty)
-				# item.carton_qty = math.floor(qty)
-				#print('\n\n Carton Qty \n\n', item.carton_qty)
-				item.no_of_items_can_be_packed = is_packaging_item
-				item.per_carton_weight_in_kg = carton_item_doc_name.per_carton_weight_kgs
-				# item.total_carton_weight_in_kg = item.per_carton_weight_in_kg * item.carton_qty
-				item.dimension = carton_item_doc_name.dimension
-				item.available_stock = available_qty[0]
-				item.used_qty = item.qty
-				# item.is_free_item = 1
-
-				if qty >= 1:
-					item.carton_qty = math.floor(qty)
-				else:
-					item.carton_qty = item.carton_qty
-
-
-			elif doc.edit_carton_qty_and_no:
-				carton_item_doc_name = frappe.get_cached_doc("Item", {"item_code": item_code})
-				item.carton_name = carton_item_doc_name.item_code
-				item.no_of_items_can_be_packed = is_packaging_item
-				item.per_carton_weight_in_kg = carton_item_doc_name.per_carton_weight_kgs
-				# item.total_carton_weight_in_kg = item.per_carton_weight_in_kg * item.carton_qty
-				item.dimension = carton_item_doc_name.dimension
-				item.available_stock = available_qty[0]
-				item.used_qty = item.qty
-				# item.is_free_item = 1
-
-
-			elif not is_packaging_item:
-				item_link = "<a target=_blank href='/app/Item/{0}'>{1}</a>".format(item.item_code, item.item_code)
-				msg = "Kindly Update No. of Item can be packed Field for Item {0}".format(item_link)
-				frappe.throw(msg)
-
-
-		box = []
-		total_craton_weight = []
-		for boxes in doc.items:
-			if not boxes.total_carton_weight_in_kg:
-				boxes.total_carton_weight_in_kg = boxes.per_carton_weight_in_kg * boxes.carton_qty
+			if qty >= 1:
+				item.carton_qty = math.floor(qty)
 			else:
-				boxes.total_carton_weight_in_kg = boxes.total_carton_weight_in_kg
+				item.carton_qty = item.carton_qty
+
+		elif doc.edit_carton_qty_and_no:
+			carton_item_doc_name = frappe.get_cached_doc("Item", {"item_code": item_code})
+			item.carton_name = carton_item_doc_name.item_code
+			item.no_of_items_can_be_packed = is_packaging_item
+			item.per_carton_weight_in_kg = carton_item_doc_name.per_carton_weight_kgs
+			# item.total_carton_weight_in_kg = item.per_carton_weight_in_kg * item.carton_qty
+			item.dimension = carton_item_doc_name.dimension
+			item.available_stock = available_qty[0]
+			item.used_qty = item.qty
+			item.is_free_item = 1
+
+
+		elif not is_packaging_item:
+			item_link = "<a target=_blank href='#Form/Item/{0}'>{1}</a>".format(item.item_code, item.item_code)
+			msg = "Kindly Update No. of Item can be packed Field for Item {0}".format(item_link)
+			frappe.throw(msg)
+
+	box = []
+	total_craton_weight = []
+	for boxes in doc.items:
+		if not boxes.total_carton_weight_in_kg:
+			boxes.total_carton_weight_in_kg = boxes.per_carton_weight_in_kg * boxes.carton_qty
+		else:
+			boxes.total_carton_weight_in_kg = boxes.total_carton_weight_in_kg 
+
 
 			box.append(boxes.carton_qty)
 			total_craton_weight.append(float(boxes.total_carton_weight_in_kg))
@@ -229,8 +227,7 @@ def set_items(doc):
 	except Exception as e:
 		print(e)
 
-
-
+	
 #------------------------------------------------------------------
 #Permission Query
 #------------------------------------------------------------------

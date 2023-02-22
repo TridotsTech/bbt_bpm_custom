@@ -217,7 +217,7 @@ def new_order(client_feedback, contact_person, transportation_mode, preferred_tr
 		doc.delivery_contact_person_pan_no_or_gst_no = delivery_contact_person
 		doc.booking_to_be_done_in_the_name_of = booking_to_be_done_in_the_name_of
 		doc.save()
-		doc.add_comment('Comment', text=client_feedback)
+		# doc.add_comment('Comment', text=client_feedback)
 		#frappe.delete_doc('Add To Cart', frappe.session.user)
 		#frappe.db.commit()
 		frappe.msgprint(_("Order Shall be processed Upon Approval"))
@@ -258,7 +258,7 @@ def new_order(client_feedback, contact_person, transportation_mode, preferred_tr
 		doc.delivery_contact_person_pan_no_or_gst_no = delivery_contact_person
 		doc.booking_to_be_done_in_the_name_of = booking_to_be_done_in_the_name_of
 		doc.save()
-		doc.add_comment('Comment', text=client_feedback)
+		# doc.add_comment('Comment', text=client_feedback)
 		#frappe.delete_doc('Add To Cart', frappe.session.user)
 		#frappe.db.commit()
 		frappe.msgprint(_("Order Shall be processed Upon Approval"))
@@ -299,7 +299,7 @@ def new_order(client_feedback, contact_person, transportation_mode, preferred_tr
 		doc.delivery_contact_person_pan_no_or_gst_no = delivery_contact_person
 		doc.booking_to_be_done_in_the_name_of = booking_to_be_done_in_the_name_of
 		doc.save()
-		doc.add_comment('Comment', text=client_feedback)
+		# doc.add_comment('Comment', text=client_feedback)
 		frappe.delete_doc('Add To Cart', frappe.session.user)
 		frappe.db.commit()
 		frappe.msgprint(_("Order Shall be processed Upon Approval"))

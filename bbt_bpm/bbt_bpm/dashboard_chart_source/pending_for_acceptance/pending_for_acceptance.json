@@ -1,0 +1,13 @@
+{
+ "creation": "2022-11-03 11:32:01.310796",
+ "docstatus": 0,
+ "doctype": "Dashboard Chart Source",
+ "idx": 0,
+ "modified": "2022-11-03 14:46:19.244009",
+ "modified_by": "Administrator",
+ "module": "Bbt Bpm",
+ "name": "Pending for acceptance",
+ "owner": "Administrator",
+ "source_name": "Pending for acceptance",
+ "timeseries": 1
+}
