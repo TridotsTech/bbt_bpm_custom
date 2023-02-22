@@ -50,21 +50,21 @@ def on_submit(doc, method):
 
 	dict_list.append(default_attachment)
 
-	args = {"doc":doc}
-	_path = 'bbt_bpm/custom_script/delivery_note/dispatch_order.html'
-	# user = frappe.db.get_value("Customer",{"name":doc.customer},"user")
-	user = 'swapnilpawar26041999@gmail.com'
+	# args = {"doc":doc}
+	# _path = 'bbt_bpm/custom_script/delivery_note/dispatch_order.html'
+	# # user = frappe.db.get_value("Customer",{"name":doc.customer},"user")
+	# user = 'swapnilpawar26041999@gmail.com'
 
-	frappe.sendmail(
-		user,
-		subject= doc.customer+ " " + 'Dispatch Details #: ' + doc.name,
-		cc = ["amit.parab@i2econsulting.com","swapnil.pawar@i2econsulting.com",
-				"admin@indiabbt.com",
-				"frontoffice@indiabbt.com"],
-		content=frappe.render_template(_path,args),
-		attachments = dict_list,
+	# frappe.sendmail(
+	# 	user,
+	# 	subject= doc.customer+ " " + 'Dispatch Details #: ' + doc.name,
+	# 	cc = ["amit.parab@i2econsulting.com","swapnil.pawar@i2econsulting.com",
+	# 			"admin@indiabbt.com",
+	# 			"frontoffice@indiabbt.com"],
+	# 	content=frappe.render_template(_path,args),
+	# 	attachments = dict_list,
         
-		)
+	# 	)
 
 	
 def on_update_after_submit(doc, method):
@@ -95,28 +95,40 @@ def on_update_after_submit(doc, method):
 
 		print_format = "New Delivery Note" if not cint(frappe.db.get_value('Print Format', 'New Delivery Note', 'disabled')) else None
 
+
 		default_attachment = frappe.attach_print('Delivery Note', doc.name, print_format=print_format)
 		dict_list.append(default_attachment)
 		
-		args = {"doc":doc}
-		_path = 'bbt_bpm/custom_script/delivery_note/order_delivery_confirmation.html'
-		
-		# user = frappe.db.get_value("Customer",{"name":doc.customer},"user")
-		user = 'swapnilpawar26041999@gmail.com'
-		frappe.sendmail(
-			user,
-			subject = 'Order Delivery Confirmation -'+ " " + doc.customer,
-			cc = ["amit.parab@i2econsulting.com","swapnil.pawar@i2econsulting.com",
-				"admin@indiabbt.com",
-				"frontoffice@indiabbt.com"],
-			content=frappe.render_template(_path,args),
-			attachments = dict_list,
 
-			)	
+
+		# args = {"doc":doc}
+		# _path = 'bbt_bpm/custom_script/delivery_note/order_delivery_confirmation.html'
+
+		
+		# # user = frappe.db.get_value("Customer",{"name":doc.customer},"user")
+		# user = 'swapnilpawar26041999@gmail.com'
+		# frappe.sendmail(
+		# 	user,
+		# 	subject = 'Order Delivery Confirmation -'+ " " + doc.customer,
+		# 	cc = ["amit.parab@i2econsulting.com","swapnil.pawar@i2econsulting.com",
+		# 		"admin@indiabbt.com",
+		# 		"frontoffice@indiabbt.com"],
+		# 	content=frappe.render_template(_path,args),
+		# 	attachments = dict_list,
+
+		# 	)	
 
 
 def save(doc, method):
 	set_items(doc)
+
+	for ref in doc.items:
+		pick_list_name = frappe.db.get_value('Sales Order',{"name":ref.against_sales_order},"pick_list_reference")
+		if pick_list_name:
+			pick_list_doc = frappe.get_doc('Pick List',pick_list_name)
+			frappe.db.set_value('Pick List',{"name":pick_list_doc.name},"delivery_note_reference",doc.name)
+		else:
+			return False
 	
 def carton_num(doc):
 	indx=0
@@ -142,7 +154,9 @@ def carton_num(doc):
 
 		if is_packaging_item and not doc.edit_carton_qty_and_no:
 			_carton_no = i.qty / is_packaging_item
+
 			if _carton_no <= 1:
+
 				start_indx=int(indx+1)
 				end_indx = count + int(i.carton_qty)
 				i.carton_no=str(start_indx)+"-"+str(end_indx)
@@ -203,12 +217,15 @@ def set_items(doc):
 		else:
 			boxes.total_carton_weight_in_kg = boxes.total_carton_weight_in_kg 
 
-		box.append(boxes.carton_qty)
-		total_craton_weight.append(float(boxes.total_carton_weight_in_kg))
-	doc.total_no_of_boxes = sum(box)
-	doc.total_craton_weight = sum(total_craton_weight)
 
-	carton_num(doc)
+			box.append(boxes.carton_qty)
+			total_craton_weight.append(float(boxes.total_carton_weight_in_kg))
+		doc.total_no_of_boxes = sum(box)
+		doc.total_carton_weight = sum(total_craton_weight)
+
+		carton_num(doc)
+	except Exception as e:
+		print(e)
 
 	
 #------------------------------------------------------------------
