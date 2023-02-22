@@ -16,9 +16,9 @@
         </style> -->
 </head>
         <body>
-                <table style="width:100%; text-align: left;" border="1">
+                <table style="width:60%; text-align: left;" border="1">
                         <tr>
-                                <td style="background-color: #D0D0D0; text-align: right;">Order Number and Date:</td>
+                                <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Order Number and Date:</td>
                                 <td>{% for row in doc.items %}
                                         {% if row.idx==1 %}
                                         {{row.against_sales_order or ""}}
@@ -27,105 +27,114 @@
                         </tr>
                         </tr>
                         <tr>
-                                <td style="background-color: #D0D0D0; text-align: right;">Order Received from Temple:</td>
+                                <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Order Received from Temple:</td>
                                 <td>{{ doc.customer }}</td>
                         </tr>
                         <tr>
-                                <td style="background-color: #D0D0D0; text-align: right;">Order Received from(Name):</td>
+                                <td style="background-color: #D0D0D0; text-align: right; font-weight: bold; width:25%">Order Received from(Name):</td>
                                 <td>{{ doc.contact_display }}</td>
                         </tr>
                         <tr>
-                                <td style="background-color: #D0D0D0; text-align: right;">Registered Email Id from Which Order Received:</td>
+                                <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Registered Email Id from Which Order Received:</td>
                         <td> {{frappe.db.get_value("Customer",{"name":doc.customer},"user")}} </td>
                         </tr>
                         <tr>
-                                <td style="background-color: #D0D0D0; text-align: right;">Delivery Challan / Packing Slip No.:</td>
+                                <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Delivery Challan / Packing Slip No.:</td>
                                 <td>{{ doc.name }}</td>
                         </tr>
                         <tr>
-                                <td style="background-color: #D0D0D0; text-align: right;">Delivery Address:</td>
+                                <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Delivery Address:</td>
                                 <td>{{ doc.shipping_address }}</td>
                         </tr>
                         <tr>
-                                <td style="background-color: #D0D0D0; text-align: right;">Delivery Contact Person:</td>
+                                <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Delivery Contact Person:</td>
                                 <td>{{ doc.contact_display }}</td>
                         </tr>
 
                         <tr>
                         
-                        <td style="background-color: #D0D0D0; text-align: right;">Delivery Contact Number:</td>
+                        <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Delivery Contact Number:</td>
                         <td> {{frappe.db.get_value("Contact",{"name":doc.contact_person},"phone")}} </td>
                         
                         </tr>
 
                         <tr>
-                                <td style="background-color: #D0D0D0; text-align: right;">Delivery Type: </td>
+                        
+                        <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Dispatch Warehouse:</td>
+                        {% set wrh = doc.set_warehouse.split('-') %}
+                        <td> {{ wrh[0] }}</td>
+                        
+                        </tr>
+
+
+                        <tr>
+                                <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Delivery Type: </td>
                                 <td>{{ doc.delivery_type }}</td>
                         </tr>
 
                         <tr>
-                                <td style="background-color: #D0D0D0; text-align: right;">Transporter Name: </td>
+                                <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Transporter Name: </td>
                                 <td>{{ doc.transporter }}</td>
                         </tr>
 
                         <tr>
-                                <td style="background-color: #D0D0D0; text-align: right;">Dispatch Date:</td>
+                                <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Dispatch Date:</td>
                                 <td>{{ doc.posting_date }}</td>
                         </tr>
 
                         <tr>
-                                <td style="background-color: #D0D0D0; text-align: right;">Waybill No.: </td>
+                                <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Waybill No.: </td>
                                 <td>{{ doc.waybill_no }}</td>
                         </tr>
 
                         <tr>
-                        <td style="background-color: #D0D0D0; text-align: right;"> Total No. Of Boxes: </td>
+                        <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;"> Total No. Of Boxes: </td>
                                 <td> {{doc.total_no_of_boxes}} </td>
 
                         </tr>
 
                         <tr>
-                        <td style="background-color: #D0D0D0; text-align: right;">Total Weight(in Kgs): </td>
-                                <td>{{ doc.total_net_weight }}</td>
+                        <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Total Carton Weight: </td>
+                                <td>{{ doc.total_craton_weight }}</td>
                         </tr>
 
                         <tr>
-                               <td style="background-color: #D0D0D0; text-align: right;">Truck Number and Driver Number:</td>
+                               <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Truck Number and Driver Number:</td>
                                 <td>{{ doc.driver_name }}</td>
                         </tr>
 
                         <tr>
-                                <td style="background-color: #D0D0D0; text-align: right;">Transporter Branch For Go Down Delivery: </td>
+                                <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Transporter Branch For Go Down Delivery: </td>
                                 <td>{{ doc.transporter_delivery_branch_new }}</td>
                         </tr>
 
                         <tr>
-                               <td style="background-color: #D0D0D0; text-align: right;">Transporter Branch Contact Person and Contact No.:</td>
+                               <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Transporter Branch Contact Person and Contact No.:</td>
                                 <td>{{ doc.transporter_delivery_branch_contact_number }}</td>
                         </tr>
 
                         <tr>
-                                <td style="background-color: #D0D0D0; text-align: right;">Unloading Instructions:</td>
+                                <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Unloading Instructions:</td>
                                 <td>{{ doc.unloading_instruction }}</td>
                         </tr>
 
                         <tr>
-                                <td style="background-color: #D0D0D0; text-align: right;">Transportation Payment Type:</td>
+                                <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Transportation Payment Type:</td>
                                 <td>{{ doc.freight_charges }}</td>
                         </tr>
 
                         <tr>
-                                <td style="background-color: #D0D0D0; text-align: right;">Freight Charges Approx. Rs.:</td>
+                                <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Freight Charges Approx. Rs.:</td>
                                 <td>{{ doc.transportation_expense}}</td>
                         </tr>
 
                         <tr>
-                                <td style="background-color: #D0D0D0; text-align: right;">Special Instructions:</td>
+                                <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Special Instructions:</td>
                                 <td>{{ doc.special_instruction }}</td>
                         </tr>
 
                         <tr>
-                               <td style="background-color: #D0D0D0; text-align: right;">Attachment Details:</td>
+                               <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Attachment Details:</td>
                                 <td> {{ doc.attachment_details }} </td>
                         </tr>
                         

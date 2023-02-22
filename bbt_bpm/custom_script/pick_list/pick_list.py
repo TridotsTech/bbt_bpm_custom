@@ -68,34 +68,38 @@ def set_items(doc):
 
 def carton_data(doc):
 
-	total_craton_weight = []
-	try:
-		for row in doc.locations:
-			frappe.db.set_value('Sales Order',{"name":row.sales_order},"pick_list_reference",doc.name)
-			if not doc.edit_carton_qty_and_no:
-				if row.so_qty > 0:
-					total_weight = row.carton_qty * row.per_carton_weight_kgs
-					row.total_weight = total_weight
-					row.total_carton_weight_in_kg = total_weight
+	for row in doc.locations:
+		if not doc.edit_carton_qty_and_no:
+			if row.so_qty > 0 and row.sales_order and row.qty >= row.no_of_items_can_be_packed:
+				total_weight = row.carton_qty * row.per_carton_weight_kgs
+				# row.total_weight = total_weight
+				# row.total_carton_weight_in_kg = total_weight 
 
-				elif row.so_qty == 0:
-					row.total_weight = 0
-					row.total_carton_weight_in_kg = 0
+				row.total_weight = round(total_weight, 2)
+				row.total_carton_weight_in_kg = round(total_weight, 2)
+			
+			else:
+				row.total_weight = row.total_weight
+				row.total_carton_weight_in_kg = row.total_carton_weight_in_kg
 
-			elif doc.edit_carton_qty_and_no:
-				if row.so_qty > 0:
-					total_weight = row.carton_qty * row.per_carton_weight_kgs
-					row.total_weight = total_weight
-					row.total_carton_weight_in_kg = total_weight
+		elif doc.edit_carton_qty_and_no:
+			if row.so_qty > 0 and row.sales_order and row.qty >= row.no_of_items_can_be_packed:
+				total_weight = row.carton_qty * row.per_carton_weight_kgs
+				row.total_weight = round(total_weight, 2)
+				row.total_carton_weight_in_kg = round(total_weight, 2)
 
-				else:
-					row.total_weight = row.total_weight
-					row.total_carton_weight_in_kg = row.total_carton_weight_in_kg
+			# elif row.qty < row.no_of_items_can_be_packed:
+			# 	row.total_weight = row.total_weight
+			# 	row.total_carton_weight_in_kg = row.total_carton_weight_in_kg
+			
+			else:
+				row.total_weight = row.total_weight
+				row.total_carton_weight_in_kg = row.total_carton_weight_in_kg
 
-			total_craton_weight.append(float(row.total_carton_weight_in_kg))
-		doc._total_carton_weight = sum(total_craton_weight)
-	except Exception as e:
-		print(e)
+	# 	total_craton_weight.append(float(row.total_carton_weight_in_kg))
+	# doc.total_craton_weight = sum(total_craton_weight)
+
+
 
 def calculate_carton_no(doc):
 	indx=0
@@ -197,6 +201,7 @@ def set_so_qty(doc):
 def before_save(doc, method=None):
 	set_so_qty(doc)
 	sort_table(doc)
+	total_craton_weight(doc)
 	# so_doc = frappe.get_cached_doc("Sales Order", doc.locations[0].sales_order)
 	# items = []
 	# for item in so_doc.items:

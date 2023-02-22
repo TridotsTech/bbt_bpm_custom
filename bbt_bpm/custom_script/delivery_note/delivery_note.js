@@ -1,5 +1,9 @@
 frappe.ui.form.on("Delivery Note", {
-
+	refresh: function(frm){
+		if (frappe.session.user != "Administrator" && frappe.user_roles.includes("Customer User")){
+			$(".form-footer").hide()
+		}
+	}
 });
 
 frappe.ui.form.on("Delivery Note Item", {

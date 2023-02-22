@@ -200,6 +200,7 @@ function check_set(frm) {
                     childTable.qty = pending_qty
                     childTable.stock_qty = pending_qty
                     childTable.picked_qty = pending_qty
+                    childTable.new_row = "Yes"
                     pending_qty = 0
                 }
             }
@@ -214,6 +215,7 @@ function check_set(frm) {
                     childTable.qty = entered_qty
                     childTable.stock_qty = entered_qty
                     childTable.picked_qty = entered_qty
+                    childTable.new_row = "No"
                     remaining_qty = 0
                 }
 
