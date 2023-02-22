@@ -132,8 +132,6 @@ def carton_num(doc):
 			start_indx=""
 			end_indx=""
 			
-			# i.carton_no=str(start_indx)+"-"+str(end_indx)
-			#i.carton_qty = str(start_indx)+"-"+str(end_indx)
 			i.no_of_items_can_be_packed = str(start_indx)+"-"+str(end_indx)
 		else:
 			i.carton_qty = i.carton_qty
@@ -141,15 +139,6 @@ def carton_num(doc):
 				carton_qty = 0
 			else:
 				carton_qty =  i.qty
-
-		#carton_no calculation
-		# if int(i.carton_qty) > 1 and not doc.edit_carton_qty_and_no:
-		# 	print('if carton_qty----------------',i.carton_qty)
-		# 	start_indx=int(indx+1)
-		# 	end_indx = count + int(i.carton_qty)
-		# 	i.carton_no=str(start_indx)+"-"+str(end_indx)
-		# 	indx=end_indx
-		# 	count = int(indx)
 
 		if is_packaging_item and not doc.edit_carton_qty_and_no:
 			_carton_no = i.qty / is_packaging_item
@@ -161,13 +150,6 @@ def carton_num(doc):
 				count = int(indx)
 			else:
 				i.carton_no = i.carton_no
-
-		#carton_no calculation
-		# if not doc.edit_carton_qty_and_no:
-		# 	#i.carton_no=str(start_indx)+"-"+str(end_indx)
-		# 	#i.carton_no = frappe.db.get_value("Pick List Item",{"name":i.item_code}, "carton_no")
-		# 	i.carton_no = frappe.db.sql(""" SELECT carton_no FROM `tabPick List Item` pli WHERE pli.parent = """, as_dict = 1) 
-		# 	print(f'\n\n\n{i.carton_no}\n\n\n')
 
 
 def set_items(doc):
@@ -184,12 +166,8 @@ def set_items(doc):
 			carton_item_doc_name = frappe.get_cached_doc("Item", {"item_code": item_code})
 			item.carton_name = carton_item_doc_name.item_code
 			qty = item.qty / is_packaging_item
-			#print('\n\n Qty \n\n', qty)
-			# item.carton_qty = math.floor(qty)
-			#print('\n\n Carton Qty \n\n', item.carton_qty)
 			item.no_of_items_can_be_packed = is_packaging_item
 			item.per_carton_weight_in_kg = carton_item_doc_name.per_carton_weight_kgs
-			# item.total_carton_weight_in_kg = item.per_carton_weight_in_kg * item.carton_qty
 			item.dimension = carton_item_doc_name.dimension
 			item.available_stock = available_qty[0]
 			item.used_qty = item.qty
@@ -199,7 +177,6 @@ def set_items(doc):
 				item.carton_qty = math.floor(qty)
 			else:
 				item.carton_qty = item.carton_qty
-
 
 		elif doc.edit_carton_qty_and_no:
 			carton_item_doc_name = frappe.get_cached_doc("Item", {"item_code": item_code})
@@ -218,7 +195,6 @@ def set_items(doc):
 			msg = "Kindly Update No. of Item can be packed Field for Item {0}".format(item_link)
 			frappe.throw(msg)
 
-
 	box = []
 	total_craton_weight = []
 	for boxes in doc.items:
@@ -233,7 +209,6 @@ def set_items(doc):
 	doc.total_craton_weight = sum(total_craton_weight)
 
 	carton_num(doc)
-
 
 	
 #------------------------------------------------------------------

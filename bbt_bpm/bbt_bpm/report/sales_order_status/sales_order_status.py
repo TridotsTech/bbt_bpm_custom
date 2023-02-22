@@ -10,7 +10,6 @@ def execute(filters=None):
 	
 	return columns, data
 
-
 def get_data(filters=None):
 	data = frappe.db.sql(""" SELECT name,customer,set_warehouse as service_warehouse from `tabSales Order` """,as_dict=True)
 
