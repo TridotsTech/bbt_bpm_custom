@@ -101,14 +101,6 @@ def on_update_after_submit(doc, method):
 
 def save(doc, method):
 	set_items(doc)
-
-	for ref in doc.items:
-		pick_list_name = frappe.db.get_value('Sales Order',{"name":ref.against_sales_order},"pick_list_reference")
-		if pick_list_name:
-			pick_list_doc = frappe.get_doc('Pick List',pick_list_name)
-			frappe.db.set_value('Pick List',{"name":pick_list_doc.name},"delivery_note_reference",doc.name)
-		else:
-			return False
 	
 def carton_num(doc):
 	indx=0
