@@ -12,6 +12,11 @@ from datetime import date
 from erpnext.selling.doctype.sales_order.sales_order import SalesOrder
 
 def validate(doc, method):
+    person_data = frappe.db.get_value("Contact",{"name":doc.contact_person},['phone','mobile_no','first_name','last_name'],as_dict=True)
+    contact_display = person_data.get('first_name') + " " + person_data.get('last_name')
+    doc.contact_phone = person_data.get('phone') or ""
+    doc.contact_mobile = person_data.get('mobile_no') or ""
+    doc.contact_display = contact_display or ""
     for row in doc.items:
         if frappe.db.exists("Stock Entry", {"quotation_ref":row.prevdoc_docname, "docstatus":1}):
             doc.stock_transfer_ref=frappe.db.get_value("Stock Entry", {"quotation_ref":row.prevdoc_docname, "docstatus":1}, "name")		
