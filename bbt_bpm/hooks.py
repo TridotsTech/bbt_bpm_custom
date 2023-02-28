@@ -155,6 +155,9 @@ doc_events = {
 	"User": {
 		"validate": "bbt_bpm.custom_script.user.user.validate",
 		"after_insert": "bbt_bpm.custom_script.user.user.after_insert"
+	},
+	"Purchase Order":{
+		"validate":"bbt_bpm.custom_script.purchase_order.purchase_order.validate"
 	}
 }
 

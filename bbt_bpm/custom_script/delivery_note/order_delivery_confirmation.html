@@ -57,6 +57,16 @@ Your order has been delivered as per below details. </p>
         </tr>
 
         <tr>
+                <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Transportation to be done in the name of: </td>
+                <td>{% for row in doc.items %}
+                        {% if row.idx==1 %}
+                        <!-- {{row.against_sales_order or ""}} -->
+                        {{frappe.db.get_value('Sales Order',{'name':row.against_sales_order},'booking_to_be_done_in_the_name_of')}}
+                        {% endif %}
+                {% endfor %}</td>
+        </tr>
+
+        <tr>
                 <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Transporter Name: </td>
                 <td>{{ doc.transporter }}</td>
         </tr>
@@ -94,7 +104,7 @@ Your order has been delivered as per below details. </p>
 
         <tr>
                 <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Attachment Details:</td>
-                <td> {{ doc.attachment_details }} </td>
+                <td> {{ doc.attachments_details }} </td>
         </tr>
 
 

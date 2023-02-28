@@ -50,6 +50,12 @@ def on_submit(doc, method):
 
 	dict_list.append(default_attachment)
 
+	if len(dict_list) == 1:
+		doc.attachments_details = 'LR Copy'
+
+	else:
+		doc.attachments_details = 'Delivery Note & LR Copy'
+
 	args = {"doc":doc}
 	_path = 'bbt_bpm/custom_script/delivery_note/dispatch_order.html'
 	# user = frappe.db.get_value("Customer",{"name":doc.customer},"user")
@@ -58,9 +64,9 @@ def on_submit(doc, method):
 	frappe.sendmail(
 		user,
 		subject= doc.customer+ " " + 'Dispatch Details #: ' + doc.name,
-		cc = ["amit.parab@i2econsulting.com","swapnil.pawar@i2econsulting.com",
-				"admin@indiabbt.com",
-				"frontoffice@indiabbt.com"],
+		# cc = ["amit.parab@i2econsulting.com","swapnil.pawar@i2econsulting.com",
+		# 		"admin@indiabbt.com",
+		# 		"frontoffice@indiabbt.com"],
 		content=frappe.render_template(_path,args),
 		attachments = dict_list,
         
@@ -106,9 +112,9 @@ def on_update_after_submit(doc, method):
 		frappe.sendmail(
 			user,
 			subject = 'Order Delivery Confirmation -'+ " " + doc.customer,
-			cc = ["amit.parab@i2econsulting.com","swapnil.pawar@i2econsulting.com",
-				"admin@indiabbt.com",
-				"frontoffice@indiabbt.com"],
+			# cc = ["amit.parab@i2econsulting.com","swapnil.pawar@i2econsulting.com",
+			# 	"admin@indiabbt.com",
+			# 	"frontoffice@indiabbt.com"],
 			content=frappe.render_template(_path,args),
 			attachments = dict_list,
 
@@ -153,7 +159,6 @@ def carton_num(doc):
 
 
 def set_items(doc):
-	
 	for item in doc.items:
 		is_packaging_item = frappe.db.get_value("Item", item.item_code, "no_of_items_can_be_packed")
 		is_carton_req = frappe.db.get_value("Item", item.item_code, "carton")

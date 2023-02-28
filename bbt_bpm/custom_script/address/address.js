@@ -27,6 +27,11 @@ frappe.ui.form.on("Address", {
 		if (frappe.session.user != "Administrator" && frappe.user_roles.includes("Customer User")){
 			$(".form-footer").hide()
 		}
+
+		if (frappe.session.user != "Administrator"){
+			frm.doc.address_type == 'Billing'
+			frm.set_df_property('address_type', 'read_only', 1)
+		}
 	}
 
 });
