@@ -190,10 +190,10 @@ def set_items(doc):
 			item.is_free_item = 1
 
 
-		elif not is_packaging_item:
-			item_link = "<a target=_blank href='#Form/Item/{0}'>{1}</a>".format(item.item_code, item.item_code)
-			msg = "Kindly Update No. of Item can be packed Field for Item {0}".format(item_link)
-			frappe.throw(msg)
+		# elif not is_packaging_item:
+		# 	item_link = "<a target=_blank href='#Form/Item/{0}'>{1}</a>".format(item.item_code, item.item_code)
+		# 	msg = "Kindly Update No. of Item can be packed Field for Item {0}".format(item_link)
+		# 	frappe.throw(msg)
 
 	box = []
 	total_craton_weight = []

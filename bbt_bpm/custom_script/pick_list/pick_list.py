@@ -52,10 +52,10 @@ def set_items(doc):
 			# item.carton_qty = doc.locations[int(item.idx)+1].qty
 			item.no_of_items_can_be_packed = is_packaging_item
 				
-		elif not is_packaging_item:
-			item_link = "<a target=_blank href='#Form/Item/{0}'>{1}</a>".format(item.item_code, item.item_code)
-			msg = "Kindly Update No. of Item can be packed Field for Item {0}".format(item_link)
-			frappe.throw(msg)
+		# elif not is_packaging_item:
+		# 	item_link = "<a target=_blank href='#Form/Item/{0}'>{1}</a>".format(item.item_code, item.item_code)
+		# 	msg = "Kindly Update No. of Item can be packed Field for Item {0}".format(item_link)
+		# 	frappe.throw(msg)
 
 	carton_details(doc)
 
@@ -75,7 +75,7 @@ def carton_data(doc):
 				row.total_carton_weight_in_kg = row.total_carton_weight_in_kg
 
 		elif doc.edit_carton_qty_and_no:
-			if row.so_qty > 0 and row.sales_order and row.qty >= row.no_of_items_can_be_packed:
+			if row.so_qty > 0 and row.sales_order and row.qty >= row.no_of_items_can_be_packed and row.item_group != 'Poster':
 				total_weight = row.carton_qty * row.per_carton_weight_kgs
 				row.total_weight = round(total_weight, 2)
 				row.total_carton_weight_in_kg = round(total_weight, 2)
@@ -87,10 +87,6 @@ def carton_data(doc):
 			else:
 				row.total_weight = row.total_weight
 				row.total_carton_weight_in_kg = row.total_carton_weight_in_kg
-
-	# 	total_craton_weight.append(float(row.total_carton_weight_in_kg))
-	# doc.total_craton_weight = sum(total_craton_weight)
-
 
 def calculate_carton_no(doc):
 	indx=0

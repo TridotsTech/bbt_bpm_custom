@@ -208,10 +208,10 @@ def set_packaging_items(doc):
             sub_item_ind+=1
             soi.insert(ignore_permissions = True)
             soi.save()
-        elif not is_packaging_item:
-            item_link="<a target=_blank href='#Form/Item/{0}'>{1}</a>".format(item.item_code,item.item_code)
-            msg="Kindly Update No. of Item can be packed Field for Item {0}".format(item_link)
-            frappe.throw(msg)
+        # elif not is_packaging_item:
+        #     item_link="<a target=_blank href='#Form/Item/{0}'>{1}</a>".format(item.item_code,item.item_code)
+        #     msg="Kindly Update No. of Item can be packed Field for Item {0}".format(item_link)
+        #     frappe.throw(msg)
 
     doc.items=po_items
 
