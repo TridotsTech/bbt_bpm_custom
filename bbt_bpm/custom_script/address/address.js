@@ -35,31 +35,3 @@ frappe.ui.form.on("Address", {
 
 });
 
-// frappe.ui.form.on("Dynamic Link", {
-
-// 	validate: function(frm,cdt,cdn){
-
-// 		let row = locals[cdt][cdn];
-// 		console.log('Hiii')
-
-// 		frappe.call({
-// 			method:'bbt_bpm.bbt_bpm.custom_script.address.address.address_links',
-// 			// args:{
-// 			// 	    'filters': {'user': frappe.session.user}
-// 			//         //async: false
-// 			// },
-// 			callback: function(data){
-// 				console.log('Hello');
-// 				let d = data.message;
-// 				console.log(d);
-// 				// for(let i in d){
-// 				// 	//console.log(i); // i = 0,1
-// 				// 	//console.log(d[i]['weight_per_unit']);
-// 				// 	//row.dimension = d[i]['dimension']
-// 				// }
-// 				// frm.refresh_fields("links");
-// 			}
-// 		})
-// 	}
-
-// })
