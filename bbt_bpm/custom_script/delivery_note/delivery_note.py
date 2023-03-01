@@ -208,7 +208,8 @@ def set_items(doc):
 		else:
 			boxes.total_carton_weight_in_kg = boxes.total_carton_weight_in_kg 
 
-		box.append(boxes.carton_qty)
+		if boxes.carton_qty:
+			box.append(boxes.carton_qty)
 		total_craton_weight.append(float(boxes.total_carton_weight_in_kg))
 	doc.total_no_of_boxes = sum(box)
 	doc.total_craton_weight = sum(total_craton_weight)
