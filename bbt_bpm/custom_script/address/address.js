@@ -29,8 +29,7 @@ frappe.ui.form.on("Address", {
 		}
 
 		if (frappe.session.user != "Administrator"){
-			frm.doc.address_type == 'Billing'
-			frm.set_df_property('address_type', 'read_only', 1)
+			set_field_options("address_type", 'Shipping');
 		}
 	}
 
