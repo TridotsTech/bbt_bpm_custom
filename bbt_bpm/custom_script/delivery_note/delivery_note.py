@@ -64,9 +64,9 @@ def on_submit(doc, method):
 	frappe.sendmail(
 		user,
 		subject= doc.customer+ " " + 'Dispatch Details #: ' + doc.name,
-		# cc = ["amit.parab@i2econsulting.com","swapnil.pawar@i2econsulting.com",
-		# 		"admin@indiabbt.com",
-		# 		"frontoffice@indiabbt.com"],
+		cc = ["amit.parab@i2econsulting.com","swapnil.pawar@i2econsulting.com",
+				"admin@indiabbt.com",
+				"frontoffice@indiabbt.com"],
 		content=frappe.render_template(_path,args),
 		attachments = dict_list,
         
@@ -112,9 +112,9 @@ def on_update_after_submit(doc, method):
 		frappe.sendmail(
 			user,
 			subject = 'Order Delivery Confirmation -'+ " " + doc.customer,
-			# cc = ["amit.parab@i2econsulting.com","swapnil.pawar@i2econsulting.com",
-			# 	"admin@indiabbt.com",
-			# 	"frontoffice@indiabbt.com"],
+			cc = ["amit.parab@i2econsulting.com","swapnil.pawar@i2econsulting.com",
+				"admin@indiabbt.com",
+				"frontoffice@indiabbt.com"],
 			content=frappe.render_template(_path,args),
 			attachments = dict_list,
 
