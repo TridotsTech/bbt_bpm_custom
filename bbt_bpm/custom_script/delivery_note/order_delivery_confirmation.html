@@ -3,7 +3,12 @@
 <p>Hare Krishna {{ doc.contact_display }} Prabhu Ji, <br>
 Your order has been delivered as per below details. </p>
 
-<p><b>Delivery Confirmation - {{ frappe.db.get_value("Customer",{"name":doc.customer},"authorized_person") }}</b></p>
+<p>
+        <!-- <b>Delivery Confirmation - {{ frappe.db.get_value("Customer",{"name":doc.customer},"authorized_person") }}</b> -->
+        <b>
+                {{doc.customer}}
+        </b>
+</p>
 
 </head>
 
