@@ -17,18 +17,22 @@ def validate(doc, method):
     doc.contact_phone = person_data.get('phone') or ""
     doc.contact_mobile = person_data.get('mobile_no') or ""
     doc.contact_display = contact_display or ""
+
+    
     for row in doc.items:
         if frappe.db.exists("Stock Entry", {"quotation_ref":row.prevdoc_docname, "docstatus":1}):
             doc.stock_transfer_ref=frappe.db.get_value("Stock Entry", {"quotation_ref":row.prevdoc_docname, "docstatus":1}, "name")		
         outstanding_amount = frappe.db.sql("""SELECT sum(outstanding_amount) as amount from `tabSales Invoice` where customer='{0}' and company='{1}' and docstatus=1 """.format(doc.customer, doc.company), as_dict=1)
         if outstanding_amount[0]:
             doc.outstanding_amount = outstanding_amount[0].get('amount')
+
+        row.delivery_date = doc.delivery_date
+    
     set_field_value(doc)
     set_packaging_items(doc)
     set_valid_customer_warehouse(doc)
     set_item_warehouses(doc)
     sort_table(doc)
-    
 
 def on_update(doc, method):
     rm_unwanted_items(doc)
