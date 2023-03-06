@@ -13,7 +13,7 @@ from erpnext.selling.doctype.sales_order.sales_order import SalesOrder
 
 def validate(doc, method):
     person_data = frappe.db.get_value("Contact",{"name":doc.contact_person},['phone','mobile_no','first_name','last_name'],as_dict=True)
-    contact_display = person_data.get('first_name') or " "+ " " + person_data.get('last_name') or " "
+    contact_display = person_data.get('first_name') + " " + person_data.get('last_name') or ""
     doc.contact_phone = person_data.get('phone') or ""
     doc.contact_mobile = person_data.get('mobile_no') or ""
     doc.contact_display = contact_display or ""
