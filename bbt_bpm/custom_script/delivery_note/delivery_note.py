@@ -11,7 +11,6 @@ from frappe.utils import get_site_path
 import base64
 
 
-
 def on_submit(doc, method):
 	for row in doc.items:
 		total_allocated_qty = frappe.db.get_value("Item", {"name":row.item_code}, "allocated_qty")			
@@ -86,8 +85,8 @@ def on_update_after_submit(doc, method):
 		dict_list = []
 		_file_name = frappe.db.sql('''SELECT file_name from `tabFile` where attached_to_name = '{0}' '''.format(doc.name),as_dict=True)
 		for file in _file_name:
-			private_path = get_site_path("private", "files")
 			public_path = get_site_path("public", "files")
+			private_path = get_site_path("private", "files")
 			if public_path:
 				path = public_path + "/"+ file.get('file_name')
 			elif private_path:
