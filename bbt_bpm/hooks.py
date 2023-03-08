@@ -122,12 +122,13 @@ permission_query_conditions = {
 doc_events = {
 	"Stock Entry": {
 		"on_submit": "bbt_bpm.custom_script.stock_entry.stock_entry.on_submit",
-		"on_cancel": "bbt_bpm.custom_script.stock_entry.stock_entry.on_cancel"
+		"on_cancel": "bbt_bpm.custom_script.stock_entry.stock_entry.on_cancel",
+		"validate": "bbt_bpm.custom_script.stock_entry.stock_entry.validate"
 	},
 	"Sales Order": {
 		"validate": "bbt_bpm.custom_script.sales_order.sales_order.validate",
 		"on_update": "bbt_bpm.custom_script.sales_order.sales_order.on_update",
-		"on_submit" : "bbt_bpm.custom_script.sales_order.sales_order.on_submit"
+		"on_submit" : "bbt_bpm.custom_script.sales_order.sales_order.on_submit",
 	},
 	"Delivery Note": {
 		"on_submit": "bbt_bpm.custom_script.delivery_note.delivery_note.on_submit",
