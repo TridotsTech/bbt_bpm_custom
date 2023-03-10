@@ -358,7 +358,7 @@
 					<td colspan="7">
 						<p><label class="shipping_address">Delivery Address </label></p>
 						<select class="s_address" id="s_address" name="s_address">
-						 {% for x in addresses %}
+						 {% for x in shipping_address %}
 							<option >{{x.parent}}</option>
 						 {% endfor %}
 						</select>
@@ -368,7 +368,7 @@
 					<td colspan="6">
 						<p><label class="billing_address">Billing Address </label></p>
 						<select class="b_address" id="b_address" name="b_address">
-						 {% for x in addresses %}
+						 {% for x in billing_address %}
 							<option >{{x.parent}}</option>
 						 {% endfor %}
 						</select>

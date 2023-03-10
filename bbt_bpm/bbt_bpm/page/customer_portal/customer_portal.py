@@ -162,13 +162,24 @@ def add_to_cart_details(user, filters):
 
 	contact = frappe.get_all('Dynamic Link', filters={'link_doctype': 'Customer', 'link_name': cust, 'parenttype': 'Contact'}, fields=['parent'])
 	# c_person = frappe.db.get_value('Contact', contact[0].parent)
+	
+	shipping_address = ""
+	billing_address = ""
+	if frappe.session.user == 'Administrator':
+		shipping_address = frappe.get_all('Dynamic Link', filters={'link_doctype': 'Customer', 'link_name': cust, 'parenttype': 'Address'}, fields=['parent'])
 
-	addresses = frappe.get_all('Dynamic Link', filters={'link_doctype': 'Customer', 'link_name': cust, 'parenttype': 'Address'}, fields=['parent'])
+		billing_address = frappe.get_all('Dynamic Link', filters={'link_doctype': 'Customer', 'link_name': cust, 'parenttype': 'Address'}, fields=['parent'])
+
+	else:
+		shipping_address = frappe.db.sql("""SELECT DL.parent from `tabDynamic Link` as DL INNER JOIN `tabAddress` as ad ON DL.parent=ad.name where DL.link_doctype = 'Customer' and DL.link_name="{}" and DL.parenttype='Address' and ad.address_type='Shipping' """.format(cust),as_dict=1)
+		
+		billing_address = frappe.db.sql("""SELECT DL.parent from `tabDynamic Link` as DL INNER JOIN `tabAddress` as ad ON DL.parent=ad.name where DL.link_doctype = 'Customer' and DL.link_name="{}" and DL.parenttype='Address' and ad.address_type='Billing' """.format(cust),as_dict=1)
+
 	# shipping_address = frappe.db.get_value('Address', addresses[0].parent, ['address_line1','city','country'])
 	# billing_address = frappe.db.get_value('Address', addresses[1].parent, 'address_line1')
 
 	path = 'bbt_bpm/bbt_bpm/page/customer_portal/add_to_cart.html'
-	html=frappe.render_template(path,{'data':add_to_cart, 'contact': contact, 'addresses':addresses})
+	html=frappe.render_template(path,{'data':add_to_cart, 'contact': contact, 'shipping_address':shipping_address,'billing_address':billing_address})
 	return {'html':html}
 
 
