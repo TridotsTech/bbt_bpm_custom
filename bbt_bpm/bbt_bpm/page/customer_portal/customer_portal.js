@@ -134,6 +134,7 @@ frappe.customer_portal = Class.extend({
 	    $('.add_to_card').click(function() {
 	    	var item = $(this).attr("item")
 	    	var rate = $(this).attr("rate")
+	    	var item_group = $(this).attr("item_group")
 	    	var stock_in_qty = $(this).attr("stock_in_qty")
 	    	var carton_qty = $(this).attr("carton_qty")
 	    	var no_of_items_can_be_packed = $(this).attr("no_of_items_can_be_packed")
@@ -157,7 +158,7 @@ frappe.customer_portal = Class.extend({
 	    		frappe.validated = false;
 	    	}
 
-	    	if (flt(carton_qty)<flt(cartan_order_qty)) {
+	    	if (flt(carton_qty)<flt(cartan_order_qty) && item_group == 'Books') {
 	    		frappe.throw(__("Please enter cartons qty less than stock in cartons."));
 	    		frappe.validated = false;
 	    	}

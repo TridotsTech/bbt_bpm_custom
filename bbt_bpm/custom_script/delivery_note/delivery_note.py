@@ -43,17 +43,25 @@ def on_submit(doc, method):
 		encoded_string = image_file.read()
 		dict_list.append({"fname":file.get('file_name'),"fcontent":encoded_string})
 
-	print_format = "New Delivery Note" if not cint(frappe.db.get_value('Print Format', 'New Delivery Note', 'disabled')) else None
+	print_format = "Dispatch Details" if not cint(frappe.db.get_value('Print Format', 'Dispatch Details', 'disabled')) else None
 
 	default_attachment = frappe.attach_print('Delivery Note', doc.name, print_format=print_format)
 
 	dict_list.append(default_attachment)
 
-	if len(dict_list) == 1:
-		doc.attachments_details = 'LR Copy'
+	# if len(dict_list) == 1:
+	# 	doc.attachments_details = 'Delivery Note'
+	if doc.lr_copy and not doc.acknowledgment:
+		doc.attachments_details = 'Delivery Note & LR Copy'
+
+	elif doc.lr_copy and doc.acknowledgment:
+		doc.attachments_details = 'Delivery Note & LR Copy& Acknowledgment'
+
+	elif doc.acknowledgment and not doc.lr_copy:
+		doc.attachments_details = 'Delivery Note & Acknowledgment'
 
 	else:
-		doc.attachments_details = 'Delivery Note & LR Copy'
+		doc.attachments_details = 'Delivery Note'
 
 	args = {"doc":doc}
 	_path = 'bbt_bpm/custom_script/delivery_note/dispatch_order.html'
@@ -102,6 +110,18 @@ def on_update_after_submit(doc, method):
 
 		default_attachment = frappe.attach_print('Delivery Note', doc.name, print_format=print_format)
 		dict_list.append(default_attachment)
+
+		if doc.lr_copy and not doc.acknowledgment:
+			doc.attachments_details = 'Delivery Note & LR Copy'
+
+		elif doc.lr_copy and doc.acknowledgment:
+			doc.attachments_details = 'Delivery Note & LR Copy& Acknowledgment'
+
+		elif doc.acknowledgment and not doc.lr_copy:
+			doc.attachments_details = 'Delivery Note & Acknowledgment'
+
+		else:
+			doc.attachments_details = 'Delivery Note'
 		
 		args = {"doc":doc}
 		_path = 'bbt_bpm/custom_script/delivery_note/order_delivery_confirmation.html'
@@ -118,7 +138,6 @@ def on_update_after_submit(doc, method):
 			attachments = dict_list,
 
 			)	
-
 
 def save(doc, method):
 	set_items(doc)
