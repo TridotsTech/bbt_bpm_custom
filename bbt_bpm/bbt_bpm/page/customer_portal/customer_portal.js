@@ -171,6 +171,18 @@ frappe.customer_portal = Class.extend({
 				var msg = "Add min "+total_req_qty+" qty to fulfill Carton's Size OR to continue please click Yes" 
 				frappe.confirm(
 					msg,
+					function() {
+				    frappe.call({
+				      		method: window.location.reload(),
+				      		args: [true]
+				    	});
+				  	},
+				  	function() {
+				    frappe.call({
+				      		method: window.location.reload(),
+				      		args: [true]
+				    	});
+				  	},
 					()=>{
 						frappe.call({
 						    "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.add_to_cart_item",
@@ -179,8 +191,17 @@ frappe.customer_portal = Class.extend({
 						    },
 						    callback: function (r) {
 						    	if (r.message){
-						      		frappe.msgprint(__("Item Added in Cart"));
-						    	}
+						      		// frappe.msgprint(__("Item Added in Cart"));
+						      		frappe.msgprint({
+										message: "Item Added in Cart",
+										primary_action: {
+										label: __("OK"),
+										action: function() {
+											location.reload();
+										}
+									},
+								});
+						    }
 			
 						    }//calback end
 						})
@@ -198,7 +219,17 @@ frappe.customer_portal = Class.extend({
 					},
 					callback: function (r) {
 						if (r.message){
-							  frappe.msgprint(__("Item Added in Cart"));
+							  // frappe.msgprint(__("Item Added in Cart"));
+
+							frappe.msgprint({
+									message: "Item Added in Cart",
+									primary_action: {
+									label: __("OK"),
+									action: function() {
+										location.reload();
+									}
+								},
+							});
 						}
 	
 					}//calback end
