@@ -200,7 +200,9 @@ doc_events = {
 #
 override_whitelisted_methods = {
 	# "frappe.desk.doctype.event.event.get_events": "bbt_bpm.event.get_events"
-	"erpnext.selling.doctype.sales_order.sales_order.validate_warehouse":"bbt_bpm.custom_script.sales_order.sales_order.validate_warehouse"
+	"erpnext.selling.doctype.sales_order.sales_order.validate_warehouse":"bbt_bpm.custom_script.sales_order.sales_order.validate_warehouse",
+
+	"erpnext.stock.doctype.pick_list.pick_list.create_delivery_note":"bbt_bpm.custom_script.pick_list.pick_list.create_delivery_notes"
 }
 #
 # each overriding function accepts a `data` argument;

@@ -27,13 +27,13 @@
 		margin: auto;
 		text-align: center;
 		padding: 10px;
-		color: white;
+		color: black;
 	}
 
 	.table {
 		background-color: white;
 		margin: auto;
-		border-collapse: separate;
+		border-collapse: collapse;
 		display: block;
 		overflow-y: scroll;
 		height: 600px;
@@ -202,6 +202,16 @@
 	.table-sortable .th-sort-desc {
 	  background: rgba(0, 0, 0, 0.1);
 	}
+
+	table,tr,th,td {
+		border: 1px solid black !important;
+
+	}
+
+	select,option {
+		max-width: 70% !important;
+	}
+
 </style>
 <div class="conatiner">
 	<div>
@@ -274,22 +284,22 @@
 				</tr>
 
 				<tr>
-					<td colspan="7">
+					<td colspan="6">
 						<p><label class="contact_person">Delivery Contact Person</label></p>
-						<select class="c_p" id="c_p" name="c_p">
+						<select class="c_p" id="c_p" name="c_p" style="width:70%;">
 						 {% for x in contact %}
-							<option >{{x.parent}}</option>
+							<option style="max-width:70%;">{{x.parent}}</option>
 						 {% endfor %}
 						 <!-- <option value='desk#Form/Contact/New%20Contact%201'>Create Contact</option> -->
 						</select>
 					</td>
 
-					<td colspan="6">
+					<td colspan="7">
 						<p><label class="create_new">Create New Contact/Address</label></p>
-						<select onChange="window.location.href=this.value">
+						<select onChange="window.location.href=this.value" style="width:40%;">
 							<option value="">&nbsp;</option>
-							<option value="desk#Form/Contact/New Contact 1">Contact List</option>
-						    <option value="desk#Form/Address/New Address 1">Address List</option>
+							<option value="/app/contact/new-contact-1">Contact List</option>
+						    <option value="/app/address/new-address-1">Address List</option>
 						</select>
 					</td>
 
@@ -297,7 +307,7 @@
 				</tr>
 
 				<tr>
-					<td colspan="7">
+					<td colspan="6">
 						<p><label class="transportation_mode">Transportation Mode </label></p>
 						<select class="transp_mode" id="transp_mode" name="transp_mode" style="color:green;">
 							<option value="Road">Road</option>
@@ -307,7 +317,7 @@
 						</select>
 					</td>
 
-					<td colspan="6">
+					<td colspan="7">
 						<p><label class="p_transporter">Preferred Transporter </label></p>
 						<input type="text" class="p_t" id="p_t" name="p_t"></input>
 					</td>
@@ -317,7 +327,7 @@
 
 				<tr>
 
-					<td colspan="7">
+					<td colspan="6">
 						<p><label class="d_charges">Delivery Type </label></p>
 						<select class="d_t" id="d_t" name="d_t" style="color:green;">
 							<option value="blk"> </option>
@@ -327,7 +337,7 @@
 						</select>
 					</td>
 
-					<td colspan="6">
+					<td colspan="7">
 						<p><label class="pan_gst">Delivery Contact Person Pan no / GST No </label></p>
 						<input type="text" class="p_g" id="p_g" name="p_g"></input>
 					</td>
@@ -335,7 +345,7 @@
 				</tr>
 
 				<tr>
-					<td colspan="7">
+					<td colspan="6">
 						<p><label class="f_charges">Freight Charges </label></p>
 						<select class="f_c" id="f_c" name="f_c" style="color:green;">
 							<option value="bl"> </option>
@@ -346,16 +356,18 @@
 						</select>
 					</td>
 
+
 					<td colspan="6">
 						<p><label class="bk_name">Transportation Booking To Be Done In The Name Of </label></p>
 						<input type="text" class="bk_name" id="bk_name" name="bk_name"></input>
 					</td>
 					
-				</tr>
+
+			 </tr>
 
 
 				<tr>
-					<td colspan="7">
+					<td colspan="6">
 						<p><label class="shipping_address">Delivery Address </label></p>
 						<select class="s_address" id="s_address" name="s_address">
 						 {% for x in shipping_address %}
@@ -365,7 +377,7 @@
 						
 					</td>
 
-					<td colspan="6">
+					<td colspan="7">
 						<p><label class="billing_address">Billing Address </label></p>
 						<select class="b_address" id="b_address" name="b_address">
 						 {% for x in billing_address %}
@@ -378,12 +390,12 @@
 
 				
 				<tr>
-					<td colspan="7">
+					<td colspan="6">
 						<p><label class="ins_delivery">Instruction for Delivery </label></p>
 						<textarea class="i_d" id="i_d" name="i_d" rows="4" cols="50"></textarea>
 					</td>
 
-					<td colspan="6">
+					<td colspan="7">
 						<p><label class="sp_instruction">Special Instruction </label></p>
 						<textarea class="s_i" id="s_i" name="s_i" rows="4" cols="50"></textarea>
 					</td>

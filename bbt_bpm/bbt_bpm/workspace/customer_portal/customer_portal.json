@@ -1,0 +1,41 @@
+{
+ "category": "Modules",
+ "charts": [],
+ "creation": "2022-11-01 19:36:23.590952",
+ "developer_mode_only": 0,
+ "disable_user_customization": 0,
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "extends_another_page": 0,
+ "hide_custom": 0,
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "label": "Customer Portal",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Customer Portal",
+   "link_to": "customer_portal",
+   "link_type": "Page",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2022-11-21 21:13:04.574338",
+ "modified_by": "Administrator",
+ "module": "Bbt Bpm",
+ "name": "Customer Portal",
+ "owner": "Administrator",
+ "pin_to_bottom": 0,
+ "pin_to_top": 1,
+ "shortcuts": [
+  {
+   "doc_view": "New",
+   "label": "Customer Poratl",
+   "link_to": "customer_portal",
+   "type": "Page"
+  }
+ ]
+}

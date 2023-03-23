@@ -256,6 +256,9 @@ def set_item_warehouses(doc):
             else:
                 doc.set_warehouse=item.warehouse
 
+            else:
+                doc.set_warehouse=item.warehouse
+
 def rm_unwanted_items(doc):
     db_items=frappe.db.sql(""" select item_code, warehouse,projected_qty,name from `tabSales Order Item` where parent=%(doc_name)s """,{"doc_name":doc.name},as_dict=1)
     doc_itm_name=[soi.name for soi in doc.items]
