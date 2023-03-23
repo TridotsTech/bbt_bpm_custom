@@ -171,20 +171,8 @@ frappe.customer_portal = Class.extend({
 				var msg = "Add min "+total_req_qty+" qty to fulfill Carton's Size OR to continue please click Yes" 
 				frappe.confirm(
 					msg,
-					// function() {
-				    // frappe.call({
-				    //   		// method: window.location.reload(),
-				    //   		// args: [true]
-				    // 	});
-				  	// },
-				  	// function() {
-				    // frappe.call({
-				    //   		method: window.location.reload(),
-				    //   		args: [true]
-				    // 	});
-				  	// },
-					()=>{
-						frappe.call({
+					function() {
+				    frappe.call({
 						    "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.add_to_cart_item",
 						    args: {
 						    	filters:filters
@@ -202,9 +190,18 @@ frappe.customer_portal = Class.extend({
 									},
 								});
 						    }
-			
+
 						    }//calback end
 						})
+				  	},
+				  	function() {
+				    frappe.call({
+				      		method: window.location.reload(),
+				      		args: [true]
+				    	});
+				  	},
+					()=>{
+
 					},
 					()=>{
 							window.close();
