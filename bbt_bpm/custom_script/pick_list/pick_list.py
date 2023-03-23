@@ -32,11 +32,8 @@ def carton_details(doc):
 		else:
 			if not i.carton_qty:
 				carton_qty = 0
-			else:
-				# carton_qty = i.carton_qty
-				#i.carton_qty =  i.qty
+			else:	
 				carton_qty =  i.qty
-				#carton_qty = doc.locations[int(i.idx)].qty
 
 	calculate_carton_no(doc)
 			
@@ -51,18 +48,14 @@ def set_items(doc):
 			if not doc.edit_carton_qty_and_no:
 				item.carton_qty = qty
 
-			# elif doc.edit_carton_qty_and_no:
-			# 	item.carton_qty = None
-
-			#print('\n\nIs packaging Item - \n\n',is_packaging_item)
-			#print('item index__________	',int(item.idx))
-			# item.carton_qty = doc.locations[int(item.idx)+1].qty
 			item.no_of_items_can_be_packed = is_packaging_item
 				
-		elif not is_packaging_item:
-			item_link = "<a target=_blank href='/app/Item/{0}'>{1}</a>".format(item.item_code, item.item_code)
-			msg = "Kindly Update No. of Item can be packed Field for Item {0}".format(item_link)
-			frappe.throw(msg)
+
+		# elif not is_packaging_item:
+		# 	item_link = "<a target=_blank href='#Form/Item/{0}'>{1}</a>".format(item.item_code, item.item_code)
+		# 	msg = "Kindly Update No. of Item can be packed Field for Item {0}".format(item_link)
+		# 	frappe.throw(msg)
+
 
 	carton_details(doc)
 
@@ -72,8 +65,6 @@ def carton_data(doc):
 		if not doc.edit_carton_qty_and_no:
 			if row.so_qty > 0 and row.sales_order and row.qty >= row.no_of_items_can_be_packed:
 				total_weight = row.carton_qty * row.per_carton_weight_kgs
-				# row.total_weight = total_weight
-				# row.total_carton_weight_in_kg = total_weight 
 
 				row.total_weight = round(total_weight, 2)
 				row.total_carton_weight_in_kg = round(total_weight, 2)
@@ -83,14 +74,10 @@ def carton_data(doc):
 				row.total_carton_weight_in_kg = row.total_carton_weight_in_kg
 
 		elif doc.edit_carton_qty_and_no:
-			if row.so_qty > 0 and row.sales_order and row.qty >= row.no_of_items_can_be_packed:
+			if row.so_qty > 0 and row.sales_order and row.qty >= row.no_of_items_can_be_packed and row.item_group != 'Poster':
 				total_weight = row.carton_qty * row.per_carton_weight_kgs
 				row.total_weight = round(total_weight, 2)
 				row.total_carton_weight_in_kg = round(total_weight, 2)
-
-			# elif row.qty < row.no_of_items_can_be_packed:
-			# 	row.total_weight = row.total_weight
-			# 	row.total_carton_weight_in_kg = row.total_carton_weight_in_kg
 			
 			else:
 				row.total_weight = row.total_weight
@@ -98,7 +85,6 @@ def carton_data(doc):
 
 	# 	total_craton_weight.append(float(row.total_carton_weight_in_kg))
 	# doc.total_craton_weight = sum(total_craton_weight)
-
 
 
 def calculate_carton_no(doc):
@@ -111,13 +97,6 @@ def calculate_carton_no(doc):
 			i.carton_no=str(start_indx)+"-"+str(end_indx)
 			indx=end_indx
 			count = int(indx)
-
-		# elif int(i.carton_qty) == 0:
-		# 	i.carton_no = str(input())
-
-		# elif doc.edit_carton_qty_and_no:
-		# 	i.carton_no == None
-
 
 def on_submit(doc, method=None):
 	sales_order = []
@@ -179,7 +158,7 @@ def set_so_qty(doc):
 	so_data = frappe.db.sql("""SELECT DISTINCT soi.item_code,soi.qty FROM `tabSales Order Item` as soi, `tabPick List Item` as pli
 						WHERE soi.parent = %(so_no)s ORDER BY soi.idx;""", {"so_no":so_no},as_dict=1)
 
-	print(f'\n\n{so_data}\n\n')
+	# print(f'\n\n{so_data}\n\n')
 	# print('\n\nfrappe.db.get_value("Item",i.item_code,"no_of_items_can_be_packed")\n\n')
 
 	for i in doc.locations:
@@ -202,31 +181,24 @@ def before_save(doc, method=None):
 	set_so_qty(doc)
 	sort_table(doc)
 	total_craton_weight(doc)
-	# so_doc = frappe.get_cached_doc("Sales Order", doc.locations[0].sales_order)
-	# items = []
-	# for item in so_doc.items:
-		
-	# 	item_details = frappe.new_doc("Pick List Item")
-	# 	item_details.item_code = item.item_code
-	# 	item_details.item_name = item.item_name
-	# 	item_details.description = item.description
-	# 	item_details.item_group =frappe.db.get_value("Item", item.item_code, "item_group")
-	# 	item_details.warehouse = item.warehouse
-	# 	item_details.qty = item.qty
-	# 	item_details.uom = item.uom
-	# 	item_details.picked_qty = item.qty
-	# 	item_details.stock_uom = item.stock_uom
-	# 	item_details.stock_qty = item.stock_qty
-	# 	item_details.conversion_factor = item.conversion_factor
-	# 	item_details.sales_order = item.parent
-	# 	item_details.parent = doc.name
-	# 	item_details.parenttype = "Pick List"
-	# 	item_details.parentfield = "locations"
-	# 	item_details.sales_order_item = item.name
-	# 	item_details.idx = item.idx
-	# 	items.append(item_details)
-	# doc.locations = items
-	# set_items(doc)
+
+def total_craton_weight(doc):
+	total_craton_weight = []
+	box = []
+	total_quantity = []
+	for row in doc.locations:
+		if row.total_carton_weight_in_kg:
+			total_craton_weight.append(float(row.total_carton_weight_in_kg))
+		if row.carton_qty:
+			box.append(row.carton_qty)
+
+		if row.qty:
+			total_quantity.append(row.qty)
+
+	doc.total_quantity = sum(total_quantity)
+	doc.total_no_of_boxes = sum(box)
+	doc.total_craton_weight = sum(total_craton_weight)
+
 
 
 @frappe.whitelist()
@@ -291,6 +263,7 @@ def create_delivery_notes(source_name, target_doc=None):
 	delivery_note.customer = pick_list.customer if pick_list.customer else None
 
 	return delivery_note
+
 	
 	
 
