@@ -45,6 +45,7 @@ doctype_list_js = {
 
 doctype_js = {
 	"Sales Order": "custom_script/sales_order/sales_order.js",
+	"Sales Invoice": "custom_script/sales_invoice/sales_invoice.js",
 	"Stock Entry": "custom_script/stock_entry/stock_entry.js",
 	"Quotation": "custom_script/quotation/quotation.js",
 	"Item": "custom_script/item/item.js",
@@ -121,12 +122,13 @@ permission_query_conditions = {
 doc_events = {
 	"Stock Entry": {
 		"on_submit": "bbt_bpm.custom_script.stock_entry.stock_entry.on_submit",
-		"on_cancel": "bbt_bpm.custom_script.stock_entry.stock_entry.on_cancel"
+		"on_cancel": "bbt_bpm.custom_script.stock_entry.stock_entry.on_cancel",
+		"validate": "bbt_bpm.custom_script.stock_entry.stock_entry.validate"
 	},
 	"Sales Order": {
 		"validate": "bbt_bpm.custom_script.sales_order.sales_order.validate",
 		"on_update": "bbt_bpm.custom_script.sales_order.sales_order.on_update",
-		"on_submit" : "bbt_bpm.custom_script.sales_order.sales_order.on_submit"
+		"on_submit" : "bbt_bpm.custom_script.sales_order.sales_order.on_submit",
 	},
 	"Delivery Note": {
 		"on_submit": "bbt_bpm.custom_script.delivery_note.delivery_note.on_submit",
@@ -154,6 +156,9 @@ doc_events = {
 	"User": {
 		"validate": "bbt_bpm.custom_script.user.user.validate",
 		"after_insert": "bbt_bpm.custom_script.user.user.after_insert"
+	},
+	"Purchase Order":{
+		"validate":"bbt_bpm.custom_script.purchase_order.purchase_order.validate"
 	}
 }
 

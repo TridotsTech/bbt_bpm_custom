@@ -15,6 +15,20 @@ frappe.ui.form.on("Sales Order", {
 		if (frappe.session.user != "Administrator" && frappe.user_roles.includes("Customer User")){
 			$(".form-footer").hide()
 		}
+
+		frm.add_custom_button(__('Split Sales Order'), function() {
+				frappe.call({
+					method:'bbt_bpm.custom_script.sales_order.sales_order.split_so',
+					args:{
+						doc: frm.doc,
+						method:'bbt_bpm.custom_script.sales_order.sales_order.split_so'
+						},
+				callback: function(data){
+					console.log(data,'-----')
+					// var d = data.message;
+					}
+				})
+            });
 	},
 	map_on_stock_entry: function(frm){
 		if (frm.doc.docstatus==0 && !frm.doc.stock_transfer_ref){

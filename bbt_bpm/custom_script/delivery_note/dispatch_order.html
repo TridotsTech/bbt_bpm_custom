@@ -70,6 +70,18 @@
                         <tr>
                                 <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Delivery Type: </td>
                                 <td>{{ doc.delivery_type }}</td>
+
+                                
+                        </tr>
+
+                        <tr>
+                                <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Transportation to be done in the name of: </td>
+                                <td>{% for row in doc.items %}
+                                        {% if row.idx==1 %}
+                                        <!-- {{row.against_sales_order or ""}} -->
+                                        {{frappe.db.get_value('Sales Order',{'name':row.against_sales_order},'booking_to_be_done_in_the_name_of')}}
+                                        {% endif %}
+                                {% endfor %}</td>
                         </tr>
 
                         <tr>
@@ -104,7 +116,7 @@
                         </tr>
 
                         <tr>
-                                <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Transporter Branch For Go Down Delivery: </td>
+                                <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Transporter Branch For Godown Delivery: </td>
                                 <td>{{ doc.transporter_delivery_branch_new }}</td>
                         </tr>
 
@@ -135,7 +147,7 @@
 
                         <tr>
                                <td style="background-color: #D0D0D0; text-align: right; font-weight: bold;">Attachment Details:</td>
-                                <td> {{ doc.attachment_details }} </td>
+                                <td> {{ doc.attachments_details }} </td>
                         </tr>
                         
                 </table>
@@ -143,7 +155,7 @@
 </html>
 
 <p>
-        Note: Please Confirm that you have received all Books as per Invoice/ Delivery Challan.
+        Note: Please confirm once you receive all Books as per Invoice/ Delivery Challan.
         <br>
         If we do not get acknowledgement, it will be considered as you have received books as per Invoice / Delivery Note.
         <br></p>

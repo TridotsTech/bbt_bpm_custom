@@ -11,7 +11,6 @@ from frappe.utils import get_site_path
 import base64
 
 
-
 def on_submit(doc, method):
 	for row in doc.items:
 		total_allocated_qty = frappe.db.get_value("Item", {"name":row.item_code}, "allocated_qty")			
@@ -44,12 +43,27 @@ def on_submit(doc, method):
 		encoded_string = image_file.read()
 		dict_list.append({"fname":file.get('file_name'),"fcontent":encoded_string})
 
-	print_format = "New Delivery Note" if not cint(frappe.db.get_value('Print Format', 'New Delivery Note', 'disabled')) else None
+	print_format = "Dispatch Details" if not cint(frappe.db.get_value('Print Format', 'Dispatch Details', 'disabled')) else None
 
 	default_attachment = frappe.attach_print('Delivery Note', doc.name, print_format=print_format)
 
 	dict_list.append(default_attachment)
 
+	# if len(dict_list) == 1:
+	# 	doc.attachments_details = 'Delivery Note'
+	if doc.lr_copy and not doc.acknowledgment:
+		doc.attachments_details = 'Delivery Note & LR Copy'
+
+	elif doc.lr_copy and doc.acknowledgment:
+		doc.attachments_details = 'Delivery Note & LR Copy& Acknowledgment'
+
+	elif doc.acknowledgment and not doc.lr_copy:
+		doc.attachments_details = 'Delivery Note & Acknowledgment'
+
+	else:
+		doc.attachments_details = 'Delivery Note'
+
+	
 	# args = {"doc":doc}
 	# _path = 'bbt_bpm/custom_script/delivery_note/dispatch_order.html'
 	# # user = frappe.db.get_value("Customer",{"name":doc.customer},"user")
@@ -63,6 +77,7 @@ def on_submit(doc, method):
 	# 			"frontoffice@indiabbt.com"],
 	# 	content=frappe.render_template(_path,args),
 	# 	attachments = dict_list,
+
         
 	# 	)
 
@@ -80,8 +95,8 @@ def on_update_after_submit(doc, method):
 		dict_list = []
 		_file_name = frappe.db.sql('''SELECT file_name from `tabFile` where attached_to_name = '{0}' '''.format(doc.name),as_dict=True)
 		for file in _file_name:
-			private_path = get_site_path("private", "files")
 			public_path = get_site_path("public", "files")
+			private_path = get_site_path("private", "files")
 			if public_path:
 				path = public_path + "/"+ file.get('file_name')
 			elif private_path:
@@ -98,6 +113,18 @@ def on_update_after_submit(doc, method):
 
 		default_attachment = frappe.attach_print('Delivery Note', doc.name, print_format=print_format)
 		dict_list.append(default_attachment)
+
+		if doc.lr_copy and not doc.acknowledgment:
+			doc.attachments_details = 'Delivery Note & LR Copy'
+
+		elif doc.lr_copy and doc.acknowledgment:
+			doc.attachments_details = 'Delivery Note & LR Copy& Acknowledgment'
+
+		elif doc.acknowledgment and not doc.lr_copy:
+			doc.attachments_details = 'Delivery Note & Acknowledgment'
+
+		else:
+			doc.attachments_details = 'Delivery Note'
 		
 
 
@@ -117,7 +144,6 @@ def on_update_after_submit(doc, method):
 		# 	attachments = dict_list,
 
 		# 	)	
-
 
 def save(doc, method):
 	set_items(doc)
@@ -159,7 +185,6 @@ def carton_num(doc):
 
 
 def set_items(doc):
-	
 	for item in doc.items:
 		is_packaging_item = frappe.db.get_value("Item", item.item_code, "no_of_items_can_be_packed")
 		is_carton_req = frappe.db.get_value("Item", item.item_code, "carton")
@@ -196,26 +221,26 @@ def set_items(doc):
 			item.is_free_item = 1
 
 
-		elif not is_packaging_item:
-			item_link = "<a target=_blank href='#Form/Item/{0}'>{1}</a>".format(item.item_code, item.item_code)
-			msg = "Kindly Update No. of Item can be packed Field for Item {0}".format(item_link)
-			frappe.throw(msg)
+		# elif not is_packaging_item:
+		# 	item_link = "<a target=_blank href='#Form/Item/{0}'>{1}</a>".format(item.item_code, item.item_code)
+		# 	msg = "Kindly Update No. of Item can be packed Field for Item {0}".format(item_link)
+		# 	frappe.throw(msg)
+	try:
+		box = []
+		total_craton_weight = []
+		for boxes in doc.items:
+			if not boxes.total_carton_weight_in_kg:
+				boxes.total_carton_weight_in_kg = boxes.per_carton_weight_in_kg * boxes.carton_qty
+			else:
+				boxes.total_carton_weight_in_kg = boxes.total_carton_weight_in_kg 
 
-	box = []
-	total_craton_weight = []
-	for boxes in doc.items:
-		if not boxes.total_carton_weight_in_kg:
-			boxes.total_carton_weight_in_kg = boxes.per_carton_weight_in_kg * boxes.carton_qty
-		else:
-			boxes.total_carton_weight_in_kg = boxes.total_carton_weight_in_kg 
+			if boxes.carton_qty:
+				box.append(boxes.carton_qty)
+				total_craton_weight.append(float(boxes.total_carton_weight_in_kg))
+			doc.total_no_of_boxes = sum(box)
+			doc.total_carton_weight = sum(total_craton_weight)
 
-
-			box.append(boxes.carton_qty)
-			total_craton_weight.append(float(boxes.total_carton_weight_in_kg))
-		doc.total_no_of_boxes = sum(box)
-		doc.total_carton_weight = sum(total_craton_weight)
-
-		carton_num(doc)
+			carton_num(doc)
 	except Exception as e:
 		print(e)
 
