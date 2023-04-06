@@ -92,15 +92,17 @@ def cart_page_condition(filters):
 def add_to_cart_item(filters):
 	data = json.loads(filters)
 	# print(f'\n\n{data}\n\n')
-	if (data.get('order_qty') < data.get('no_of_items_can_be_packed')):
-		data.update({"cartan_order_qty":0})
+	# if (data.get('order_qty') < data.get('no_of_items_can_be_packed') and not data.get("cartan_order_qty")):
+	# 	data.update({"cartan_order_qty":0})
 
-	# print(data,'--------------')
 	order_qty = 0.0
 	if not data.get("order_qty"):
 		order_qty = flt(data.get("cartan_order_qty"))*flt(data.get("no_of_items_can_be_packed"))
 	else:
 		order_qty = flt(data.get("order_qty"))
+		if order_qty < flt(data.get('no_of_items_can_be_packed')):
+			data.update({"cartan_order_qty":0})
+
 
 	item = frappe.db.get_values("Item", {"name":data.get("item")}, ["item_name", "description", "item_group", "publisher"])
 	

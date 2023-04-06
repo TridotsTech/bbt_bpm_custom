@@ -159,6 +159,9 @@ doc_events = {
 	},
 	"Purchase Order":{
 		"validate":"bbt_bpm.custom_script.purchase_order.purchase_order.validate"
+	},
+	"Bin":{
+		"validate":"bbt_bpm.custom_script.bin.bin.validate"
 	}
 }
 
