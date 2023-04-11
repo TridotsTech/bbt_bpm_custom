@@ -3,8 +3,24 @@ import frappe
 from frappe.utils import cint, cstr,flt
 import json
 import math
+import random
+
 
 def save(doc, method):
+	sales_order = ""
+	for idx,row in enumerate(doc.locations):
+		random_number = random.randint(1, 100000) 
+		if idx == 0:
+			sales_order = row.sales_order
+
+		split_row_no = sales_order + "/" + str(random_number)
+		row.split_row_no = split_row_no
+
+
+		if not row.so_qty:
+			row.so_qty = 0
+		if not row.stock_qty:
+			row.stock_qty = row.qty
 	set_so_qty(doc)
 	set_items(doc)
 	carton_data(doc)
@@ -64,6 +80,8 @@ def carton_data(doc):
 				row.total_carton_weight_in_kg = row.total_carton_weight_in_kg
 
 		elif doc.edit_carton_qty_and_no:
+			if not row.so_qty:
+				row.so_qty = 0
 			if row.so_qty > 0 and row.sales_order and row.qty >= row.no_of_items_can_be_packed and row.item_group != 'Poster':
 				total_weight = row.carton_qty * row.per_carton_weight_kgs
 				row.total_weight = round(total_weight, 2)
@@ -160,7 +178,7 @@ def set_so_qty(doc):
 			# print(loops)
 			if int(i.no_of_items_can_be_packed) > 0:
 				if i.item_code == x['item_code'] and int(i.qty) % int(i.no_of_items_can_be_packed) == 0:
-			 		i.so_qty = x['qty']
+					i.so_qty = x['qty']
 
 
 def before_save(doc, method=None):
@@ -184,6 +202,15 @@ def total_craton_weight(doc):
 	doc.total_quantity = sum(total_quantity)
 	doc.total_no_of_boxes = sum(box)
 	doc.total_craton_weight = sum(total_craton_weight)
+
+@frappe.whitelist()
+def split_row(doc):
+	doc = json.loads(doc)
+	for idx,slr in enumerate(doc.get('locations')):
+		if idx == 1:
+			return slr.get('warehouse')
+			print(slr.get('warehouse'))
+		
 
 	
 	
