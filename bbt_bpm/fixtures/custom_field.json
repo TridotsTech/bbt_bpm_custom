@@ -14480,9 +14480,6 @@
   "description": null,
   "docstatus": 0,
   "doctype": "Custom Field",
-<<<<<<< HEAD
-  "dt": "Delivery Note Item",
-=======
   "dt": "Purchase Order Item",
   "fetch_from": null,
   "fetch_if_empty": 0,
@@ -14530,7 +14527,6 @@
   "docstatus": 0,
   "doctype": "Custom Field",
   "dt": "Purchase Invoice Item",
->>>>>>> 303d77e363ac799be635c57554cea99f2f496cf0
   "fetch_from": null,
   "fetch_if_empty": 0,
   "fieldname": "total_carton_weight_in_kg",
@@ -19341,8 +19337,6 @@
   "unique": 0,
   "width": null
  },
-<<<<<<< HEAD
-=======
  {
   "allow_in_quick_entry": 0,
   "allow_on_submit": 0,
@@ -19435,7 +19429,6 @@
   "unique": 0,
   "width": null
  },
->>>>>>> 303d77e363ac799be635c57554cea99f2f496cf0
  {
   "allow_in_quick_entry": 0,
   "allow_on_submit": 0,
@@ -19815,9 +19808,6 @@
   "collapsible_depends_on": null,
   "columns": 0,
   "default": null,
-<<<<<<< HEAD
-  "depends_on": "eval:in_list([\"SEZ\", \"Overseas\"], doc.gst_category)",
-=======
   "depends_on": null,
   "description": null,
   "docstatus": 0,
@@ -19865,7 +19855,6 @@
   "columns": 0,
   "default": "Road",
   "depends_on": null,
->>>>>>> 303d77e363ac799be635c57554cea99f2f496cf0
   "description": null,
   "docstatus": 0,
   "doctype": "Custom Field",
