@@ -12,15 +12,19 @@ from datetime import date
 from erpnext.selling.doctype.sales_order.sales_order import SalesOrder
 
 def validate(doc, method):
-    person_data = frappe.db.get_value("Contact",{"name":doc.contact_person},['phone','mobile_no','first_name','last_name'],as_dict=True)
-    # contact_display = person_data.get('first_name') + " " + person_data.get('last_name') or " "
-    doc.contact_phone = person_data.get('phone') or ""
-    doc.contact_mobile = person_data.get('mobile_no') or ""
+    person_data = {}
+    if doc.contact_person:
+        person_data = frappe.db.get_value("Contact",{"name":doc.contact_person},['phone','mobile_no','first_name','last_name'],as_dict=True)
+
+    if person_data.get('phone'):
+        doc.contact_phone = person_data.get('phone'," ") or " "
+    if person_data.get('mobile_no'):
+        doc.contact_mobile = person_data.get('mobile_no'," ") or ""
     if person_data.get('first_name') and not person_data.get('last_name'):
-        contact_display = person_data.get('first_name')
+        contact_display = person_data.get('first_name',"")
         doc.contact_display = contact_display
     elif person_data.get('first_name') and person_data.get('last_name'):
-        contact_display = person_data.get('first_name') + " " + person_data.get('last_name')
+        contact_display = person_data.get('first_name',"") + " " + person_data.get('last_name',"")
         doc.contact_display = contact_display
    
     for row in doc.items:
