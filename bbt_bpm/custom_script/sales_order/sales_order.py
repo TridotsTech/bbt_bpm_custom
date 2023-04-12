@@ -12,18 +12,36 @@ from datetime import date
 from erpnext.selling.doctype.sales_order.sales_order import SalesOrder
 
 def validate(doc, method):
+    person_data = {}
+    if doc.contact_person:
+        person_data = frappe.db.get_value("Contact",{"name":doc.contact_person},['phone','mobile_no','first_name','last_name'],as_dict=True)
+
+    if person_data.get('phone'):
+        doc.contact_phone = person_data.get('phone'," ") or " "
+    if person_data.get('mobile_no'):
+        doc.contact_mobile = person_data.get('mobile_no'," ") or ""
+    if person_data.get('first_name') and not person_data.get('last_name'):
+        contact_display = person_data.get('first_name',"")
+        doc.contact_display = contact_display
+    elif person_data.get('first_name') and person_data.get('last_name'):
+        contact_display = person_data.get('first_name',"") + " " + person_data.get('last_name',"")
+        doc.contact_display = contact_display
+   
     for row in doc.items:
         if frappe.db.exists("Stock Entry", {"quotation_ref":row.prevdoc_docname, "docstatus":1}):
             doc.stock_transfer_ref=frappe.db.get_value("Stock Entry", {"quotation_ref":row.prevdoc_docname, "docstatus":1}, "name")		
         outstanding_amount = frappe.db.sql("""SELECT sum(outstanding_amount) as amount from `tabSales Invoice` where customer='{0}' and company='{1}' and docstatus=1 """.format(doc.customer, doc.company), as_dict=1)
         if outstanding_amount[0]:
             doc.outstanding_amount = outstanding_amount[0].get('amount')
+
+        row.delivery_date = doc.delivery_date
+    
     set_field_value(doc)
     set_packaging_items(doc)
     set_valid_customer_warehouse(doc)
     set_item_warehouses(doc)
     sort_table(doc)
-    
+
 
 def on_update(doc, method):
     rm_unwanted_items(doc)
@@ -203,10 +221,10 @@ def set_packaging_items(doc):
             sub_item_ind+=1
             soi.insert(ignore_permissions = True)
             soi.save()
-        elif not is_packaging_item:
-            item_link="<a target=_blank href='#Form/Item/{0}'>{1}</a>".format(item.item_code,item.item_code)
-            msg="Kindly Update No. of Item can be packed Field for Item {0}".format(item_link)
-            frappe.throw(msg)
+        # elif not is_packaging_item:
+        #     item_link="<a target=_blank href='#Form/Item/{0}'>{1}</a>".format(item.item_code,item.item_code)
+        #     msg="Kindly Update No. of Item can be packed Field for Item {0}".format(item_link)
+        #     frappe.throw(msg)
 
     doc.items=po_items
 
@@ -239,9 +257,6 @@ def set_item_warehouses(doc):
         for item in doc.items:
             if not doc.edit_item_warehouse:
                 item.warehouse=doc.set_warehouse
-            else:
-                doc.set_warehouse=item.warehouse
-
             else:
                 doc.set_warehouse=item.warehouse
 
@@ -303,3 +318,212 @@ def validate_warehouse(self):
                 frappe.throw(_("stock item {0}").format(d.item_code),
                     WarehouseRequired)
 SalesOrder.validate_warehouse=validate_warehouse
+
+
+
+@frappe.whitelist()
+def split_so(doc,method):
+    doc = json.loads(doc)
+    so_split = []
+    warehouse_data = {}
+
+    split_so_name = frappe.db.sql(""" SELECT name from`tabSales Order` where sales_order_reference = '{}' """.format(doc.get('name')),as_dict=True)
+
+    if split_so_name:
+        for so in split_so_name:
+            so_split.append(so.get('name'))
+
+    if so_split:
+        frappe.throw(f"Sales Order is already splited.The splited sales order is {so_split}")
+
+    else:    
+        for item in doc.get('items'):
+            if item['warehouse'] not in warehouse_data:
+                warehouse_data[item['warehouse']] = []
+            warehouse_data[item['warehouse']].append(item)
+
+        for wrh,data in warehouse_data.items():
+            if wrh:
+                if wrh == doc.get('from_warehouse'):
+                    continue
+                print(wrh,data)
+                newdoc = frappe.new_doc('Sales Order')
+                newdoc.customer = doc.get('customer')
+                newdoc.company = doc.get('company')
+                newdoc.delivery_date = doc.get('delivery_date')
+                newdoc.transaction_date = doc.get('transaction_date')
+                newdoc.order_type = doc.get('order_type')
+                newdoc.order_class = doc.get('order_class')
+                newdoc.submitted_date = doc.get('submitted_date')
+                newdoc.request_no = doc.get('request_no')
+                newdoc.credit_limit = doc.get('credit_limit')
+                newdoc.accepted_by_warehouse = doc.get('accepted_by_warehouse')
+                newdoc.outstanding_amount = doc.get('outstanding_amount')
+                newdoc.booking_to_be_done_in_the_name_of = doc.get('booking_to_be_done_in_the_name_of')
+                newdoc.po_no = doc.get('po_no')
+                newdoc.delivery_contact_person_pan_no_or_gst_no = doc.get('delivery_contact_person_pan_no_or_gst_no')
+                newdoc.stock_transfer_request_no = doc.get('stock_transfer_request_no')
+                newdoc.stock_transfer_ref = doc.get('stock_transfer_ref')
+                newdoc.delivery_type = doc.get('delivery_type')
+                newdoc.credit_limit_ex = doc.get('credit_limit_ex')
+                newdoc.payment = doc.get('payment')
+
+                # address and contact section
+                newdoc.sales_order_reference = doc.get('name')
+                newdoc.customer_address = doc.get('customer_address')
+                newdoc.shipping_address_name = doc.get('shipping_address_name')
+                newdoc.billing_address_gstin = doc.get('billing_address_gstin')
+                newdoc.customer_gstin = doc.get('customer_gstin')
+                newdoc.address_display = doc.get('address_display')
+                newdoc.place_of_supply = doc.get('place_of_supply')
+                newdoc.territory = doc.get('territory')
+                newdoc.contact_person = doc.get('contact_person') or ""
+                newdoc.contact_display = doc.get('contact_display') or ""
+                newdoc.contact_phone = doc.get('contact_phone') or ""
+                newdoc.company_address = doc.get('company_address') or ""
+
+                # currency and price list section
+                newdoc.currency = doc.get('currency')
+                newdoc.selling_price_list = doc.get('selling_price_list')
+                newdoc.ignore_pricing_rule = doc.get('ignore_pricing_rule')
+                # warehouse
+                newdoc.set_warehouse = wrh
+                newdoc.edit_item_warehouse = True
+                newdoc.scan_barcode = doc.get('scan_barcode')
+                newdoc.edit_carton_items = doc.get('edit_carton_items')
+                newdoc.calculate_quantity_from_carton = doc.get('calculate_quantity_from_carton')
+               
+                for row in data:
+                    frappe.db.delete('Sales Order Item', row.get('name'))
+                    newdoc.append('items', {
+                        'item_code': row.get('item_code'),
+                        'delivery_date': row.get('delivery_date'),
+                        'ensure_delivery_based_on_produced_serial_no':row.get('ensure_delivery_based_on_produced_serial_no'),
+                        'item_name':row.get('item_name'),
+                        'description':row.get('description'),
+                        'qty': row.get('qty'),
+                        'uom':row.get('uom'),
+                        'quantity_carton':row.get('quantity_carton'),
+                        'conversion_factor':row.get('conversion_factor'),
+                        'stock_uom':row.get('stock_uom'),
+                        'stock_qty':row.get('stock_qty'),
+                        'price_list_rate':row.get('price_list_rate'),
+                        'margin_type':row.get('margin_type'),
+                        'discount_percentage':row.get('discount_percentage'),
+                        'margin_rate_or_amount':row.get('margin_rate_or_amount'),
+                        'discount_amount':row.get('discount_amount'),
+                        'is_free_item':row.get('is_free_item'),
+                        'rate': row.get('rate'),
+                        'amount':row.get('amount'),
+                        'item_tax_template':row.get('item_tax_template'),
+                        'warehouse':row.get('warehouse'),
+                        'billed_amt':row.get('billed_amt'),
+                        'valuation_rate':row.get('valuation_rate'),
+                        'gross_profit':row.get('gross_profit'),
+                        'delivered_by_supplier':row.get('delivered_by_supplier'),
+                        'supplier':row.get('supplier'),
+                        'weight_per_unit':row.get('weight_per_unit'),
+                        'total_weight':row.get('total_weight'),
+                        'weight_uom':row.get('weight_uom'),
+                        'blanket_order':row.get('blanket_order'),
+                        'blanket_order_rate':row.get('blanket_order_rate'),
+                        'projected_qty':row.get('projected_qty'),
+                        'actual_qty':row.get('actual_qty'),
+                        'ordered_qty':row.get('ordered_qty'),
+                        'work_order_qty':row.get('work_order_qty'),
+                        'delivered_qty':row.get('delivered_qty'),
+                        'additional_notes':row.get('additional_notes'),
+                        'page_break':row.get('page_break')
+                    })
+                # total calculation
+                # newdoc.total_qty = doc.get('total_qty')
+                # newdoc.total_net_weight = doc.get('total_net_weight')
+                # newdoc.total = doc.get('total')
+
+                # transporter information
+                newdoc.transporter = doc.get('transporter')
+                newdoc.gst_transporter_id = doc.get('gst_transporter_id')
+                newdoc.driver = doc.get('driver')
+                newdoc.transport_receipt_no = doc.get('transport_receipt_no')
+                newdoc.vehicle_no = doc.get('vehicle_no')
+                newdoc.special_instruction = doc.get('special_instruction')
+                newdoc.unloading_instruction = doc.get('unloading_instruction')
+                newdoc.distance_in_km = doc.get('distance_in_km')
+                newdoc.transporter_delivery_branch = doc.get('transporter_delivery_branch')
+                newdoc.transporter_delivery_branch_contact_number = doc.get('transporter_delivery_branch_contact_number')
+                newdoc.mode_of_transport = doc.get('mode_of_transport')
+                newdoc.transport_receipt_date = doc.get('transport_receipt_date')
+                newdoc.gst_vehicle_type = doc.get('gst_vehicle_type')
+                newdoc.preferred_transporter = doc.get('preferred_transporter')
+                newdoc.instruction_for_delivery = doc.get('instruction_for_delivery')
+                
+                # Taxes and Charges
+                newdoc.tax_category = doc.get('tax_category')
+                newdoc.shipping_rule = doc.get('shipping_rule')
+                newdoc.taxes_and_charges = doc.get('taxes_and_charges')
+                
+                # Tax Breakup
+                newdoc.other_charges_calculation = doc.get('other_charges_calculation')
+                newdoc.base_total_taxes_and_charges = doc.get('base_total_taxes_and_charges')
+                newdoc.total_taxes_and_charges = doc.get('total_taxes_and_charges')
+                
+                # Loyalty Points Redemption
+                newdoc.loyalty_points = doc.get('loyalty_points')
+                newdoc.loyalty_amount = doc.get('loyalty_amount')
+                newdoc.coupon_code = doc.get('coupon_code')
+                newdoc.apply_discount_on = doc.get('apply_discount_on')
+                newdoc.base_discount_amount = doc.get('base_discount_amount')
+                newdoc.additional_discount_percentage = doc.get('additional_discount_percentage')
+                newdoc.discount_amount = doc.get('discount_amount')
+                newdoc.base_grand_total = doc.get('base_grand_total')
+                newdoc.base_rounding_adjustment = doc.get('base_rounding_adjustment')
+                newdoc.base_rounded_total = doc.get('base_rounded_total')
+                newdoc.base_in_words = doc.get('base_in_words')
+                newdoc.grand_total = doc.get('grand_total')
+                newdoc.rounding_adjustment = doc.get('rounding_adjustment')
+                newdoc.rounded_total = doc.get('rounded_total')
+                newdoc.in_words = doc.get('in_words')
+                newdoc.advance_paid = doc.get('advance_paid')
+
+                # Packing List
+                newdoc.payment_terms_template = doc.get('payment_terms_template')
+
+                #Terms and Conditions
+                newdoc.tc_name = doc.get('tc_name')
+                newdoc.terms = doc.get('terms')
+
+                # More Information
+                newdoc.inter_company_order_reference = doc.get('inter_company_order_reference')
+                newdoc.project = doc.get('project')
+                newdoc.party_account_currency = doc.get('party_account_currency')
+                newdoc.source = doc.get('source')
+                newdoc.campaign = doc.get('campaign')
+
+                # Print Settings
+                newdoc.language = doc.get('language')
+                newdoc.letter_head = doc.get('letter_head')
+                newdoc.select_print_heading = doc.get('select_print_heading')
+                newdoc.group_same_items = doc.get('group_same_items')
+
+                # Billing and Delivery Status
+                newdoc.status = doc.get('status')
+                newdoc.delivery_status = doc.get('delivery_status')
+                newdoc.per_delivered = doc.get('per_delivered')
+                newdoc.per_billed = doc.get('per_billed')
+                newdoc.billing_status = doc.get('billing_status')
+
+                # Commission
+                newdoc.sales_partner = doc.get('sales_partner')
+                newdoc.commission_rate = doc.get('commission_rate')
+                newdoc.total_commission = doc.get('total_commission')
+
+                # Auto Repeat Section
+                newdoc.from_date = doc.get('from_date')
+                newdoc.to_date = doc.get('to_date')
+                newdoc.auto_repeat = doc.get('auto_repeat')
+
+                newdoc.save(ignore_permissions=True)
+            # frappe.db.commit()
+            # frappe.db.delete('Sales Order', doc.get('name'))
+
+        frappe.msgprint('Sales Order splited successfully');

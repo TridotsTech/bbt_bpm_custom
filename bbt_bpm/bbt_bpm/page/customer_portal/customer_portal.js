@@ -134,6 +134,7 @@ frappe.customer_portal = Class.extend({
 	    $('.add_to_card').click(function() {
 	    	var item = $(this).attr("item")
 	    	var rate = $(this).attr("rate")
+	    	var item_group = $(this).attr("item_group")
 	    	var stock_in_qty = $(this).attr("stock_in_qty")
 	    	var carton_qty = $(this).attr("carton_qty")
 	    	var no_of_items_can_be_packed = $(this).attr("no_of_items_can_be_packed")
@@ -157,7 +158,7 @@ frappe.customer_portal = Class.extend({
 	    		frappe.validated = false;
 	    	}
 
-	    	if (flt(carton_qty)<flt(cartan_order_qty)) {
+	    	if (flt(carton_qty)<flt(cartan_order_qty) && item_group == 'Books') {
 	    		frappe.throw(__("Please enter cartons qty less than stock in cartons."));
 	    		frappe.validated = false;
 	    	}
@@ -166,23 +167,52 @@ frappe.customer_portal = Class.extend({
 			no_of_cartons = 0.0
 	    	no_of_cartons = Math.ceil(parseFloat(order_qty)/parseFloat(no_of_items_can_be_packed))
 	    	total_req_qty = no_of_cartons*parseFloat(no_of_items_can_be_packed)
+	    	var selected_language = me.language
 	    	if (total_req_qty && total_req_qty!=0 && parseFloat(order_qty)!=parseFloat(total_req_qty)){
 				var msg = "Add min "+total_req_qty+" qty to fulfill Carton's Size OR to continue please click Yes" 
+
 				frappe.confirm(
 					msg,
+					function() {
+					    frappe.call({
+							    "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.add_to_cart_item",
+							    args: {
+							    	filters:filters
+							    },
+							    callback: function (r) {
+							    	if (r.message){
+							      		frappe.msgprint({
+											message: "Item Added in Cart",
+											primary_action: {
+											label: __("OK"),
+											action: function() {
+												if (selected_language){
+													$(".item_order_qty").val("");
+													$(".cartan_order_qty").val("");
+
+												}
+												// location.reload()
+												if (typeof selected_language === 'undefined'){
+												console.log(selected_language,'ffff')
+												location.reload();
+												}
+												
+											}
+										},
+									});
+							    }
+
+							    }//calback end
+							})
+				  	},
+				  	function() {
+				    frappe.call({
+				      		method: window.location.reload(),
+				      		args: [true]
+				    	});
+				  	},
 					()=>{
-						frappe.call({
-						    "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.add_to_cart_item",
-						    args: {
-						    	filters:filters
-						    },
-						    callback: function (r) {
-						    	if (r.message){
-						      		frappe.msgprint(__("Item Added in Cart"));
-						    	}
-			
-						    }//calback end
-						})
+
 					},
 					()=>{
 							window.close();
@@ -197,7 +227,28 @@ frappe.customer_portal = Class.extend({
 					},
 					callback: function (r) {
 						if (r.message){
-							  frappe.msgprint(__("Item Added in Cart"));
+
+							frappe.msgprint({
+									message: "Item Added in Cart",
+									primary_action: {
+									label: __("OK"),
+									action: function() {
+										if (selected_language){
+											$(".item_order_qty").val("");
+											$(".cartan_order_qty").val("");
+
+										}
+										if (typeof selected_language === 'undefined'){
+											location.reload();
+										}else{
+											var elem = document.getElementsByClassName("order_qty");
+											elem.value = ""
+											cur_dialog.hide()
+										}
+									}
+									
+								},
+							});
 						}
 	
 					}//calback end

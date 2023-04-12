@@ -92,11 +92,17 @@ def cart_page_condition(filters):
 def add_to_cart_item(filters):
 	data = json.loads(filters)
 	# print(f'\n\n{data}\n\n')
+	# if (data.get('order_qty') < data.get('no_of_items_can_be_packed') and not data.get("cartan_order_qty")):
+	# 	data.update({"cartan_order_qty":0})
+
 	order_qty = 0.0
 	if not data.get("order_qty"):
 		order_qty = flt(data.get("cartan_order_qty"))*flt(data.get("no_of_items_can_be_packed"))
 	else:
 		order_qty = flt(data.get("order_qty"))
+		if order_qty < flt(data.get('no_of_items_can_be_packed')):
+			data.update({"cartan_order_qty":0})
+
 
 	item = frappe.db.get_values("Item", {"name":data.get("item")}, ["item_name", "description", "item_group", "publisher"])
 	
@@ -162,13 +168,24 @@ def add_to_cart_details(user, filters):
 
 	contact = frappe.get_all('Dynamic Link', filters={'link_doctype': 'Customer', 'link_name': cust, 'parenttype': 'Contact'}, fields=['parent'])
 	# c_person = frappe.db.get_value('Contact', contact[0].parent)
+	
+	shipping_address = ""
+	billing_address = ""
+	if frappe.session.user == 'Administrator':
+		shipping_address = frappe.get_all('Dynamic Link', filters={'link_doctype': 'Customer', 'link_name': cust, 'parenttype': 'Address'}, fields=['parent'])
 
-	addresses = frappe.get_all('Dynamic Link', filters={'link_doctype': 'Customer', 'link_name': cust, 'parenttype': 'Address'}, fields=['parent'])
+		billing_address = frappe.get_all('Dynamic Link', filters={'link_doctype': 'Customer', 'link_name': cust, 'parenttype': 'Address'}, fields=['parent'])
+
+	else:
+		shipping_address = frappe.db.sql("""SELECT DL.parent from `tabDynamic Link` as DL INNER JOIN `tabAddress` as ad ON DL.parent=ad.name where DL.link_doctype = 'Customer' and DL.link_name="{}" and DL.parenttype='Address' and ad.address_type='Shipping' and ad.disabled=0 """.format(cust),as_dict=1)
+		
+		billing_address = frappe.db.sql("""SELECT DL.parent from `tabDynamic Link` as DL INNER JOIN `tabAddress` as ad ON DL.parent=ad.name where DL.link_doctype = 'Customer' and DL.link_name="{}" and DL.parenttype='Address' and ad.address_type='Billing' and ad.disabled=0 """.format(cust),as_dict=1)
+
 	# shipping_address = frappe.db.get_value('Address', addresses[0].parent, ['address_line1','city','country'])
 	# billing_address = frappe.db.get_value('Address', addresses[1].parent, 'address_line1')
 
 	path = 'bbt_bpm/bbt_bpm/page/customer_portal/add_to_cart.html'
-	html=frappe.render_template(path,{'data':add_to_cart, 'contact': contact, 'addresses':addresses})
+	html=frappe.render_template(path,{'data':add_to_cart, 'contact': contact, 'shipping_address':shipping_address,'billing_address':billing_address})
 	return {'html':html}
 
 

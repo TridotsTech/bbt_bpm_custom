@@ -3,6 +3,11 @@ frappe.ui.form.on("Delivery Note", {
 		if (frappe.session.user != "Administrator" && frappe.user_roles.includes("Customer User")){
 			$(".form-footer").hide()
 		}
+	},
+	delivery_confirmed:function(frm) {
+		if (frm.doc.delivery_confirmed){
+			frm.set_df_property('actual_delivered_date', 'reqd', 1);
+		}
 	}
 });
 
