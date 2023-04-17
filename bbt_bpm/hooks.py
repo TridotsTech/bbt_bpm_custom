@@ -58,6 +58,7 @@ doctype_js = {
 	"Contact": "custom_script/contact/contact.js",
 	"Pick List": "custom_script/pick_list/pick_list.js",
 	"Payment Entry": "custom_script/payment_entry/payment_entry.js",
+	"User":"custom_script/user/user.js"
 }
 
 app_logo_url = "/files/bbt_icon.png"
