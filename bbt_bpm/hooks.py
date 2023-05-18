@@ -58,7 +58,8 @@ doctype_js = {
 	"Contact": "custom_script/contact/contact.js",
 	"Pick List": "custom_script/pick_list/pick_list.js",
 	"Payment Entry": "custom_script/payment_entry/payment_entry.js",
-	"User":"custom_script/user/user.js"
+	"User":"custom_script/user/user.js",
+	"Bin":"custom_script/bin/bin.js"
 }
 
 app_logo_url = "/files/bbt_icon.png"
@@ -130,6 +131,7 @@ doc_events = {
 		"validate": "bbt_bpm.custom_script.sales_order.sales_order.validate",
 		"on_update": "bbt_bpm.custom_script.sales_order.sales_order.on_update",
 		"on_submit" : "bbt_bpm.custom_script.sales_order.sales_order.on_submit",
+		# "after_save":"bbt_bpm.custom_script.sales_order.sales_order.before_save"
 	},
 	"Delivery Note": {
 		"on_submit": "bbt_bpm.custom_script.delivery_note.delivery_note.on_submit",
@@ -163,6 +165,12 @@ doc_events = {
 	},
 	"Bin":{
 		"validate":"bbt_bpm.custom_script.bin.bin.validate"
+	},
+
+	# autoname in contact
+
+	"Contact":{
+		"validate":"bbt_bpm.custom_script.contact.contact.validate"
 	}
 }
 

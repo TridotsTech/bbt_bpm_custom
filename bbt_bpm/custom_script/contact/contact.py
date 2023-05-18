@@ -1,6 +1,14 @@
 import frappe
 from frappe.utils import has_common
+from frappe.model.naming import make_autoname
+from frappe.utils import cstr, has_gravatar, cint
 
+
+
+
+def validate(doc,method):
+	name = doc.first_name + " " + doc.middle_name + " " + doc.last_name
+	doc.full_name = name
 
 @frappe.whitelist()
 def contact_links(user):
@@ -13,7 +21,6 @@ def contact_links(user):
 		return 'Customer', cust_name
 
 	return contact_link[0]['link_doctype'], cust_name
-
 
 
 #------------------------------------------------------------------
