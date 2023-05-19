@@ -8,11 +8,12 @@ from frappe.utils import cstr, has_gravatar, cint
 
 def validate(doc,method):
 	new_name = doc.first_name + " " + doc.middle_name + " " + doc.last_name
-	return frappe.rename_doc("Contact", 
-		doc.name, 
-		new_name, 
-		force=False,
-		)
+	print(new_name)
+	# return frappe.rename_doc("Contact", 
+	# 	doc.name, 
+	# 	new_name, 
+	# 	force=False,
+	# 	)
 
 
 @frappe.whitelist()
