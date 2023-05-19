@@ -7,8 +7,13 @@ from frappe.utils import cstr, has_gravatar, cint
 
 
 def validate(doc,method):
-	name = doc.first_name + " " + doc.middle_name + " " + doc.last_name
-	doc.full_name = name
+	new_name = doc.first_name + " " + doc.middle_name + " " + doc.last_name
+	return frappe.rename_doc("Contact", 
+		doc.name, 
+		new_name, 
+		force=False,
+		)
+
 
 @frappe.whitelist()
 def contact_links(user):
