@@ -4,17 +4,34 @@ from frappe.model.naming import make_autoname
 from frappe.utils import cstr, has_gravatar, cint
 
 
+import frappe
 
+def validate(doc, method):
+	link_title = ""
+	for l in doc.links:
+		if l.link_title:
+			link_title = l.link_title
 
-def validate(doc,method):
-	new_name = doc.first_name + " " + doc.middle_name + " " + doc.last_name
-	print(new_name)
-	# return frappe.rename_doc("Contact", 
-	# 	doc.name, 
-	# 	new_name, 
-	# 	force=False,
-	# 	)
+	new_name = ""
+	if doc.first_name:
+		new_name += doc.first_name
 
+	if doc.middle_name:
+		if new_name:
+			new_name += " " + doc.middle_name
+		else:
+			new_name += doc.middle_name
+
+	if doc.last_name:
+		if new_name:
+			new_name += " " + doc.last_name
+		else:
+			new_name += doc.last_name
+
+	if link_title:
+		doc.full_name = new_name + "-" + link_title
+	else:
+		doc.full_name = new_name
 
 @frappe.whitelist()
 def contact_links(user):
