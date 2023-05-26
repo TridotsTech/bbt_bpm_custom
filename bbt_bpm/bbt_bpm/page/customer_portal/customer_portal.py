@@ -167,10 +167,18 @@ def add_to_cart_details(user, filters):
 
 	cust = frappe.db.get_value("Customer", {"user":user}, "name")
 
-	if frappe.session.user != 'Administrator':
-		contact = frappe.get_all('Contact',filters={'owner':frappe.session.user},fields=['full_name'])
+	if not cust:
+		contact = frappe.db.sql(''' SELECT dl.parent,C.full_name from `tabDynamic Link` AS dl INNER JOIN `tabContact` AS C ON C.name = dl.parent where dl.link_doctype = 'Customer' and dl.parenttype = 'Contact' ''',as_dict=True)
+
 	else:
-		contact = frappe.get_all('Contact',fields=['full_name'])
+
+		contact = frappe.db.sql(''' SELECT C.full_name from `tabDynamic Link` AS dl INNER JOIN `tabContact` AS C ON C.name = dl.parent where dl.link_doctype = 'Customer' and dl.link_name = '{}' and dl.parenttype = 'Contact' '''.format(cust),as_dict=True)
+
+	# if frappe.session.user != 'Administrator':
+	# 	contact = frappe.get_all('Contact',filters={'owner':frappe.session.user},fields=['full_name'])
+		
+	# else:
+	# 	contact = frappe.get_all('Contact',fields=['full_name'])
 
 	# contact = frappe.get_all('Dynamic Link', filters={'link_doctype': 'Customer', 'link_name': cust, 'parenttype': 'Contact'}, fields=['parent'])
 	# c_person = frappe.db.get_value('Contact', contact[0].parent)
