@@ -11,11 +11,21 @@ def execute(filters=None):
 
 
 def get_data(filters):
-	data = frappe.db.sql(''' SELECT parent as customer ,item_code as book_code,required_qty as required_qty,required_date as required_date,estimated_date_of_grn as estimated_date_of_grn FROM `tabItem List` WHERE parent = '{}' '''.format(filters.get('customer')),as_dict=True)
+	if filters:
+		data = frappe.db.sql(''' SELECT parent as customer ,item_code as book_code,required_qty as required_qty,required_date as required_date,estimated_date_of_grn as estimated_date_of_grn,order_date as order_date,item_name FROM `tabItem List` WHERE parent = '{}' '''.format(filters.get('customer')),as_dict=True)		
 
-	for idx,row in enumerate(data):
-		if idx !=0:
-			row.update({"customer":" "})
+		for idx,row in enumerate(data):
+			if idx !=0:
+				row.update({"customer":" "})		
+	else:
+		data = frappe.db.sql(''' SELECT parent as customer ,item_code as book_code,required_qty as required_qty,required_date as required_date,estimated_date_of_grn as estimated_date_of_grn,order_date as order_date,item_name FROM `tabItem List` '''.format(filters.get('customer')),as_dict=True)
+
+
+	for name in data:
+		item_name = name.book_code + ":"+name.item_name
+		name.update({"book_code":item_name})
+
+	
 
 	return data
 	
@@ -35,12 +45,20 @@ def get_columns():
 			"fieldname": "book_code",
 			"fieldtype": "Link",
 			"options":"Item",
-			"width": 150
+			"width": 450
 		},
 		{
 			"label": "Required Qty",
 			"fieldname": "required_qty",
 			"fieldtype": "Int",
+			"width": 120
+		},
+
+
+		{
+			"label": "Order Date",
+			"fieldname": "order_date",
+			"fieldtype": "Date",
 			"width": 120
 		},
 
