@@ -35,12 +35,24 @@ def validate(doc, method):
             doc.outstanding_amount = outstanding_amount[0].get('amount')
 
         row.delivery_date = doc.delivery_date
-    
+
+    for row in doc.items:
+        if doc.selling_price_list and not row.new_print:
+            row.price_list = doc.selling_price_list
+
+        if row.new_print:
+            print(row.price_list)
+            rate = frappe.db.get_value('Item Price',{"price_list":row.price_list},"price_list_rate")
+            row.rate = rate
+            row.amount = rate * row.qty    
     set_field_value(doc)
     set_packaging_items(doc)
     set_valid_customer_warehouse(doc)
     set_item_warehouses(doc)
     sort_table(doc)
+
+def before_save(doc,method):
+    print('-----------------')
 
 
 def on_update(doc, method):

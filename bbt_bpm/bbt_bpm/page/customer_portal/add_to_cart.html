@@ -251,8 +251,8 @@
 					<td class="text_center col5">{{row.rate or ""}}</td>
 					<td class="text_center col6">{{row.stock_in_nos or ""}}</td>
 					<td class="text_center col7">{{row.stock_in_cartons or ""}}</td>
-					<td class="text_center col8">{{row.book_per_carton or ""}}</td>
-					<td class="text_center col9"><input class="order_qty cart_order_qty" item="{{row.item_code}}" language="{{row.language}}" rate="{{row.rate}}" type="number" value="{{row.ordered_qty_in_nos}}"></td>
+					<td class="text_center col8 book_prc">{{row.book_per_carton or ""}}</td>
+					<td class="text_center col9"><input class="order_qty cart_order_qty" item="{{row.item_code}}" language="{{row.language}}" rate="{{row.rate}}" book_per_cartons="{{row.book_per_carton}}" type="number" value="{{row.ordered_qty_in_nos}}"></td>
 					<td class="text_center col10 order_cartons"><input class="cartan_order_qty cart_cartan_order_qty" item="{{row.item_code}}" language="{{row.language}}" rate="{{row.rate}}" book_per_cartons="{{row.book_per_carton}}" type="number" value="{{row.ordered_qty_in_cartons}}"></td>
 					<td class="col12">{{row.amount or ""}}</td>
 					<td class="text_center col11">{{row.publisher or ""}}</td>
@@ -288,7 +288,9 @@
 						<p><label class="contact_person">Delivery Contact Person</label></p>
 						<select class="c_p" id="c_p" name="c_p" style="width:70%;">
 						 {% for x in contact %}
-							<option style="max-width:70%;">{{x.parent}}</option>
+
+							<option >{{x.full_name}}</option>
+
 						 {% endfor %}
 						 <!-- <option value='desk#Form/Contact/New%20Contact%201'>Create Contact</option> -->
 						</select>

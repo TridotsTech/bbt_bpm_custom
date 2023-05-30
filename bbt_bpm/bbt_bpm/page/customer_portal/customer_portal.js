@@ -259,6 +259,8 @@ frappe.customer_portal = Class.extend({
 	    })
 	},
 
+
+
 	notify_me: function(me){
 	    $('.notify_me').click(function() {
 	    	let name = $(this).closest('tr').children('td.col4').text()
@@ -446,11 +448,46 @@ frappe.customer_portal = Class.extend({
 	},
 
 	update_qty_on_cart: function(){
+
+		// to save entered value in ordered qty in nos
+		$('.cart_order_qty').on("change", function(){
+	    	var item = $(this).attr("item")
+	    	var book_per_cartons = $(this).attr("book_per_cartons")
+			var language = $(this).attr("language")
+			var rate = $(this).attr("rate")
+			var order_qty=jQuery($(this).closest('tr').children('td.col9')[0]).find("input[type='number']").val()
+			var amount = parseFloat(order_qty)*parseFloat(rate)
+			var a = jQuery($(this).closest('tr').children('td.col11')[0]).html(amount)
+			frappe.call({
+		        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.update_enter_on_cart",
+		        args: {
+		        	item:item,
+		        	language:language,
+		        	order_qty:order_qty,
+		        	rate:rate,
+		        	book_per_cartons:book_per_cartons
+		        },
+		        callback: function (r) {
+		        	if (r.message){
+		        		data = r.message
+		        		$(".total_amount").html(data.amount)
+		        		$(".total_ordered_qty").html(data.total_ordered_qty)
+		        		$(".total_cartons_qty").html(data.total_cartons_qty)
+		        	}
+
+		        }//calback end
+		    })
+	
+		})
+		
+		// to save entered value in ordered qty in nos
+
 		$(".cart_order_qty").click(function(){
 			var item = $(this).attr("item")
 			var language = $(this).attr("language")
 			var rate = $(this).attr("rate")
 			var order_qty=jQuery($(this).closest('tr').children('td.col9')[0]).find("input[type='number']").val()
+			console.log(order_qty,'order_qty')
 			var amount = parseFloat(order_qty)*parseFloat(rate)
 			var a = jQuery($(this).closest('tr').children('td.col11')[0]).html(amount)
 			frappe.call({
@@ -473,6 +510,47 @@ frappe.customer_portal = Class.extend({
 		    })
 		})
 
+		// to save entered value in ordered qty in carton
+
+		$('.cart_cartan_order_qty').on("change", function(){
+			var amount = 0.0 
+			var item = $(this).attr("item")
+			var language = $(this).attr("language")
+			var rate = $(this).attr("rate")
+			var book_per_cartons = $(this).attr("book_per_cartons")
+			var cartan_order_qty=jQuery($(this).closest('tr').children('td.col10')[0]).find("input[type='number']").val()
+			var qty = parseFloat(book_per_cartons)*parseFloat(cartan_order_qty)
+			var amount = parseFloat(qty)*parseFloat(rate)
+			var a = jQuery($(this).closest('tr').children('td.col11')[0]).html(amount)
+			frappe.call({
+		        "method": "bbt_bpm.bbt_bpm.page.customer_portal.customer_portal.update_cartons_quantity_on_cart",
+		        args: {
+		        	item:item,
+		        	language:language,
+		        	rate: rate,
+		        	cartan_order_qty:cartan_order_qty,
+		        	book_per_cartons:book_per_cartons,
+		        },
+		        callback: function (r) {
+		        	if (r.message){
+		        		data = r.message[0]
+		        		$(".total_amount").html(data.amount)
+		        		$(".total_ordered_qty").html(data.total_ordered_qty)
+		        		$(".total_cartons_qty").html(data.total_cartons_qty)
+		        		// $("input").val(r.message[1]); 
+		    //     		jQuery($(this).closest('tr').children('td.col9')[0]).find("input[type='number']").innerHTMLer=r.message[1]
+						// console.log("=============",jQuery($(this).closest('tr').children('td.col9')[0]).find("input[type='number']").innerHTMLer=r.message[1])
+
+		        	}
+
+		        }//calback end
+		    })
+
+		})
+
+		// to save entered value in ordered qty in carton
+
+
 		$(".cart_cartan_order_qty").click(function(){
 			var amount = 0.0 
 			var item = $(this).attr("item")
@@ -490,7 +568,7 @@ frappe.customer_portal = Class.extend({
 		        	language:language,
 		        	rate: rate,
 		        	cartan_order_qty:cartan_order_qty,
-		        	book_per_cartons:book_per_cartons
+		        	book_per_cartons:book_per_cartons,
 		        },
 		        callback: function (r) {
 		        	if (r.message){

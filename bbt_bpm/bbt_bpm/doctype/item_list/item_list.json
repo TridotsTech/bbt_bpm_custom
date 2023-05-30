@@ -1,0 +1,50 @@
+{
+ "creation": "2023-05-24 09:24:25.316559",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item_code",
+  "required_qty",
+  "required_date",
+  "estimated_date_of_grn"
+ ],
+ "fields": [
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item Code",
+   "options": "Item"
+  },
+  {
+   "fieldname": "required_qty",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Required Qty"
+  },
+  {
+   "fieldname": "required_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Required date"
+  },
+  {
+   "fieldname": "estimated_date_of_grn",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Estimated date of GRN"
+  }
+ ],
+ "istable": 1,
+ "modified": "2023-05-24 09:30:18.888397",
+ "modified_by": "Administrator",
+ "module": "Bbt Bpm",
+ "name": "Item List",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

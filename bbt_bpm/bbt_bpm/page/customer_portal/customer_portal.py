@@ -154,6 +154,7 @@ def add_to_cart_item(filters):
 
 @frappe.whitelist()
 def add_to_cart_details(user, filters):
+	print('----------------bbbb-----')
 	filters = json.loads(filters)
 	#add_to_cart = frappe.db.sql("""SELECT name, item_code, item_group, description, rate, language, stock_in_nos, stock_in_cartons, book_per_carton, ordered_qty_in_nos, ordered_qty_in_cartons, amount from `tabAdd To Cart Item` where parent='{0}' """.format(user), as_dict=1)
 	add_to_cart = frappe.db.sql("""SELECT name, item_code, item_group, description, rate, language, stock_in_nos, stock_in_cartons, book_per_carton, ordered_qty_in_nos, ordered_qty_in_cartons, amount, publisher from `tabAdd To Cart Item`  where parent='{0}' ORDER BY language, description""".format(user), as_dict=1)	
@@ -166,7 +167,20 @@ def add_to_cart_details(user, filters):
 
 	cust = frappe.db.get_value("Customer", {"user":user}, "name")
 
-	contact = frappe.get_all('Dynamic Link', filters={'link_doctype': 'Customer', 'link_name': cust, 'parenttype': 'Contact'}, fields=['parent'])
+	if not cust:
+		contact = frappe.db.sql(''' SELECT dl.parent,C.full_name from `tabDynamic Link` AS dl INNER JOIN `tabContact` AS C ON C.name = dl.parent where dl.link_doctype = 'Customer' and dl.parenttype = 'Contact' ''',as_dict=True)
+
+	else:
+
+		contact = frappe.db.sql(''' SELECT C.full_name from `tabDynamic Link` AS dl INNER JOIN `tabContact` AS C ON C.name = dl.parent where dl.link_doctype = 'Customer' and dl.link_name = '{}' and dl.parenttype = 'Contact' '''.format(cust),as_dict=True)
+
+	# if frappe.session.user != 'Administrator':
+	# 	contact = frappe.get_all('Contact',filters={'owner':frappe.session.user},fields=['full_name'])
+		
+	# else:
+	# 	contact = frappe.get_all('Contact',fields=['full_name'])
+
+	# contact = frappe.get_all('Dynamic Link', filters={'link_doctype': 'Customer', 'link_name': cust, 'parenttype': 'Contact'}, fields=['parent'])
 	# c_person = frappe.db.get_value('Contact', contact[0].parent)
 	
 	shipping_address = ""
@@ -336,6 +350,7 @@ def delete_add_to_cart_item(user, name):
 
 @frappe.whitelist()
 def update_qty_on_cart(item, language, order_qty, rate):
+	print(order_qty,'--------')
 	amount = 0.0
 	amount = flt(order_qty)*flt(rate)
 	frappe.db.set_value("Add To Cart Item", {"item_code":item, "language":language}, {"ordered_qty_in_nos":order_qty, "amount":amount})
@@ -343,11 +358,42 @@ def update_qty_on_cart(item, language, order_qty, rate):
 	total_amount = frappe.db.sql("""SELECT sum(ordered_qty_in_nos) as total_ordered_qty, sum(ordered_qty_in_cartons) as total_cartons_qty, sum(amount) as amount From	`tabAdd To Cart Item` where parent = '{0}'""".format(frappe.session.user), as_dict=True)
 	return total_amount
 
+	
+	# save entered qty
+
+@frappe.whitelist()
+def update_enter_on_cart(item, language, order_qty, rate,book_per_cartons):
+	amount = 0.0
+	order_qty_in_carton = flt(order_qty) / flt(book_per_cartons)
+	amount = flt(order_qty)*flt(rate)
+	frappe.db.set_value("Add To Cart Item", {"item_code":item, "language":language}, {"ordered_qty_in_nos":order_qty,"ordered_qty_in_cartons": order_qty_in_carton, "amount":amount})
+	frappe.db.commit()
+	total_amount = frappe.db.sql("""SELECT sum(ordered_qty_in_nos) as total_ordered_qty, sum(ordered_qty_in_cartons) as total_cartons_qty, sum(amount) as amount From	`tabAdd To Cart Item` where parent = '{0}'""".format(frappe.session.user), as_dict=True)
+	return total_amount
+
+
+
+@frappe.whitelist()
+def update_cartons_quantity_on_cart(item, language, cartan_order_qty, rate, book_per_cartons):
+	amount = 0.0
+	order_qty = flt(book_per_cartons)*flt(cartan_order_qty)
+	print(order_qty,'order_qty nnnn')
+	amount = flt(order_qty)*flt(rate)
+	frappe.db.set_value("Add To Cart Item", {"item_code":item, "language":language}, {"ordered_qty_in_cartons":cartan_order_qty, "amount":amount, "ordered_qty_in_nos":order_qty})
+	frappe.db.commit()
+	total_amount = frappe.db.sql("""SELECT sum(ordered_qty_in_nos) as total_ordered_qty, sum(ordered_qty_in_cartons) as total_cartons_qty, sum(amount) as amount From	`tabAdd To Cart Item` where parent = '{0}'""".format(frappe.session.user), as_dict=True)
+	total_amount.append(order_qty)
+	return total_amount
+
+	# save entered qty
+
+
 
 @frappe.whitelist()
 def update_cartons_qty_on_cart(item, language, cartan_order_qty, rate, book_per_cartons):
 	amount = 0.0
 	order_qty = flt(book_per_cartons)*flt(cartan_order_qty)
+	print(order_qty,'order_qty nnnn')
 	amount = flt(order_qty)*flt(rate)
 	frappe.db.set_value("Add To Cart Item", {"item_code":item, "language":language}, {"ordered_qty_in_cartons":cartan_order_qty, "amount":amount, "ordered_qty_in_nos":order_qty})
 	frappe.db.commit()
