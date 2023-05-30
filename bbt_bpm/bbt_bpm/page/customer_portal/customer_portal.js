@@ -20,9 +20,9 @@ frappe.customer_portal = Class.extend({
 		});
 
     	this.wrapper = wrapper
-    	$('.viewcustomcart').click(function() {
-    		window.location.href = '/desk#customer_portal?viewcart=true'
-    		window.location.reload()
+    	$('#viewcart').click(function() {
+    		window.location.href = '/app/customer_portal?viewcart=true'
+    		// window.location.reload()
     	})
     	this.make()
 		this.get_imp_data()
@@ -41,7 +41,7 @@ frappe.customer_portal = Class.extend({
 			var me = this;
 			$('.frappe-list').html('')
 			me.add_to_cart_items = this.value?this.value:null
-			$('[data-fieldname="home"]').show()
+			$('[data-fieldname="landing_page"]').show()
 			$('[data-fieldname="language"]').hide()
 			$('[data-fieldname="category"]').hide()
 			$('[data-fieldname="item_code"]').hide()
@@ -95,8 +95,9 @@ frappe.customer_portal = Class.extend({
 	        callback: function (r) {
 	        	if (r.message){
 	          		var html = r.message.html
-	          		//console.log(html)
-					$('.frappe-list').html(html)
+	          		$('.frappe-list').html(html)
+	          		// $('.delete').hide()
+	          		// console.log(html)
 					me.item_order_qty(me)
 	    			me.add_to_card(me)
 	    			me.notify_me(me)
@@ -106,7 +107,7 @@ frappe.customer_portal = Class.extend({
 					$('[data-fieldname="category"]').show()
 					$('[data-fieldname="item_code"]').show()
 					$('[data-fieldname="description"]').show()
-					$('[data-fieldname="home"]').hide()
+					$('[data-fieldname="landing_page"]').hide()
 
 	        	}
 
@@ -114,12 +115,11 @@ frappe.customer_portal = Class.extend({
 	    })
 
 	},
-
 	
 	get_imp_data:function(){
 	    var me = this
-	    $('.frappe-list').html("")
-
+	    // $('.frappe-list').html("")
+	    
 	    var view_cart = window.location.href.split('?').reverse()[0]
 	    
 	    if (view_cart == "viewcart=true"){
@@ -642,11 +642,11 @@ frappe.customer_portal = Class.extend({
 		me.page.add_field({
 			"fieldtype": 'Button',
 			"label": __('Back'),
-			"fieldname": 'home',
+			"fieldname": 'landing_page',
 			click: function() {
-				me.home = this.value?this.value:null
-				window.location.href = "desk#customer_portal"
-				window.location.reload()
+				me.landing_page = this.value?this.value:null
+				window.location.href = "/app/customer_portal"
+				// window.location.reload()
 				me.get_imp_data()
 			}
 		})
@@ -663,7 +663,9 @@ frappe.customer_portal = Class.extend({
 				me.get_imp_data()
 			}
 		})
-		$('[data-fieldname="language"]').css({"border": "1px solid Brown", "width": "90px"})
+		$('[data-fieldname="language"]').css({"border": "0px solid Brown", "width": "90px", "margin-right": "10px"})
+
+		$('[data-fieldname="language"]').removeClass("col-md-2")
 
 		me.page.add_field({
 			"fieldtype": 'Autocomplete',
@@ -677,7 +679,10 @@ frappe.customer_portal = Class.extend({
 				me.get_imp_data()
 			}
 		})
-		$('[data-fieldname="category"]').css({"border": "1px solid Brown","width": "90px"})
+		
+		$('[data-fieldname="category"]').css({"border": "0px solid Brown", "width": "90px", "margin-right": "10px"})
+
+		$('[data-fieldname="category"]').removeClass("col-md-2")
 
 		me.page.add_field({
 			"fieldtype": 'Autocomplete',
@@ -690,7 +695,10 @@ frappe.customer_portal = Class.extend({
 				me.get_imp_data()
 			}
 		})
-		$('[data-fieldname="item_code"]').css({"border": "1px solid Brown", "width": "80px"})
+
+		$('[data-fieldname="item_code"]').css({"border": "0px solid Brown", "width": "90px", "margin-right": "10px"})
+
+		$('[data-fieldname="item_code"]').removeClass("col-md-2")
 
 		me.page.add_field({
 			"fieldtype": 'Autocomplete',
@@ -703,7 +711,11 @@ frappe.customer_portal = Class.extend({
 				me.get_imp_data()
 			}
 		})
-		$('[data-fieldname="description"]').css({"border": "1px solid Brown", "width": "190px"})
+
+
+		$('[data-fieldname="description"]').css({"border": "0px solid Brown", "width": "190px", "margin-right": "10px"})
+
+		$('[data-fieldname="description"]').removeClass("col-md-2")
 
 		this.view_cart_button =  me.page.add_field({
 			"fieldtype": 'Button',
@@ -711,7 +723,7 @@ frappe.customer_portal = Class.extend({
 			"fieldname": 'add_to_cart_items',
 			click: function() {
 				me.add_to_cart_items = this.value?this.value:null
-				$('[data-fieldname="home"]').show()
+				$('[data-fieldname="landing_page"]').show()
 				$('[data-fieldname="language"]').hide()
 				$('[data-fieldname="category"]').hide()
 				$('[data-fieldname="item_code"]').hide()
@@ -752,7 +764,10 @@ frappe.customer_portal = Class.extend({
 			    })
 			}
 		})
-		$('[data-fieldname="add_to_cart_items"]').addClass("btn-primary")
+		$('[data-fieldname="add_to_cart_items"] > button').addClass("btn-primary")
+
+    	$('[data-fieldname="add_to_cart_items"] > button').css({"border":"none","color":"white"})
+		$('[data-fieldname="add_to_cart_items"] > button').removeClass("btn")
 
 		me.page.add_field({
 		"fieldtype": 'Button',
