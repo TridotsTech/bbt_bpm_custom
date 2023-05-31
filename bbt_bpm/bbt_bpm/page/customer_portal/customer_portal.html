@@ -1,5 +1,11 @@
 <style type="text/css">
-     .text_right{
+    
+    .awesomplete>ul {
+    	z-index: 9999 !important;
+    	min-width: 145% !important;
+    }
+ 
+    .text_right{
         text-align: right;
     }
     .text_center{
@@ -27,13 +33,13 @@
 		margin: auto;
 		text-align: center;
 		padding: 10px;
-		color: white;
+		color: black;
 	}
 
 	.table {
 		background-color: white;
 		margin: auto;
-		border-collapse: separate;
+		border-collapse: collapse;
 		display: block;
 		overflow-y: scroll;
 		height: 600px;
@@ -45,7 +51,7 @@
 
 	thead {
 		position: sticky;
-		top: 1px;
+		top: 0;
 		z-index: 3;
 	}
 
@@ -55,6 +61,7 @@
 
 	th {
 		background-color: #f5f7fa;
+		width: 100px !important;
 	}
 
 	.fixed {
@@ -65,19 +72,19 @@
 		z-index: 2;
 	}
 
-	td:not(.fixed) {
+/*	td:not(.fixed) {
 		z-index: 0;
-	}
+	}*/
 		
 	.ta{
 		text-align: center;
 		width:9.09%;
 		word-wrap: break-word;
 	}
-
+/*
 	td:not(.fixed) {
 		z-index: 0;
-	}
+	}*/
 
 	/*.first_col {
 		top: auto;
@@ -202,18 +209,29 @@
 	.table-sortable .th-sort-desc {
 	  background: rgba(0, 0, 0, 0.1);
 	}*/
+	tr {
+		width: 80%;
+	}
+
+	table,tr,th,td {
+		border: 1px solid black !important;
+
+	}
+	.border {
+		border-right: hidden !important;
+	}
 </style>
 	
 <body>
 		<table class="table table-bordered table-wrapper table-sortable" width="100%" border="1px" bordercolor="#000000" id="portalTable">
 			<thead>
-				<tr>
-					<th colspan="10" style="background-color: #C7DFCD; color: black;" class="fixed">
+				<tr class="border">
+					<th colspan="8" style="background-color: #C7DFCD; color: black;" class="fixed border">
 						Books Details
 						<!-- <button class="notify_me" style="color:blue;">Notify Me when in Stock</button> -->
 					</th>
-					<th colspan="4" style="background-color: #C7DFCD; color: white; text-align: right; border-left: hidden;">
-						<a href="/desk#home" class="button" style="color: black;"><button class="button" style="color: black;"><b>Home</b></button></a>
+					<th class="border" colspan="6" style="background-color: #C7DFCD; color: white; text-align: right; border-left: hidden;">
+						<a href="/app/landing_page" class="button" style="color: black;"><button class="button" style="color: black;"><b>Home</b></button></a>
 					</th>
 				</tr>
 				<tr>
