@@ -1,6 +1,6 @@
 {
  "autoname": "field:customer",
- "creation": "2023-05-24 09:26:48.180945",
+ "creation": "2023-05-25 12:40:16.654912",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -29,7 +29,7 @@
    "options": "Item List"
   }
  ],
- "modified": "2023-05-24 09:41:49.832994",
+ "modified": "2023-05-25 12:45:10.127531",
  "modified_by": "Administrator",
  "module": "Bbt Bpm",
  "name": "Stock Demand",
