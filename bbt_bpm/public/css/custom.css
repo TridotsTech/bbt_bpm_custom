@@ -19,13 +19,26 @@ background-color: #FFFCED;}
 }
 
 .btn-primary {
-    background-color: #BB6464;
-    border-color: #BB6464;
+    background-color: #BB6464 !important;
+    border-color: #BB6464 !important;
 }
 
-.btn-primary:hover {
-    background-color: #BB6464;
-    border-color: #BB6464;
+.btn-primary:hover, .btn-primary:focus {
+    background-color: #BB6464 !important;
+    border-color: #BB6464 !important;
+    color: white !important;
+    outline: none !important;
+}
+.add-to-cart-btn:hover , .add-to-cart-btn:focus {
+    background-color: #BB6464 !important;
+    border-color: #BB6464 !important;
+    color: white !important;
+    outline: none !important;
+}
+
+.add-to-cart-btn {
+    background-color: #BB6464 !important;
+    border-color: #BB6464 !important;
 }
 
 /*.navbar-fixed-top{
