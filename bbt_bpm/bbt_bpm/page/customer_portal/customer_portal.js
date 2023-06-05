@@ -21,7 +21,7 @@ frappe.customer_portal = Class.extend({
 
     	this.wrapper = wrapper
     	$('#viewcart').click(function() {
-    		window.location.href = '/app/customer_portal?viewcart=true'
+    		window.location.href = '/desk#customer_portal?viewcart=true'
     		// window.location.reload()
     	})
     	this.make()
@@ -645,7 +645,7 @@ frappe.customer_portal = Class.extend({
 			"fieldname": 'landing_page',
 			click: function() {
 				me.landing_page = this.value?this.value:null
-				window.location.href = "/app/customer_portal"
+				window.location.href = "/desk#customer_portal"
 				// window.location.reload()
 				me.get_imp_data()
 			}
