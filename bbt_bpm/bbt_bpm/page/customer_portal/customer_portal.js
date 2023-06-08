@@ -663,7 +663,7 @@ frappe.customer_portal = Class.extend({
 				me.get_imp_data()
 			}
 		})
-		$('[data-fieldname="language"]').css({"border": "0px solid Brown", "width": "90px", "margin-right": "10px"})
+		$('[data-fieldname="language"]').css({"border": "1px solid Black", "width": "90px", "margin-right": "10px","font-weight": "bold","color":"black"})
 
 		$('[data-fieldname="language"]').removeClass("col-md-2")
 
@@ -680,7 +680,7 @@ frappe.customer_portal = Class.extend({
 			}
 		})
 		
-		$('[data-fieldname="category"]').css({"border": "0px solid Brown", "width": "90px", "margin-right": "10px"})
+		$('[data-fieldname="category"]').css({"border": "1px solid Black", "width": "90px", "margin-right": "10px","font-weight": "bold","color":"black"})
 
 		$('[data-fieldname="category"]').removeClass("col-md-2")
 
@@ -696,7 +696,7 @@ frappe.customer_portal = Class.extend({
 			}
 		})
 
-		$('[data-fieldname="item_code"]').css({"border": "0px solid Brown", "width": "90px", "margin-right": "10px"})
+		$('[data-fieldname="item_code"]').css({"border": "1px solid Black", "width": "90px", "margin-right": "10px","font-weight": "bold","color":"black"})
 
 		$('[data-fieldname="item_code"]').removeClass("col-md-2")
 
@@ -713,7 +713,7 @@ frappe.customer_portal = Class.extend({
 		})
 
 
-		$('[data-fieldname="description"]').css({"border": "0px solid Brown", "width": "190px", "margin-right": "10px"})
+		$('[data-fieldname="description"]').css({"border": "1px solid Black", "width": "190px", "margin-right": "10px","font-weight": "bold","color":"black"})
 
 		$('[data-fieldname="description"]').removeClass("col-md-2")
 
