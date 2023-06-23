@@ -26,8 +26,14 @@ def validate(doc, method):
     elif person_data.get('first_name') and person_data.get('last_name'):
         contact_display = person_data.get('first_name',"") + " " + person_data.get('last_name',"")
         doc.contact_display = contact_display
-   
+    
+    total_qty = 0
     for row in doc.items:
+        if row.item_code == "SCP001":
+            continue
+        quantity = row.get('qty', 0)
+        total_qty += quantity
+
         if frappe.db.exists("Stock Entry", {"quotation_ref":row.prevdoc_docname, "docstatus":1}):
             doc.stock_transfer_ref=frappe.db.get_value("Stock Entry", {"quotation_ref":row.prevdoc_docname, "docstatus":1}, "name")		
         outstanding_amount = frappe.db.sql("""SELECT sum(outstanding_amount) as amount from `tabSales Invoice` where customer='{0}' and company='{1}' and docstatus=1 """.format(doc.customer, doc.company), as_dict=1)
@@ -35,6 +41,8 @@ def validate(doc, method):
             doc.outstanding_amount = outstanding_amount[0].get('amount')
 
         row.delivery_date = doc.delivery_date
+
+    doc.total_qty = total_qty
 
     for row in doc.items:
         if doc.selling_price_list and not row.new_print:
