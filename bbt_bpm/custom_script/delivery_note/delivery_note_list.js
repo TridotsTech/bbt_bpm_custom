@@ -11,6 +11,9 @@ frappe.listview_settings['Delivery Note'] = {
 		// else if (flt(doc.delivered, 2) == 100) {
 		// 	return [__("Completed"), "green", "per_billed,=,100"];
 		// } 
+		else if (doc.status === "Completed" && doc.delivered == 1){
+			return [__("Completed"), "darkgrey", "status,=,Completed|delivered,=,1"];
+		}
 		else if (doc.status === 'To Bill' && doc.delivered == 0){
 			return [__("Goods-In-Transit"), "green", "status,=,To Bill|delivered,=,0"];
 		} 
@@ -18,7 +21,7 @@ frappe.listview_settings['Delivery Note'] = {
 			return [__("Submitted"), "black", "status,=,Completed|delivered,=,0"];
 		}
 		else if (doc.delivered == 1){
-			return [__("Delivered"), "blue", "delivered,=,1"];
+			return [__("Delivered"), "blue", "delivered,=,1|status,=,To Bill"];
 		}
 
 	},

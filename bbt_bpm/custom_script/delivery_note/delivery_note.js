@@ -8,7 +8,26 @@ frappe.ui.form.on("Delivery Note", {
 		if (frm.doc.delivery_confirmed){
 			frm.set_df_property('actual_delivered_date', 'reqd', 1);
 		}
-	}
+	},
+	onload: function (frm) {
+        if (frm.doc.status === "Closed") {
+            frm.set_indicator(__('Closed'), 'green');
+        } else {
+            frappe.call({
+                method: 'bbt_bpm.custom_script.delivery_note.delivery_note.check_si_against_dt',
+                args: {
+                    docname: frm.doc.name
+                },
+                callback: function (r) {
+                    if (r.message) {
+                        frm.doc.status = "Completed";
+                        frm.refresh_field('status');
+                    }
+                }
+            });
+        }
+    }
+
 });
 
 frappe.ui.form.on("Delivery Note Item", {

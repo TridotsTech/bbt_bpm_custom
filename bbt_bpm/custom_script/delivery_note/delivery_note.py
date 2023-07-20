@@ -262,3 +262,16 @@ def dn_get_permission_query_conditions(user):
 		else:
 			# return "1=2"
 			return """(`tabDelivery Note`.name is null)"""
+
+
+
+#-----------------------------------------------------------
+# Check sales invoice against delivery note 
+#-----------------------------------------------------------
+
+
+@frappe.whitelist()
+def check_si_against_dt(docname):
+	data = frappe.db.sql(''' SELECT name from `tabSales Invoice Item` where delivery_note = '{}' '''.format(docname))
+	if data:
+		return data
