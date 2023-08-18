@@ -58,6 +58,25 @@ def set_items(doc):
 			item.used_qty = item.qty
 
 
+def on_submit(doc,method):
+	if doc.docstatus == 1:
+		for itm in doc.items:
+			item_code = itm.item_code
+			
+			stock_qty = frappe.db.sql("""SELECT sum(actual_qty) as actual_qty,warehouse,item_code,item_name from `tabBin` where item_code='{0}' and warehouse="Transcend Store Website - BBT" """.format(item_code), as_dict=1)
+
+			for st in stock_qty:
+				if st.actual_qty:
+					user = "admin@indiabbt.com"
+					if st.actual_qty <= 10:
+						frappe.sendmail(
+							user,
+							subject= f'{st.item_code} is out of stock in {st.warehouse} warehouse',
+							content=f'''The book {st.item_name}({st.item_code}) is currently out of stock. Kindly restock this book to ensure that users can proceed with their purchases''',
+							now=True
+							)
+
+
 
 
 #------------------------------------------------------------------
